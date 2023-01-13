@@ -30,12 +30,17 @@ public:
 	class USpringArmComponent* playerSpringArm;
 	UPROPERTY(EditDefaultsOnly)
 	class UCameraComponent* playerCamera;
+	UPROPERTY(EditDefaultsOnly)
+	class USkeletalMeshComponent* skMeshComp;
+	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
+	TSubclassOf<class ARocketAmmo> BulletFactory;
 
 	void InputAxisLookUp(float value);
 	void InputAxisTurnRight(float value);
 	void InputAxisMoveVertical(float value);
 	void InputAxisMoveHorizontal(float value);
 	void InputActionJump();
+	void InputActionFire();
 
 private:
 	FVector dir;

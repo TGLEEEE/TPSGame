@@ -5,6 +5,8 @@
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
 #include <GameFramework/CharacterMovementComponent.h>
+#include <Components/SkeletalMeshComponent.h>
+#include "RocketAmmo.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -30,6 +32,15 @@ AMyPlayer::AMyPlayer()
 	playerSpringArm->bUsePawnControlRotation = true;
 	playerCamera->bUsePawnControlRotation = true;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	skMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>rocketLauncher(TEXT("/Script/Engine.SkeletalMesh'/Game/MilitaryWeapSilver/Weapons/Rocket_Launcher_A.Rocket_Launcher_A'"));
+	if (rocketLauncher.Succeeded())
+	{
+		skMeshComp->SetSkeletalMesh(rocketLauncher.Object);
+	}
+	skMeshComp->SetupAttachment(GetMesh());
+	skMeshComp->SetRelativeLocation(FVector(-30, 0, 120));
 }
 
 // Called when the game starts or when spawned
@@ -63,6 +74,7 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMyPlayer::InputActionJump);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AMyPlayer::InputActionFire);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AMyPlayer::InputAxisLookUp);
 	PlayerInputComponent->BindAxis(TEXT("TurnRight"), this, &AMyPlayer::InputAxisTurnRight);
 	PlayerInputComponent->BindAxis(TEXT("MoveVertical"), this, &AMyPlayer::InputAxisMoveVertical);
@@ -92,5 +104,11 @@ void AMyPlayer::InputAxisMoveHorizontal(float value)
 void AMyPlayer::InputActionJump()
 {
 	Jump();
+}
+
+void AMyPlayer::InputActionFire()
+{
+	FTransform rocketTrans = skMeshComp->GetSocketTransform(TEXT("FirePosition"));
+	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
 }
 

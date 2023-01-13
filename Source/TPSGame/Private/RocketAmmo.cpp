@@ -27,11 +27,12 @@ ARocketAmmo::ARocketAmmo()
 	}
 
 	projectileComp=CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
-	projectileComp->InitialSpeed = 800;
-	projectileComp->MaxSpeed = 800;
+	projectileComp->InitialSpeed = 1000;
+	projectileComp->MaxSpeed = 1000;
 	projectileComp->ProjectileGravityScale = 0;
 	projectileComp->bShouldBounce = false;
 	projectileComp->SetUpdatedComponent(sphereComp);
+
 }
 
 // Called when the game starts or when spawned
@@ -39,6 +40,7 @@ void ARocketAmmo::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	sphereComp->OnComponentHit.AddDynamic(this, &ARocketAmmo::OnHit);
 }
 
 // Called every frame
@@ -46,5 +48,10 @@ void ARocketAmmo::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ARocketAmmo::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("boooooom!!"));
 }
 
