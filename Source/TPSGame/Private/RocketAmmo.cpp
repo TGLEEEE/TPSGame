@@ -21,7 +21,7 @@ ARocketAmmo::ARocketAmmo()
 	MeshComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Skeletal Mesh"));
 	MeshComp->SetupAttachment(sphereComp);
 	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
-	ConstructorHelpers::FObjectFinder<UStaticMesh>MeshTemp(TEXT("/Script/Engine.StaticMesh'/Game/MilitaryWeapSilver/Weapons/RocketLauncherA_Ammo.RocketLauncherA_Ammo'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh>MeshTemp(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/RocketLauncherA_Ammo.RocketLauncherA_Ammo'"));
 	if (MeshTemp.Succeeded())
 	{
 		MeshComp->SetStaticMesh(MeshTemp.Object);
