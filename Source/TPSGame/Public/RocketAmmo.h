@@ -29,6 +29,8 @@ UPROPERTY(EditDefaultsOnly)
 class UStaticMeshComponent* MeshComp;
 UPROPERTY(EditDefaultsOnly)
 class UProjectileMovementComponent* projectileComp;
+UPROPERTY(EditDefaultsOnly)
+TSubclassOf<class ARocketExplosion> explosion;
 
 UFUNCTION()
 void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

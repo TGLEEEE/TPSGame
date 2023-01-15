@@ -5,6 +5,7 @@
 #include <Components/SphereComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include <GameFramework/ProjectileMovementComponent.h>
+#include "RocketExplosion.h"
 
 // Sets default values
 ARocketAmmo::ARocketAmmo()
@@ -27,9 +28,9 @@ ARocketAmmo::ARocketAmmo()
 	}
 
 	projectileComp=CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
-	projectileComp->InitialSpeed = 1000;
-	projectileComp->MaxSpeed = 1000;
-	projectileComp->ProjectileGravityScale = 0;
+	projectileComp->InitialSpeed = 1200.f;
+	projectileComp->MaxSpeed = 1200.f;
+	projectileComp->ProjectileGravityScale = 0.f;
 	projectileComp->bShouldBounce = false;
 	projectileComp->SetUpdatedComponent(sphereComp);
 
@@ -52,6 +53,8 @@ void ARocketAmmo::Tick(float DeltaTime)
 
 void ARocketAmmo::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("boooooom!!"));
+//	UE_LOG(LogTemp, Warning, TEXT("boooooom!!"));
+	GetWorld()->SpawnActor<ARocketExplosion>(explosion, GetActorLocation(), FRotator::ZeroRotator);
+	Destroy();
 }
 
