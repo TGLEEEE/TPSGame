@@ -33,14 +33,24 @@ AMyPlayer::AMyPlayer()
 	playerCamera->bUsePawnControlRotation = true;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	skMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
+	rocketLauncherComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rocket Launcher Mesh"));
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>rocketLauncher(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Rocket_Launcher_A.Rocket_Launcher_A'"));
 	if (rocketLauncher.Succeeded())
 	{
-		skMeshComp->SetSkeletalMesh(rocketLauncher.Object);
+		rocketLauncherComp->SetSkeletalMesh(rocketLauncher.Object);
 	}
-	skMeshComp->SetupAttachment(GetMesh());
-	skMeshComp->SetRelativeLocation(FVector(-30, 0, 120));
+	rocketLauncherComp->SetupAttachment(GetMesh());
+	rocketLauncherComp->SetRelativeLocation(FVector(-30, 0, 120));
+
+	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>rifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
+	if (rifle.Succeeded())
+	{
+		rifleComp->SetSkeletalMesh(rifle.Object);
+	}
+	rifleComp->SetupAttachment(GetMesh());
+	rifleComp->SetRelativeLocation(FVector(-30, 0, 120));
+	
 }
 
 // Called when the game starts or when spawned
@@ -108,7 +118,7 @@ void AMyPlayer::InputActionJump()
 
 void AMyPlayer::InputActionFire()
 {
-	FTransform rocketTrans = skMeshComp->GetSocketTransform(TEXT("FirePosition"));
+	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
 	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
 }
 

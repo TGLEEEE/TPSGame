@@ -31,7 +31,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UCameraComponent* playerCamera;
 	UPROPERTY(EditDefaultsOnly)
-	class USkeletalMeshComponent* skMeshComp;
+	class USkeletalMeshComponent* rocketLauncherComp;
+	UPROPERTY(EditDefaultsOnly)
+	class USkeletalMeshComponent* rifleComp;
 	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
 	TSubclassOf<class ARocketAmmo> BulletFactory;
 
