@@ -30,6 +30,8 @@ class UStaticMeshComponent* MeshComp;
 UPROPERTY(EditDefaultsOnly)
 class UProjectileMovementComponent* projectileComp;
 UPROPERTY(EditDefaultsOnly)
+class UParticleSystemComponent* particleComp;
+UPROPERTY(EditDefaultsOnly)
 TSubclassOf<class ARocketExplosion> explosion;
 
 UFUNCTION()
