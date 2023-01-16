@@ -4,6 +4,7 @@
 #include "EnemyFSM.h"
 #include "Enemy.h"
 //#include "TPSPr.h"
+#include "EnemyAnim.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
@@ -29,6 +30,9 @@ void UEnemyFSM::BeginPlay()
 	target = Cast<AMyPlayer>(actor);
 	//소유객체가져오기
 	me = Cast<AEnemy>(GetOwner());
+
+	//UEnemyAnim*할당
+	anim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
 
 }
 
@@ -69,8 +73,13 @@ void UEnemyFSM::IdleState()
 		mState = EEnemyState::Move;
 		//4. 경과시간 초기화
 		currentTime = 0;
-		UE_LOG(LogTemp, Warning, TEXT("2after move"));
+		//UE_LOG(LogTemp, Warning, TEXT("2after move"));
+
+		//애니메이션 상태 동기화
+		anim->animState = mState;
 	}
+
+
 }
 //이동상태
 void UEnemyFSM::MoveState()
@@ -88,6 +97,12 @@ void UEnemyFSM::MoveState()
 	{
 		//2.공격상태로 전환하고싶다
 		mState = EEnemyState::Attack;
+		//애니메이션 상태 동기화
+		anim->animState = mState;
+		//공격애니메이션 재생활성화
+		anim->bAttackPlay = true;
+		//공격상태전환시 대기시간이 바로 끝나도록 처리
+		currentTime = attackDelayTime;
 
 	}
 }
@@ -103,6 +118,7 @@ void UEnemyFSM::AttackState()
 		//3. 공격하고싶다
 		//---------
 		currentTime = 0;
+		anim->bAttackPlay = true;
 	}
 
 	//목표: 타깃이 공격 범위를 벗어나면 상태를 이동으로 전환하고싶다
@@ -113,6 +129,8 @@ void UEnemyFSM::AttackState()
 	{
 		//3. 상태를 이동으로 전환하고 싶다
 		mState = EEnemyState::Move;
+		//애니메이션 상태 동기화
+		anim->animState = mState;
 	}
 
 
@@ -129,6 +147,8 @@ void UEnemyFSM::DamageState()
 		mState = EEnemyState::Idle;
 		//경과시간초기화
 		currentTime = 0;
+		//애니메이션 상태 동기화
+		anim->animState = mState;
 	}
 }
 //죽음상태
@@ -153,5 +173,7 @@ void UEnemyFSM::OnDamageProcess()
 		//상태를 죽음으로 전환
 		mState = EEnemyState::Die;
 	}
+	//애니메이션상태 동기화
+	anim->animState = mState;
 }
 

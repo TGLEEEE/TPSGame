@@ -23,6 +23,14 @@ AEnemy::AEnemy()
 	}
 	//EnemyFSM컴포넌트 추가
 	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
+
+	//애니메이션 블루프린트 할당하기
+	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass(TEXT("/Script/Engine.AnimBlueprint'/Game/Blueprints/ABP_Enemy.ABP_Enemy'"));
+	if (tempClass.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(tempClass.Class);
+	}
+
 }
 
 // Called when the game starts or when spawned
