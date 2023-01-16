@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "MyPlayer.h"
 #include "EnemyFSM.generated.h"
 
 //사용할 상태의 정의
@@ -57,15 +58,31 @@ public:
 	float currentTime = 0;
 	
 	//타깃
-	//UPROPERTY(VisibleAnywhere,Category=FSM)
+	UPROPERTY(VisibleAnywhere,Category=FSM)
+		class AMyPlayer* target;
 
 	//소유액터
 	UPROPERTY()
-	class AEnemy*me;
+	class AEnemy* me;
 
 	//공격범위 
 	UPROPERTY(EditAnywhere, Category=FSM)
 	float attackRange = 150.0f;
+
+	//공격 대기시간 
+	UPROPERTY(EditAnywhere, Category = FSM)
+	float attackDelayTime= 2.0f;
+
+	//피격 알림 이벤트 함수
+	void OnDamageProcess();
+
+	//체력
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = FSM)
+	int32 hp = 3;
+
+	//피격상태 대기시간
+	UPROPERTY(EditAnywhere, Category=FSM)
+	float damageDelayTime = 2.0f;
 
 	
 		
