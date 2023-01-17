@@ -58,6 +58,7 @@ void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	ArmRifle();
 }
 
 // Called every frame
@@ -83,12 +84,16 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMyPlayer::InputActionJump);
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AMyPlayer::InputActionFire);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AMyPlayer::InputAxisLookUp);
 	PlayerInputComponent->BindAxis(TEXT("TurnRight"), this, &AMyPlayer::InputAxisTurnRight);
 	PlayerInputComponent->BindAxis(TEXT("MoveVertical"), this, &AMyPlayer::InputAxisMoveVertical);
 	PlayerInputComponent->BindAxis(TEXT("MoveHorizontal"), this, &AMyPlayer::InputAxisMoveHorizontal);
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMyPlayer::InputActionJump);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AMyPlayer::InputActionFire);
+	PlayerInputComponent->BindAction(TEXT("Rifle"), IE_Pressed, this, &AMyPlayer::ArmRifle);
+	PlayerInputComponent->BindAction(TEXT("RocketLauncher"), IE_Pressed, this, &AMyPlayer::ArmRocketLauncher);
+	PlayerInputComponent->BindAction(TEXT("Knife"), IE_Pressed, this, &AMyPlayer::ArmKnife);
+	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Pressed, this, &AMyPlayer::ArmGrenade);
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -120,5 +125,52 @@ void AMyPlayer::InputActionFire()
 {
 	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
 	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
+}
+
+void AMyPlayer::ArmRifle()
+{
+	ChangeWeapon(1);
+}
+
+void AMyPlayer::ArmRocketLauncher()
+{
+	ChangeWeapon(2);
+}
+
+void AMyPlayer::ArmKnife()
+{
+	ChangeWeapon(3);
+}
+
+void AMyPlayer::ArmGrenade()
+{
+	ChangeWeapon(4);
+}
+
+void AMyPlayer::ChangeWeapon(int weaponNumber)
+{
+	switch (weaponNumber)
+	{
+	case
+		SelcetWeapon::Rifle:
+			rifleComp->SetVisibility(true);
+			rocketLauncherComp->SetVisibility(false);
+		break;
+	case 
+		SelcetWeapon::RocketLauncher:
+			rifleComp->SetVisibility(false);
+			rocketLauncherComp->SetVisibility(true);
+		break;
+	case
+		SelcetWeapon::Knife:
+			UE_LOG(LogTemp, Warning, TEXT("3"));
+		break;
+	case
+		SelcetWeapon::Grenade:
+			UE_LOG(LogTemp, Warning, TEXT("4"));
+		break;
+	default:
+		break;
+	}
 }
 

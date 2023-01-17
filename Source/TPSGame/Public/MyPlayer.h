@@ -6,6 +6,16 @@
 #include "GameFramework/Character.h"
 #include "MyPlayer.generated.h"
 
+UENUM(BlueprintType)
+enum class SelcetWeapon : uint8
+{
+	Default,
+	Rifle,
+	RocketLauncher,
+	Knife,
+	Grenade
+};
+
 UCLASS()
 class TPSGAME_API AMyPlayer : public ACharacter
 {
@@ -43,6 +53,11 @@ public:
 	void InputAxisMoveHorizontal(float value);
 	void InputActionJump();
 	void InputActionFire();
+	void ArmRocketLauncher();
+	void ArmRifle();
+	void ArmKnife();
+	void ArmGrenade();
+	void ChangeWeapon(int weaponNumber);
 
 private:
 	FVector dir;
