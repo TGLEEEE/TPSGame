@@ -7,6 +7,7 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include <Components/SkeletalMeshComponent.h>
 #include "RocketAmmo.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -128,8 +129,14 @@ void AMyPlayer::InputActionFire()
 	
 	FHitResult hitInfo;
 	FVector startLoc = playerCamera->GetComponentLocation();
-
-
+	FVector endLoc = startLoc + playerCamera->GetForwardVector() * 10000.f;
+	FCollisionQueryParams param;
+	bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
+	if (isHit)
+	{	
+		FTransform trans(hitInfo.ImpactPoint);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, trans);
+	}
 }
 
 void AMyPlayer::ArmRifle()

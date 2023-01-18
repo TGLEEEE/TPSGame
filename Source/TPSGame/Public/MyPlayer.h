@@ -45,6 +45,8 @@ public:
 	class USkeletalMeshComponent* rifleComp;
 	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
 	TSubclassOf<class ARocketAmmo> BulletFactory;
+	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
+	UParticleSystem* bulletEffectFactory;
 
 	void InputAxisLookUp(float value);
 	void InputAxisTurnRight(float value);
