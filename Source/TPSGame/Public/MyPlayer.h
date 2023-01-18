@@ -9,7 +9,6 @@
 UENUM(BlueprintType)
 enum class SelcetWeapon : uint8
 {
-	Default,
 	Rifle,
 	RocketLauncher,
 	Knife,
@@ -53,12 +52,18 @@ public:
 	void InputAxisMoveHorizontal(float value);
 	void InputActionJump();
 	void InputActionFire();
+
+private:
+
 	void ArmRocketLauncher();
 	void ArmRifle();
 	void ArmKnife();
 	void ArmGrenade();
 	void ChangeWeapon(int weaponNumber);
 
-private:
 	FVector dir;
+	const int rifle = 0;
+	const int rocketLauncher = 1;
+	const int knife = 2;
+	const int grenade = 3;
 };

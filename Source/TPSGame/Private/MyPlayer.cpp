@@ -34,19 +34,19 @@ AMyPlayer::AMyPlayer()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	rocketLauncherComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rocket Launcher Mesh"));
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>rocketLauncher(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Rocket_Launcher_A.Rocket_Launcher_A'"));
-	if (rocketLauncher.Succeeded())
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRocketLauncher(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Rocket_Launcher_A.Rocket_Launcher_A'"));
+	if (tempRocketLauncher.Succeeded())
 	{
-		rocketLauncherComp->SetSkeletalMesh(rocketLauncher.Object);
+		rocketLauncherComp->SetSkeletalMesh(tempRocketLauncher.Object);
 	}
 	rocketLauncherComp->SetupAttachment(GetMesh());
 	rocketLauncherComp->SetRelativeLocation(FVector(-30, 0, 120));
 
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>rifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
-	if (rifle.Succeeded())
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
+	if (tempRifle.Succeeded())
 	{
-		rifleComp->SetSkeletalMesh(rifle.Object);
+		rifleComp->SetSkeletalMesh(tempRifle.Object);
 	}
 	rifleComp->SetupAttachment(GetMesh());
 	rifleComp->SetRelativeLocation(FVector(-30, 0, 120));
@@ -123,28 +123,33 @@ void AMyPlayer::InputActionJump()
 
 void AMyPlayer::InputActionFire()
 {
-	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
-	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
+// 	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
+// 	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
+	
+	FHitResult hitInfo;
+	FVector startLoc = playerCamera->GetComponentLocation();
+
+
 }
 
 void AMyPlayer::ArmRifle()
 {
-	ChangeWeapon(1);
+	ChangeWeapon(rifle);
 }
 
 void AMyPlayer::ArmRocketLauncher()
 {
-	ChangeWeapon(2);
+	ChangeWeapon(rocketLauncher);
 }
 
 void AMyPlayer::ArmKnife()
 {
-	ChangeWeapon(3);
+	ChangeWeapon(knife);
 }
 
 void AMyPlayer::ArmGrenade()
 {
-	ChangeWeapon(4);
+	ChangeWeapon(grenade);
 }
 
 void AMyPlayer::ChangeWeapon(int weaponNumber)
