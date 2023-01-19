@@ -7,6 +7,7 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include <Components/SkeletalMeshComponent.h>
 #include "RocketAmmo.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -34,19 +35,19 @@ AMyPlayer::AMyPlayer()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	rocketLauncherComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rocket Launcher Mesh"));
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>rocketLauncher(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Rocket_Launcher_A.Rocket_Launcher_A'"));
-	if (rocketLauncher.Succeeded())
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRocketLauncher(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Rocket_Launcher_A.Rocket_Launcher_A'"));
+	if (tempRocketLauncher.Succeeded())
 	{
-		rocketLauncherComp->SetSkeletalMesh(rocketLauncher.Object);
+		rocketLauncherComp->SetSkeletalMesh(tempRocketLauncher.Object);
 	}
 	rocketLauncherComp->SetupAttachment(GetMesh());
 	rocketLauncherComp->SetRelativeLocation(FVector(-30, 0, 120));
 
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>rifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
-	if (rifle.Succeeded())
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
+	if (tempRifle.Succeeded())
 	{
-		rifleComp->SetSkeletalMesh(rifle.Object);
+		rifleComp->SetSkeletalMesh(tempRifle.Object);
 	}
 	rifleComp->SetupAttachment(GetMesh());
 	rifleComp->SetRelativeLocation(FVector(-30, 0, 120));
@@ -58,6 +59,7 @@ void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	ArmRifle();
 }
 
 // Called every frame
@@ -83,12 +85,16 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMyPlayer::InputActionJump);
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AMyPlayer::InputActionFire);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AMyPlayer::InputAxisLookUp);
 	PlayerInputComponent->BindAxis(TEXT("TurnRight"), this, &AMyPlayer::InputAxisTurnRight);
 	PlayerInputComponent->BindAxis(TEXT("MoveVertical"), this, &AMyPlayer::InputAxisMoveVertical);
 	PlayerInputComponent->BindAxis(TEXT("MoveHorizontal"), this, &AMyPlayer::InputAxisMoveHorizontal);
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMyPlayer::InputActionJump);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AMyPlayer::InputActionFire);
+	PlayerInputComponent->BindAction(TEXT("Rifle"), IE_Pressed, this, &AMyPlayer::ArmRifle);
+	PlayerInputComponent->BindAction(TEXT("RocketLauncher"), IE_Pressed, this, &AMyPlayer::ArmRocketLauncher);
+	PlayerInputComponent->BindAction(TEXT("Knife"), IE_Pressed, this, &AMyPlayer::ArmKnife);
+	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Pressed, this, &AMyPlayer::ArmGrenade);
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -118,7 +124,65 @@ void AMyPlayer::InputActionJump()
 
 void AMyPlayer::InputActionFire()
 {
-	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
-	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
+// 	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
+// 	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
+	
+	FHitResult hitInfo;
+	FVector startLoc = playerCamera->GetComponentLocation();
+	FVector endLoc = startLoc + playerCamera->GetForwardVector() * 10000.f;
+	FCollisionQueryParams param;
+	bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
+	if (isHit)
+	{	
+		FTransform trans(hitInfo.ImpactPoint);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, trans);
+	}
+}
+
+void AMyPlayer::ArmRifle()
+{
+	ChangeWeapon(rifle);
+}
+
+void AMyPlayer::ArmRocketLauncher()
+{
+	ChangeWeapon(rocketLauncher);
+}
+
+void AMyPlayer::ArmKnife()
+{
+	ChangeWeapon(knife);
+}
+
+void AMyPlayer::ArmGrenade()
+{
+	ChangeWeapon(grenade);
+}
+
+void AMyPlayer::ChangeWeapon(int weaponNumber)
+{
+	switch (weaponNumber)
+	{
+	case
+		SelcetWeapon::Rifle:
+			rifleComp->SetVisibility(true);
+			rocketLauncherComp->SetVisibility(false);
+		break;
+	case 
+		SelcetWeapon::RocketLauncher:
+			rifleComp->SetVisibility(false);
+			rocketLauncherComp->SetVisibility(true);
+		break;
+	case
+		SelcetWeapon::Knife:
+			UE_LOG(LogTemp, Warning, TEXT("3"));
+		break;
+	case
+		SelcetWeapon::Grenade:
+			UE_LOG(LogTemp, Warning, TEXT("4"));
+		break;
+	default:
+		break;
+	}
 }
 

@@ -6,6 +6,15 @@
 #include "GameFramework/Character.h"
 #include "MyPlayer.generated.h"
 
+UENUM(BlueprintType)
+enum class SelcetWeapon : uint8
+{
+	Rifle,
+	RocketLauncher,
+	Knife,
+	Grenade
+};
+
 UCLASS()
 class TPSGAME_API AMyPlayer : public ACharacter
 {
@@ -36,6 +45,8 @@ public:
 	class USkeletalMeshComponent* rifleComp;
 	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
 	TSubclassOf<class ARocketAmmo> BulletFactory;
+	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
+	UParticleSystem* bulletEffectFactory;
 
 	void InputAxisLookUp(float value);
 	void InputAxisTurnRight(float value);
@@ -45,5 +56,16 @@ public:
 	void InputActionFire();
 
 private:
+
+	void ArmRocketLauncher();
+	void ArmRifle();
+	void ArmKnife();
+	void ArmGrenade();
+	void ChangeWeapon(int weaponNumber);
+
 	FVector dir;
+	const int rifle = 0;
+	const int rocketLauncher = 1;
+	const int knife = 2;
+	const int grenade = 3;
 };
