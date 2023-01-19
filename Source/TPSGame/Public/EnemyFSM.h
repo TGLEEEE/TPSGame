@@ -82,10 +82,10 @@ public:
 
 	//피격상태 대기시간
 	UPROPERTY(EditAnywhere, Category=FSM)
-	float damageDelayTime = 2.0f;
+	float damageDelayTime = 0.8f;
 
 	//사용중인 애니메이션블루프린트
 	UPROPERTY()
-		class UEnemyAnim* anim;
+	class UEnemyAnim* anim;
 		
 };

@@ -109,30 +109,36 @@ void UEnemyFSM::MoveState()
 //공격상태
 void UEnemyFSM::AttackState()
 {
-	//목표: 일정 시간에 한번씩 공격하고싶다
-	//1. 시간이 흘러야한다
-	currentTime += GetWorld()->DeltaRealTimeSeconds;
-	//2. 공격시간이 됐을때
-	if (currentTime > attackDelayTime)
-	{
-		//3. 공격하고싶다
-		//---------
-		currentTime = 0;
-		anim->bAttackPlay = true;
-	}
+	
 
-	//목표: 타깃이 공격 범위를 벗어나면 상태를 이동으로 전환하고싶다
-	//1. 타깃과의 거리가 필요
-	float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
-	//2.타깃과의 거리가 공격범위를 벗어 났을때
-	if (distance > attackRange)
-	{
-		//3. 상태를 이동으로 전환하고 싶다
-		mState = EEnemyState::Move;
-		//애니메이션 상태 동기화
-		anim->animState = mState;
-	}
+	    //목표: 일정 시간에 한번씩 공격하고싶다
+	    //1. 시간이 흘러야한다
+	    currentTime += GetWorld()->DeltaRealTimeSeconds;
+		//2. 공격시간이 됐을때
+		if (currentTime > attackDelayTime)
+		{
+	
+			//3. 공격하고싶다
 
+			//---------
+			currentTime = 0;
+			anim->bAttackPlay = true;
+	
+		}
+
+	
+// 	    //목표: 타깃이 공격 범위를 벗어나면 상태를 이동으로 전환하고싶다
+		//1. 타깃과의 거리가 필요
+		float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
+		//2.타깃과의 거리가 공격범위를 벗어 났을때
+		if (distance > attackRange)
+		{
+			//3. 상태를 이동으로 전환하고 싶다
+			mState = EEnemyState::Move;
+			//애니메이션 상태 동기화
+			anim->animState = mState;
+		}
+	
 
 }
 //피격상태
@@ -154,6 +160,7 @@ void UEnemyFSM::DamageState()
 //죽음상태
 void UEnemyFSM::DieState()
 {
+
 }
 
 //피격알림 이벤트 함수

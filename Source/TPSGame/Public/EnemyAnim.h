@@ -24,6 +24,10 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category=FSM)
 	bool bAttackPlay = false;
 
+	//공격 애니메이션이 끝나는 이벤트 함수
+	UFUNCTION(BlueprintCallable, Category=FSMEvent)
+	void OnEndAttackAnimation();
+
 
 
 };
