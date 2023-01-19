@@ -91,6 +91,7 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis(TEXT("MoveHorizontal"), this, &AMyPlayer::InputAxisMoveHorizontal);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMyPlayer::InputActionJump);
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AMyPlayer::InputActionFire);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &AMyPlayer::InputActionFireReleased);
 	PlayerInputComponent->BindAction(TEXT("Rifle"), IE_Pressed, this, &AMyPlayer::ArmRifle);
 	PlayerInputComponent->BindAction(TEXT("RocketLauncher"), IE_Pressed, this, &AMyPlayer::ArmRocketLauncher);
 	PlayerInputComponent->BindAction(TEXT("Knife"), IE_Pressed, this, &AMyPlayer::ArmKnife);
@@ -124,65 +125,109 @@ void AMyPlayer::InputActionJump()
 
 void AMyPlayer::InputActionFire()
 {
-// 	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
-// 	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
-	
+	switch (nowWeapon)
+	{
+	case WeaponList::Rifle:
+		GetWorldTimerManager().SetTimer(rifleTimerhandle, this, &AMyPlayer::FireRifle, fireRifleInterval, true);
+		FireRifle();
+		break;
+	case WeaponList::RocketLauncher:
+		FireRocketLauncher();
+		break;
+	case WeaponList::Knife:
+		FireKnife();
+		break;
+	case WeaponList::Grenade:
+		FireGrenade();
+		break;
+	default:
+		break;
+	}
+}
+
+void AMyPlayer::InputActionFireReleased()
+{
+	GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+}
+
+void AMyPlayer::ArmRifle()
+{
+	ChangeWeapon(WeaponList::Rifle);
+}
+
+void AMyPlayer::ArmRocketLauncher()
+{
+	ChangeWeapon(WeaponList::RocketLauncher);
+}
+
+void AMyPlayer::ArmKnife()
+{
+	ChangeWeapon(WeaponList::Knife);
+}
+
+void AMyPlayer::ArmGrenade()
+{
+	ChangeWeapon(WeaponList::Grenade);
+}
+
+void AMyPlayer::ChangeWeapon(WeaponList value)
+{
+	switch (value)
+	{
+	case
+		WeaponList::Rifle:
+			nowWeapon = value;
+			rifleComp->SetVisibility(true);
+			rocketLauncherComp->SetVisibility(false);
+		break;
+	case 
+		WeaponList::RocketLauncher:
+			nowWeapon = value;
+			rifleComp->SetVisibility(false);
+			rocketLauncherComp->SetVisibility(true);
+		break;
+	case
+		WeaponList::Knife:
+			nowWeapon = value;
+			UE_LOG(LogTemp, Warning, TEXT("3"));
+		break;
+	case
+		WeaponList::Grenade:
+			nowWeapon = value;
+			UE_LOG(LogTemp, Warning, TEXT("4"));
+		break;
+	default:
+		break;
+	}
+}
+
+void AMyPlayer::FireRifle()
+{
 	FHitResult hitInfo;
 	FVector startLoc = playerCamera->GetComponentLocation();
 	FVector endLoc = startLoc + playerCamera->GetForwardVector() * 10000.f;
 	FCollisionQueryParams param;
 	bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
 	if (isHit)
-	{	
+	{
 		FTransform trans(hitInfo.ImpactPoint);
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, trans);
 	}
 }
 
-void AMyPlayer::ArmRifle()
+void AMyPlayer::FireRocketLauncher()
 {
-	ChangeWeapon(rifle);
+	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
+	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
 }
 
-void AMyPlayer::ArmRocketLauncher()
+void AMyPlayer::FireKnife()
 {
-	ChangeWeapon(rocketLauncher);
+	UE_LOG(LogTemp, Warning, TEXT("knife attack"));
 }
 
-void AMyPlayer::ArmKnife()
+void AMyPlayer::FireGrenade()
 {
-	ChangeWeapon(knife);
-}
-
-void AMyPlayer::ArmGrenade()
-{
-	ChangeWeapon(grenade);
-}
-
-void AMyPlayer::ChangeWeapon(int weaponNumber)
-{
-	switch (weaponNumber)
-	{
-	case
-		SelcetWeapon::Rifle:
-			rifleComp->SetVisibility(true);
-			rocketLauncherComp->SetVisibility(false);
-		break;
-	case 
-		SelcetWeapon::RocketLauncher:
-			rifleComp->SetVisibility(false);
-			rocketLauncherComp->SetVisibility(true);
-		break;
-	case
-		SelcetWeapon::Knife:
-			UE_LOG(LogTemp, Warning, TEXT("3"));
-		break;
-	case
-		SelcetWeapon::Grenade:
-			UE_LOG(LogTemp, Warning, TEXT("4"));
-		break;
-	default:
-		break;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("grenade attack"));
 }
 

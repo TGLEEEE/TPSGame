@@ -7,7 +7,7 @@
 #include "MyPlayer.generated.h"
 
 UENUM(BlueprintType)
-enum class SelcetWeapon : uint8
+enum class WeaponList : uint8
 {
 	Rifle,
 	RocketLauncher,
@@ -47,6 +47,8 @@ public:
 	TSubclassOf<class ARocketAmmo> BulletFactory;
 	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
 	UParticleSystem* bulletEffectFactory;
+	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
+	float fireRifleInterval = 0.2;
 
 	void InputAxisLookUp(float value);
 	void InputAxisTurnRight(float value);
@@ -54,6 +56,7 @@ public:
 	void InputAxisMoveHorizontal(float value);
 	void InputActionJump();
 	void InputActionFire();
+	void InputActionFireReleased();
 
 private:
 
@@ -61,11 +64,13 @@ private:
 	void ArmRifle();
 	void ArmKnife();
 	void ArmGrenade();
-	void ChangeWeapon(int weaponNumber);
+	void ChangeWeapon(WeaponList value);
+	void FireRifle();
+	void FireRocketLauncher();
+	void FireKnife();
+	void FireGrenade();
 
 	FVector dir;
-	const int rifle = 0;
-	const int rocketLauncher = 1;
-	const int knife = 2;
-	const int grenade = 3;
+	WeaponList nowWeapon;
+	FTimerHandle rifleTimerhandle;
 };
