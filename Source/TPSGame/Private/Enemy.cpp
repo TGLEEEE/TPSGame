@@ -12,7 +12,7 @@ AEnemy::AEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//1.스켈레탈메시 데이터로드
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Zoombie/character.character'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Zoombie/character.character'"));
 	//1-1스켈레탈 메시 데이터로드 성공시
 	if (tempMesh.Succeeded())
 	{
@@ -25,7 +25,7 @@ AEnemy::AEnemy()
 	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
 	//애니메이션 블루프린트 할당하기
-	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass(TEXT("/Script/Engine.AnimBlueprint'/Game/Blueprints/ABP_Enemy.ABP_Enemy'"));
+	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass(TEXT("/Script/CoreUObject.Class'/Script/TPSGame.EnemyAnim'"));
 	if (tempClass.Succeeded())
 	{
 		GetMesh()->SetAnimInstanceClass(tempClass.Class);
