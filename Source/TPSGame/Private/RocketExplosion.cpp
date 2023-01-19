@@ -4,8 +4,6 @@
 #include "RocketExplosion.h"
 #include <PhysicsEngine/RadialForceComponent.h>
 #include <Components/SphereComponent.h>
-#include <Particles/ParticleSystemComponent.h>
-#include <Particles/ParticleSystem.h>
 
 // Sets default values
 ARocketExplosion::ARocketExplosion()
@@ -22,13 +20,6 @@ ARocketExplosion::ARocketExplosion()
 	sphereComp->SetupAttachment(RootComponent);
 	sphereComp->SetSphereRadius(500.f);
 
- 	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
- 	particleComp->SetupAttachment(RootComponent);
-	ConstructorHelpers::FObjectFinder<UParticleSystem> tempParticleSystem(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_RocketLauncher_Explosion_01.P_RocketLauncher_Explosion_01'"));
-	if (tempParticleSystem.Succeeded())
-	{
-		particleComp->SetTemplate(tempParticleSystem.Object);
-	}
 }
 
 // Called when the game starts or when spawned

@@ -6,7 +6,6 @@
 #include <Components/StaticMeshComponent.h>
 #include <GameFramework/ProjectileMovementComponent.h>
 #include "RocketExplosion.h"
-#include <Particles/ParticleSystemComponent.h>
 
 // Sets default values
 ARocketAmmo::ARocketAmmo()
@@ -34,14 +33,6 @@ ARocketAmmo::ARocketAmmo()
 	projectileComp->ProjectileGravityScale = 0.f;
 	projectileComp->bShouldBounce = false;
 	projectileComp->SetUpdatedComponent(sphereComp);
-
-	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
-	particleComp->SetupAttachment(MeshComp);
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempParticleSystem(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_RocketLauncher_Trail_01.P_RocketLauncher_Trail_01'"));
-	if (tempParticleSystem.Succeeded())
-	{
-		particleComp->SetTemplate(tempParticleSystem.Object);
-	}
 
 }
 
