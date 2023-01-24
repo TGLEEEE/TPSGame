@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 #include "EnemyFSM.h"
+#include <Components/CapsuleComponent.h>
 
 
 // Sets default values
@@ -11,6 +12,9 @@ AEnemy::AEnemy()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+// 	campsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("campsuleComp"));
+// 	SetRootComponent(campsuleComp); 
+
 	//1.스켈레탈메시 데이터로드
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Zoombie/character.character'"));
 	//1-1스켈레탈 메시 데이터로드 성공시
@@ -18,7 +22,7 @@ AEnemy::AEnemy()
 	{
 		//1-2. 데이터를 할당해준다
 		GetMesh()->SetSkeletalMesh(tempMesh.Object);
-		//1-3. 메시위치와 회전설정
+		//1-3. 메시위치와 회전설정campsuleComp
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	}
 	//EnemyFSM컴포넌트 추가
