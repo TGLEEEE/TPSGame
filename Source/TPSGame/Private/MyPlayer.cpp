@@ -9,23 +9,25 @@
 #include "RocketAmmo.h"
 #include <Kismet/GameplayStatics.h>
 #include "Enemy.h"
+#include <Particles/ParticleSystem.h>
 
 // Sets default values
 AMyPlayer::AMyPlayer()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	// 캐릭터 메시
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Player/character.character'"));
 	if (mesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(mesh.Object);
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	}
-
+	// 스프링암
 	playerSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("playerSpringArm"));
 	playerSpringArm->SetupAttachment(RootComponent);
 	playerSpringArm->TargetArmLength = 250;
+	// 카메라
 	playerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("playerCamera"));
 	playerCamera->SetupAttachment(playerSpringArm);
 	playerCamera->SetRelativeLocation(FVector(0, 50, 100));
@@ -34,7 +36,7 @@ AMyPlayer::AMyPlayer()
 	playerSpringArm->bUsePawnControlRotation = true;
 	playerCamera->bUsePawnControlRotation = true;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
+	// 로켓런처
 	rocketLauncherComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rocket Launcher Mesh"));
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRocketLauncher(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Rocket_Launcher_A.Rocket_Launcher_A'"));
 	if (tempRocketLauncher.Succeeded())
@@ -44,6 +46,17 @@ AMyPlayer::AMyPlayer()
 	rocketLauncherComp->SetupAttachment(GetMesh());
 	rocketLauncherComp->SetRelativeLocation(FVector(-30, 0, 120));
 
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRocketMuzzleFront(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_RocketLauncher_MuzzleFlash_Front_01.P_RocketLauncher_MuzzleFlash_Front_01'"));
+	if (tempRocketMuzzleFront.Succeeded())
+	{
+		rocketMuzzleFront = tempRocketMuzzleFront.Object;
+	}
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRocketMuzzleBack(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_RocketLauncher_MuzzleFlash_Rear_01.P_RocketLauncher_MuzzleFlash_Rear_01'"));
+	if (tempRocketMuzzleBack.Succeeded())
+	{
+		rocketMuzzleBack = tempRocketMuzzleBack.Object;
+	}
+	// 라이플
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
 	if (tempRifle.Succeeded())
@@ -53,6 +66,16 @@ AMyPlayer::AMyPlayer()
 	rifleComp->SetupAttachment(GetMesh());
 	rifleComp->SetRelativeLocation(FVector(-30, 0, 120));
 	
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempBulletEffect(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_Impact_Metal_Medium_01.P_Impact_Metal_Medium_01'"));
+	if (tempBulletEffect.Succeeded())
+	{
+		bulletEffectFactory = tempBulletEffect.Object;
+	}
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempMuzzleFire(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_AssaultRifle_MuzzleFlash.P_AssaultRifle_MuzzleFlash'"));
+	if (tempMuzzleFire.Succeeded())
+	{
+		rifleMuzzleFire = tempMuzzleFire.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -83,7 +106,7 @@ void AMyPlayer::Tick(float DeltaTime)
 	startLoc = playerCamera->GetComponentLocation();
 	endLoc = startLoc + playerCamera->GetForwardVector() * 100000.f;
 	isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
-
+	// 적 검출
 	if (isHit)
 	{
 		AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
@@ -226,12 +249,17 @@ void AMyPlayer::FireRifle()
 	// 반동
 	AddControllerPitchInput(-0.1f);
 	AddControllerYawInput(FMath::RandRange(-0.05f, 0.05f));
+	// 총구 화염 이펙트
+	UGameplayStatics::SpawnEmitterAttached(rifleMuzzleFire, rifleComp, FName("MuzzleFlash"));
 }
 
 void AMyPlayer::FireRocketLauncher()
 {
 	FVector rocketLoc = rocketLauncherComp->GetSocketLocation(TEXT("FirePosition"));
 	GetWorld()->SpawnActor<ARocketAmmo>(rocketFactory, rocketLoc, GetControlRotation());
+	// 발사시 화염 이펙트
+	UGameplayStatics::SpawnEmitterAttached(rocketMuzzleFront, rocketLauncherComp, FName("MuzzleFlash"));
+	UGameplayStatics::SpawnEmitterAttached(rocketMuzzleBack, rocketLauncherComp, FName("MuzzleFlashRear"));
 }
 
 void AMyPlayer::FireKnife()

@@ -45,8 +45,10 @@ public:
 	class USkeletalMeshComponent* rifleComp;
 	UPROPERTY(EditDefaultsOnly, Category = PlayerSettings)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
-	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
 	UParticleSystem* bulletEffectFactory;
+	UParticleSystem* rifleMuzzleFire;
+	UParticleSystem* rocketMuzzleFront;
+	UParticleSystem* rocketMuzzleBack;
 	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
 	float fireRifleInterval = 0.15;
 
