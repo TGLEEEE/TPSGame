@@ -49,16 +49,15 @@ public:
 	TSubclassOf<class UUserWidget> crossIdleFactory;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> crossZoomFactory;
-
-	UParticleSystem* bulletEffectFactory;
-	UParticleSystem* rifleMuzzleFire;
-	UParticleSystem* rocketMuzzleFront;
-	UParticleSystem* rocketMuzzleBack;
-	UUserWidget* crossIdleUI;
-	UUserWidget* crossZoomUI;
-
-	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> crossHitFactory;
+	UPROPERTY(EditDefaultsOnly, Category = PlayerSettings)
 	float fireRifleInterval = 0.15;
+
+	void SetPlayerHP(int hp);
+	int GetPlayerHP();
+
+private:
 
 	void InputAxisLookUp(float value);
 	void InputAxisTurnRight(float value);
@@ -67,9 +66,6 @@ public:
 	void InputActionJump();
 	void InputActionFire();
 	void InputActionFireReleased();
-
-private:
-
 	void ArmRocketLauncher();
 	void ArmRifle();
 	void ArmKnife();
@@ -81,7 +77,18 @@ private:
 	void FireGrenade();
 	void Zoom();
 	void ZoomOut();
+	void CrossHit();
 
+	int playerHP = 100;
+	bool bisHitUIOn;
+
+	UParticleSystem* bulletEffectFactory;
+	UParticleSystem* rifleMuzzleFire;
+	UParticleSystem* rocketMuzzleFront;
+	UParticleSystem* rocketMuzzleBack;
+	UUserWidget* crossIdleUI;
+	UUserWidget* crossZoomUI;
+	UUserWidget* crossHitUI;
 	FVector dir;
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;

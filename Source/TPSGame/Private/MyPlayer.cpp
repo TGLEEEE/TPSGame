@@ -11,6 +11,8 @@
 #include "Enemy.h"
 #include <Particles/ParticleSystem.h>
 #include <Blueprint/UserWidget.h>
+#include <Components/CapsuleComponent.h>
+#include "EnemyFSM.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -24,6 +26,8 @@ AMyPlayer::AMyPlayer()
 		GetMesh()->SetSkeletalMesh(mesh.Object);
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	}
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PlayerPreset"));
 	// 스프링암
 	playerSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("playerSpringArm"));
 	playerSpringArm->SetupAttachment(RootComponent);
@@ -88,6 +92,7 @@ void AMyPlayer::BeginPlay()
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	crossIdleUI->AddToViewport();
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
+	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 }
 
 // Called every frame
@@ -233,7 +238,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			{
 				crossZoomUI->RemoveFromParent();
 				crossIdleUI->AddToViewport();
-				playerCamera->SetFieldOfView(90);
+				playerCamera->SetFieldOfView(90.f);
 			}
 			nowWeapon = value;
 			UE_LOG(LogTemp, Warning, TEXT("4"));
@@ -245,7 +250,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 
 void AMyPlayer::FireRifle()
 {
-	// 라이플 총알 이펙트
+	// 라인트레이스
 	FHitResult hitInfo;
 	FVector startLoc = playerCamera->GetComponentLocation();
 	FVector endLoc = startLoc + playerCamera->GetForwardVector() * 100000.f;
@@ -255,6 +260,17 @@ void AMyPlayer::FireRifle()
 	{
 		FTransform trans(hitInfo.ImpactPoint);
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, trans);
+		// 적 데미지
+		AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
+		if (enemy)
+		{
+			UEnemyFSM* enemyfsm = Cast<UEnemyFSM>(enemy->fsm);
+			if (enemyfsm)
+			{
+				enemyfsm->OnDamageProcess();
+				CrossHit();
+ 			}
+		}
 	}
 	// 반동
 	AddControllerPitchInput(-0.1f);
@@ -289,12 +305,12 @@ void AMyPlayer::Zoom()
 	case WeaponList::Rifle:
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
-		playerCamera->SetFieldOfView(60);
+		playerCamera->SetFieldOfView(60.f);
 		break;
 	case WeaponList::RocketLauncher:
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
-		playerCamera->SetFieldOfView(60);
+		playerCamera->SetFieldOfView(60.f);
 		break;
 	case WeaponList::Knife:
 		break;
@@ -312,13 +328,12 @@ void AMyPlayer::ZoomOut()
 	case WeaponList::Rifle:
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
-		playerCamera->SetFieldOfView(90);
+		playerCamera->SetFieldOfView(90.f);
 		break;
 	case WeaponList::RocketLauncher:
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
-		playerCamera->SetFieldOfView(90);
-		break;
+		playerCamera->SetFieldOfView(90.f);
 	case WeaponList::Knife:
 		break;
 	case WeaponList::Grenade:
@@ -326,5 +341,30 @@ void AMyPlayer::ZoomOut()
 	default:
 		break;
 	}
+}
+
+void AMyPlayer::CrossHit()
+{
+	if (!bisHitUIOn)
+	{
+		bisHitUIOn = true;
+		crossHitUI->AddToViewport();
+		FTimerHandle crossHitTimerhandle;
+		GetWorld()->GetTimerManager().SetTimer(crossHitTimerhandle, FTimerDelegate::CreateLambda([&]()
+			{
+				crossHitUI->RemoveFromParent();
+				bisHitUIOn = false;
+			}), 1.f, false);
+	}
+}
+
+void AMyPlayer::SetPlayerHP(int hp)
+{
+	playerHP = hp;
+}
+
+int AMyPlayer::GetPlayerHP()
+{
+	return playerHP;
 }
 
