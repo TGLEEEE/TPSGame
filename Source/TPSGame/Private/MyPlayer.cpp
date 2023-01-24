@@ -203,9 +203,10 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 
 void AMyPlayer::FireRifle()
 {
+	// 라인트레이스
 	FHitResult hitInfo;
 	FVector startLoc = playerCamera->GetComponentLocation();
-	FVector endLoc = startLoc + playerCamera->GetForwardVector() * 10000.f;
+	FVector endLoc = startLoc + playerCamera->GetForwardVector() * 100000.f;
 	FCollisionQueryParams param;
 	bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
 	if (isHit)
@@ -213,12 +214,15 @@ void AMyPlayer::FireRifle()
 		FTransform trans(hitInfo.ImpactPoint);
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, trans);
 	}
+	// 반동
+	AddControllerPitchInput(-0.1f);
+	AddControllerYawInput(FMath::RandRange(-0.05f, 0.05f));
 }
 
 void AMyPlayer::FireRocketLauncher()
 {
 	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
-	GetWorld()->SpawnActor<ARocketAmmo>(BulletFactory, rocketTrans);
+	GetWorld()->SpawnActor<ARocketAmmo>(rocketFactory, rocketTrans);
 }
 
 void AMyPlayer::FireKnife()

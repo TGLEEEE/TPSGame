@@ -27,6 +27,8 @@ public:
 	class URadialForceComponent* radialForceComp;
 	UPROPERTY(EditDefaultsOnly)
 	class USphereComponent* sphereComp;
+	UPROPERTY(EditDefaultsOnly)
+	class UParticleSystemComponent* particleComp;
 
 private:
 
