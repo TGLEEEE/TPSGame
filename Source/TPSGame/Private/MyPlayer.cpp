@@ -78,6 +78,10 @@ void AMyPlayer::Tick(float DeltaTime)
 	// 변환된 dir로 이동 (속도는 self에)
 	AddMovementInput(newDir);
 	
+	// 라인트레이스
+	startLoc = playerCamera->GetComponentLocation();
+	endLoc = startLoc + playerCamera->GetForwardVector() * 100000.f;
+	isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
 }
 
 // Called to bind functionality to input
@@ -203,12 +207,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 
 void AMyPlayer::FireRifle()
 {
-	// 라인트레이스
-	FHitResult hitInfo;
-	FVector startLoc = playerCamera->GetComponentLocation();
-	FVector endLoc = startLoc + playerCamera->GetForwardVector() * 100000.f;
-	FCollisionQueryParams param;
-	bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
+	// 라이플 총알 이펙트
 	if (isHit)
 	{
 		FTransform trans(hitInfo.ImpactPoint);
@@ -221,8 +220,8 @@ void AMyPlayer::FireRifle()
 
 void AMyPlayer::FireRocketLauncher()
 {
-	FTransform rocketTrans = rocketLauncherComp->GetSocketTransform(TEXT("FirePosition"));
-	GetWorld()->SpawnActor<ARocketAmmo>(rocketFactory, rocketTrans);
+	FVector rocketLoc = rocketLauncherComp->GetSocketLocation(TEXT("FirePosition"));
+	GetWorld()->SpawnActor<ARocketAmmo>(rocketFactory, rocketLoc, GetControlRotation());
 }
 
 void AMyPlayer::FireKnife()

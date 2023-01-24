@@ -73,4 +73,11 @@ private:
 	FVector dir;
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
+
+	// 라인트레이스
+	FHitResult hitInfo;
+	FVector startLoc;
+	FVector endLoc;
+	FCollisionQueryParams param;
+	bool isHit;
 };
