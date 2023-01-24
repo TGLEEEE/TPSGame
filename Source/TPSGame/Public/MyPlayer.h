@@ -45,10 +45,18 @@ public:
 	class USkeletalMeshComponent* rifleComp;
 	UPROPERTY(EditDefaultsOnly, Category = PlayerSettings)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> crossIdleFactory;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> crossZoomFactory;
+
 	UParticleSystem* bulletEffectFactory;
 	UParticleSystem* rifleMuzzleFire;
 	UParticleSystem* rocketMuzzleFront;
 	UParticleSystem* rocketMuzzleBack;
+	UUserWidget* crossIdleUI;
+	UUserWidget* crossZoomUI;
+
 	UPROPERTY(EditDefaultsOnly, Category=PlayerSettings)
 	float fireRifleInterval = 0.15;
 
@@ -71,15 +79,11 @@ private:
 	void FireRocketLauncher();
 	void FireKnife();
 	void FireGrenade();
+	void Zoom();
+	void ZoomOut();
 
 	FVector dir;
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 
-	// 라인트레이스
-	FHitResult hitInfo;
-	FVector startLoc;
-	FVector endLoc;
-	FCollisionQueryParams param;
-	bool isHit;
 };

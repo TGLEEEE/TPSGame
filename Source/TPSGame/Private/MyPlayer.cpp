@@ -10,6 +10,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "Enemy.h"
 #include <Particles/ParticleSystem.h>
+#include <Blueprint/UserWidget.h>
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -82,8 +83,11 @@ AMyPlayer::AMyPlayer()
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	ArmRifle();
+
+	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
+	crossIdleUI->AddToViewport();
+	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 }
 
 // Called every frame
@@ -102,19 +106,6 @@ void AMyPlayer::Tick(float DeltaTime)
 	// 변환된 dir로 이동 (속도는 self에)
 	AddMovementInput(newDir);
 	
-	// 라인트레이스
-	startLoc = playerCamera->GetComponentLocation();
-	endLoc = startLoc + playerCamera->GetForwardVector() * 100000.f;
-	isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
-	// 적 검출
-	if (isHit)
-	{
-		AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
-		if (enemy)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("enemy detected"));
-		}
-	}
 }
 
 // Called to bind functionality to input
@@ -133,6 +124,8 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("RocketLauncher"), IE_Pressed, this, &AMyPlayer::ArmRocketLauncher);
 	PlayerInputComponent->BindAction(TEXT("Knife"), IE_Pressed, this, &AMyPlayer::ArmKnife);
 	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Pressed, this, &AMyPlayer::ArmGrenade);
+	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Pressed, this, &AMyPlayer::Zoom);
+	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &AMyPlayer::ZoomOut);
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -225,11 +218,23 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 		break;
 	case
 		WeaponList::Knife:
+			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher)
+			{
+				crossZoomUI->RemoveFromParent();
+				crossIdleUI->AddToViewport();
+				playerCamera->SetFieldOfView(90);
+			}
 			nowWeapon = value;
 			UE_LOG(LogTemp, Warning, TEXT("3"));
 		break;
 	case
 		WeaponList::Grenade:
+			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher)
+			{
+				crossZoomUI->RemoveFromParent();
+				crossIdleUI->AddToViewport();
+				playerCamera->SetFieldOfView(90);
+			}
 			nowWeapon = value;
 			UE_LOG(LogTemp, Warning, TEXT("4"));
 		break;
@@ -241,6 +246,11 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 void AMyPlayer::FireRifle()
 {
 	// 라이플 총알 이펙트
+	FHitResult hitInfo;
+	FVector startLoc = playerCamera->GetComponentLocation();
+	FVector endLoc = startLoc + playerCamera->GetForwardVector() * 100000.f;
+	FCollisionQueryParams param;
+	bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
 	if (isHit)
 	{
 		FTransform trans(hitInfo.ImpactPoint);
@@ -270,5 +280,51 @@ void AMyPlayer::FireKnife()
 void AMyPlayer::FireGrenade()
 {
 	UE_LOG(LogTemp, Warning, TEXT("grenade attack"));
+}
+
+void AMyPlayer::Zoom()
+{
+	switch (nowWeapon)
+	{
+	case WeaponList::Rifle:
+		crossIdleUI->RemoveFromParent();
+		crossZoomUI->AddToViewport();
+		playerCamera->SetFieldOfView(60);
+		break;
+	case WeaponList::RocketLauncher:
+		crossIdleUI->RemoveFromParent();
+		crossZoomUI->AddToViewport();
+		playerCamera->SetFieldOfView(60);
+		break;
+	case WeaponList::Knife:
+		break;
+	case WeaponList::Grenade:
+		break;
+	default:
+		break;
+	}
+}
+
+void AMyPlayer::ZoomOut()
+{
+	switch (nowWeapon)
+	{
+	case WeaponList::Rifle:
+		crossZoomUI->RemoveFromParent();
+		crossIdleUI->AddToViewport();
+		playerCamera->SetFieldOfView(90);
+		break;
+	case WeaponList::RocketLauncher:
+		crossZoomUI->RemoveFromParent();
+		crossIdleUI->AddToViewport();
+		playerCamera->SetFieldOfView(90);
+		break;
+	case WeaponList::Knife:
+		break;
+	case WeaponList::Grenade:
+		break;
+	default:
+		break;
+	}
 }
 
