@@ -8,6 +8,7 @@
 #include <Components/SkeletalMeshComponent.h>
 #include "RocketAmmo.h"
 #include <Kismet/GameplayStatics.h>
+#include "Enemy.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -82,6 +83,15 @@ void AMyPlayer::Tick(float DeltaTime)
 	startLoc = playerCamera->GetComponentLocation();
 	endLoc = startLoc + playerCamera->GetForwardVector() * 100000.f;
 	isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, endLoc, ECC_Visibility, param);
+
+	if (isHit)
+	{
+		AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
+		if (enemy)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("enemy detected"));
+		}
+	}
 }
 
 // Called to bind functionality to input
