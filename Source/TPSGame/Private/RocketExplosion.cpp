@@ -5,6 +5,8 @@
 #include <PhysicsEngine/RadialForceComponent.h>
 #include <Components/SphereComponent.h>
 #include <Particles/ParticleSystemComponent.h>
+#include "Enemy.h"
+#include "EnemyFSM.h"
 
 // Sets default values
 ARocketExplosion::ARocketExplosion()
@@ -28,7 +30,6 @@ ARocketExplosion::ARocketExplosion()
 	{
 		particleComp->SetTemplate(tempExplosionFX.Object);
 	}
-
 }	
 
 // Called when the game starts or when spawned
@@ -39,6 +40,8 @@ void ARocketExplosion::BeginPlay()
 	radialForceComp->FireImpulse();
 	FTimerHandle destroyTimer;
 	GetWorld()->GetTimerManager().SetTimer(destroyTimer, this, &ARocketExplosion::SelfDestroy, 2.f, false);
+
+	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &ARocketExplosion::OnOverlap);
 }
 
 // Called every frame
@@ -46,6 +49,23 @@ void ARocketExplosion::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ARocketExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AEnemy*	enemy = Cast<AEnemy>(OtherActor);
+	UE_LOG(LogTemp, Warning, TEXT("overlaped"));
+	if (enemy)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("enemy casted"));
+		UEnemyFSM* fsm = Cast<UEnemyFSM>(enemy->fsm);
+		if (fsm)
+		{
+			fsm->OnDamageProcess(10);
+			UE_LOG(LogTemp, Warning, TEXT("casting complete"));
+		}
+	}
 }
 
 void ARocketExplosion::SelfDestroy()

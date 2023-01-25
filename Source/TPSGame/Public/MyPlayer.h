@@ -43,7 +43,9 @@ public:
 	class USkeletalMeshComponent* rocketLauncherComp;
 	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rifleComp;
-	UPROPERTY(EditDefaultsOnly, Category = PlayerSettings)
+	UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent* grenadeComp;
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> crossIdleFactory;
@@ -51,7 +53,7 @@ public:
 	TSubclassOf<class UUserWidget> crossZoomFactory;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> crossHitFactory;
-	UPROPERTY(EditDefaultsOnly, Category = PlayerSettings)
+	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
 
 	void SetPlayerHP(int hp);

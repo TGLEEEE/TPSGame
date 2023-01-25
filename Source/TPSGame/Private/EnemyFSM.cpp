@@ -171,14 +171,15 @@ void UEnemyFSM::DamageState()
 //죽음상태
 void UEnemyFSM::DieState()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("enemy died"));
 }
 
 //피격알림 이벤트 함수
-void UEnemyFSM::OnDamageProcess()
+void UEnemyFSM::OnDamageProcess(int val)
 {
+	UE_LOG(LogTemp, Warning, TEXT("enemy hited"));
 	//체력감소 
-	hp--;
+	hp -= val;
 	//만약에 체력이 남아있다면 
 	if (hp > 0)
 	{
