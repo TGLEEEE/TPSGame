@@ -14,6 +14,7 @@
 #include <Components/CapsuleComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include "EnemyFSM.h"
+#include "Grenade.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -308,7 +309,9 @@ void AMyPlayer::FireKnife()
 
 void AMyPlayer::FireGrenade()
 {
-	UE_LOG(LogTemp, Warning, TEXT("grenade attack"));
+//	UE_LOG(LogTemp, Warning, TEXT("grenade attack"));
+	GetWorld()->SpawnActor<AGrenade>(grenadeFactory, GetActorLocation()+FVector(0, 0, 120.f), FRotator::ZeroRotator);
+
 }
 
 void AMyPlayer::Zoom()

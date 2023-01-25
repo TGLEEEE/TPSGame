@@ -48,6 +48,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AGrenade> grenadeFactory;
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> crossIdleFactory;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> crossZoomFactory;
