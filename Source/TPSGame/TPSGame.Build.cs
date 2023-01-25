@@ -8,7 +8,11 @@ public class TPSGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
+<<<<<<< Updated upstream
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore","UMG", "NavigationSystem", "AIModule" });
+=======
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "NavigationSystem", "AIModule"});
+>>>>>>> Stashed changes
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

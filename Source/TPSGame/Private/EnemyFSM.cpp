@@ -7,6 +7,8 @@
 //#include "TPSPr.h"
 #include "EnemyAnim.h"
 #include "Kismet/GameplayStatics.h"
+#include <GameFramework/Character.h>
+#include <Components/CapsuleComponent.h>
 
 
 // Sets default values for this component's properties
@@ -171,7 +173,21 @@ void UEnemyFSM::DamageState()
 //죽음상태
 void UEnemyFSM::DieState()
 {
+	//계속아래로내려가고싶다
+	//등속운동공식 P=P0+vt
+	FVector P0 = me->GetActorLocation();
+	FVector vt = FVector::DownVector * dieSpeed * GetWorld()->DeltaTimeSeconds;
+	FVector P = P0 + vt;
+	me->SetActorLocation(P);
+	//me->Destroy();
+	//1. 만약 2미터이상내려왔다면
+	if (P.Z < -200.0f)
+	{
+		//2. 제거한다
+		me->Destroy();
 
+	}
+	
 }
 
 //피격알림 이벤트 함수
@@ -190,8 +206,13 @@ void UEnemyFSM::OnDamageProcess()
 	{
 		//상태를 죽음으로 전환
 		mState = EEnemyState::Die;
+
+		//캡슐충돌체비활성화
+		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	//애니메이션상태 동기화
 	anim->animState = mState;
+
+	
 }
 
