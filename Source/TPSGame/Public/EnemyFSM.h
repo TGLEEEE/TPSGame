@@ -87,5 +87,12 @@ public:
 	//사용중인 애니메이션블루프린트
 	UPROPERTY()
 	class UEnemyAnim* anim;
+
+	//Enemy를 소유하고 있는 AlController
+	UPROPERTY()
+		class AAIController* ai;
+		
+	//bool canMove = true;
+
 		
 };

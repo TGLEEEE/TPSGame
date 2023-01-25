@@ -3,9 +3,11 @@
 
 #include "EnemyFSM.h"
 #include "Enemy.h"
+#include "AIController.h"
 //#include "TPSPr.h"
 #include "EnemyAnim.h"
 #include "Kismet/GameplayStatics.h"
+
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -33,6 +35,9 @@ void UEnemyFSM::BeginPlay()
 
 	//UEnemyAnim*할당
 	anim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
+
+	//AAIController 할당하기
+	ai = Cast<AAIController>(me->GetController());
 
 }
 
@@ -84,13 +89,19 @@ void UEnemyFSM::IdleState()
 //이동상태
 void UEnemyFSM::MoveState()
 {
+// 	if (!canMove)
+// 	{
+// 		return;
+// 	}
 	//타깃 목적지
 	FVector destination = target->GetActorLocation();
 	// 방향
 	FVector dir = destination - me->GetActorLocation();
 	//방향으로 이동하고싶다
-	me->AddMovementInput(dir.GetSafeNormal());
+	//me->AddMovementInput(dir.GetSafeNormal());
+	ai->MoveToLocation(destination);
 	
+
 	//타깃과 가까워지면 공격상태로 전환하고싶다
 	//1. 만약 거리가 공격범위안에 들어오면
 	if (dir.Size() < attackRange)
