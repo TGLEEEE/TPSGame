@@ -334,7 +334,6 @@ void AMyPlayer::Zoom()
 	case WeaponList::Knife:
 		break;
 	case WeaponList::Grenade:
-		UGameplayStatics::PredictProjectilePath()
 		break;
 	default:
 		break;
