@@ -96,10 +96,10 @@ void UEnemyFSM::IdleState()
 //이동상태
 void UEnemyFSM::MoveState()
 {
-// 	if (!canMove)
-// 	{
-// 		return;
-// 	}
+ 	if (!canMove)
+	{
+		return;
+ 	}
 	//타깃 목적지
 	FVector destination = target->GetActorLocation();
 	// 방향
