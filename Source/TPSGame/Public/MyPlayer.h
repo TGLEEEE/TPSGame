@@ -85,6 +85,7 @@ private:
 
 	int playerHP = 100;
 	bool bisHitUIOn;
+	bool bisZooming;
 
 	UParticleSystem* bulletEffectFactory;
 	UParticleSystem* rifleMuzzleFire;
@@ -96,5 +97,6 @@ private:
 	FVector dir;
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
+	FTimerHandle crossHitTimerhandle;
 
 };

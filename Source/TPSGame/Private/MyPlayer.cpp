@@ -99,13 +99,12 @@ AMyPlayer::AMyPlayer()
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	ArmRifle();
-
 	// À§Á¬
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	crossIdleUI->AddToViewport();
+	ArmRifle();
 }
 
 // Called every frame
@@ -238,22 +237,24 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 		break;
 	case
 		WeaponList::Knife:
-			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher)
+			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
 			{
 				crossZoomUI->RemoveFromParent();
 				crossIdleUI->AddToViewport();
 				playerCamera->SetFieldOfView(90);
+				bisZooming = false;
 			}
 			nowWeapon = value;
 			UE_LOG(LogTemp, Warning, TEXT("3"));
 		break;
 	case
 		WeaponList::Grenade:
-			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher)
+			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
 			{
 				crossZoomUI->RemoveFromParent();
 				crossIdleUI->AddToViewport();
 				playerCamera->SetFieldOfView(90.f);
+				bisZooming = false;
 			}
 			nowWeapon = value;
 			rifleComp->SetVisibility(false);
@@ -325,11 +326,13 @@ void AMyPlayer::Zoom()
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
 		playerCamera->SetFieldOfView(60.f);
+		bisZooming = true;
 		break;
 	case WeaponList::RocketLauncher:
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
 		playerCamera->SetFieldOfView(60.f);
+		bisZooming = true;
 		break;
 	case WeaponList::Knife:
 		break;
@@ -348,11 +351,14 @@ void AMyPlayer::ZoomOut()
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90.f);
+		bisZooming = false;
 		break;
 	case WeaponList::RocketLauncher:
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90.f);
+		bisZooming = false;
+		break;
 	case WeaponList::Knife:
 		break;
 	case WeaponList::Grenade:
@@ -368,7 +374,6 @@ void AMyPlayer::CrossHit()
 	{
 		bisHitUIOn = true;
 		crossHitUI->AddToViewport();
-		FTimerHandle crossHitTimerhandle;
 		GetWorld()->GetTimerManager().SetTimer(crossHitTimerhandle, FTimerDelegate::CreateLambda([&]()
 			{
 				crossHitUI->RemoveFromParent();
