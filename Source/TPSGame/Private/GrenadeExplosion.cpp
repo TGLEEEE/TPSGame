@@ -16,12 +16,12 @@ AGrenadeExplosion::AGrenadeExplosion()
 
 	radialForceComp = CreateDefaultSubobject<URadialForceComponent>(TEXT("Radial Force Component"));
 	SetRootComponent(radialForceComp);
-	radialForceComp->Radius = 300.f;
+	radialForceComp->Radius = 400.f;
 	radialForceComp->ImpulseStrength = 10000.f;
 
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
 	sphereComp->SetupAttachment(RootComponent);
-	sphereComp->SetSphereRadius(300.f);
+	sphereComp->SetSphereRadius(400.f);
 	sphereComp->SetCollisionProfileName(TEXT("PlayerPreset"));
 
 	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
@@ -40,7 +40,7 @@ void AGrenadeExplosion::BeginPlay()
 
 	radialForceComp->FireImpulse();
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &AGrenadeExplosion::OnOverlap);
-	GetWorldTimerManager().SetTimer(destroyHandle, this, &AGrenadeExplosion::SelfDestroy, 1.f);
+	GetWorldTimerManager().SetTimer(destroyHandle, this, &AGrenadeExplosion::SelfDestroy, 3.f);
 }
 
 // Called every frame
@@ -61,6 +61,7 @@ void AGrenadeExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 			fsm->OnDamageProcess(5);
 		}
 	}
+	sphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AGrenadeExplosion::SelfDestroy()
