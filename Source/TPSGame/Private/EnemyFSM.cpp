@@ -4,9 +4,13 @@
 #include "EnemyFSM.h"
 #include "Enemy.h"
 #include "AIController.h"
-//#include "TPSPr.h"
+#include "MyPlayer.h"
 #include "EnemyAnim.h"
+#include "Components/CapsuleComponent.h"
+#include "NavigationSystem.h"
 #include "Kismet/GameplayStatics.h"
+
+
 
 
 // Sets default values for this component's properties
@@ -28,7 +32,7 @@ void UEnemyFSM::BeginPlay()
 	// ...
 	//월드에서 플레이어 타깃 가져오기
 	auto actor = UGameplayStatics::GetActorOfClass(GetWorld(), AMyPlayer::StaticClass());
-	//캐스팅
+	//AMyPlayer타입으로캐스팅
 	target = Cast<AMyPlayer>(actor);
 	//소유객체가져오기
 	me = Cast<AEnemy>(GetOwner());
@@ -58,6 +62,9 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		MoveState();
 		break;
 	case EEnemyState::Attack:
+		AttackState();
+		break;
+	case EEnemyState::Damage:
 		DamageState();
 		break;
 	case EEnemyState::Die:
@@ -97,15 +104,38 @@ void UEnemyFSM::MoveState()
 	FVector destination = target->GetActorLocation();
 	// 방향
 	FVector dir = destination - me->GetActorLocation();
+
 	//방향으로 이동하고싶다
 	//me->AddMovementInput(dir.GetSafeNormal());
 	ai->MoveToLocation(destination);
-	
+
+
+/*
+	auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+
+	FPathFindingQuery query;
+
+	FAIMoveRequest req;
+
+	req.SetAcceptanceRadius(100);
+
+	req.SetGoalLocation(destination);
+
+	ai->BuildPathfindingQuery(req, query);
+
+	FPathFindingResult r = ns->FindPathSync(query);
+
+	if (r.Result == ENavigationQueryResult::Success)
+	{
+		ai->MoveToLocation(destination);
+	}
+	*/
 
 	//타깃과 가까워지면 공격상태로 전환하고싶다
 	//1. 만약 거리가 공격범위안에 들어오면
 	if (dir.Size() < attackRange)
 	{
+		ai->StopMovement();
 		//2.공격상태로 전환하고싶다
 		mState = EEnemyState::Attack;
 		//애니메이션 상태 동기화
@@ -116,6 +146,10 @@ void UEnemyFSM::MoveState()
 		currentTime = attackDelayTime;
 
 	}
+	
+
+
+	//목저ㅗㄱ지 
 }
 //공격상태
 void UEnemyFSM::AttackState()
@@ -124,7 +158,7 @@ void UEnemyFSM::AttackState()
 
 	    //목표: 일정 시간에 한번씩 공격하고싶다
 	    //1. 시간이 흘러야한다
-	    currentTime += GetWorld()->DeltaRealTimeSeconds;
+	    currentTime += GetWorld()->DeltaTimeSeconds;
 		//2. 공격시간이 됐을때
 		if (currentTime > attackDelayTime)
 		{
@@ -147,7 +181,7 @@ void UEnemyFSM::AttackState()
 			//3. 상태를 이동으로 전환하고 싶다
 			mState = EEnemyState::Move;
 			//애니메이션 상태 동기화
-			anim->animState = mState;
+		anim->animState = mState;
 		}
 	
 
@@ -166,12 +200,25 @@ void UEnemyFSM::DamageState()
 		currentTime = 0;
 		//애니메이션 상태 동기화
 		anim->animState = mState;
+
 	}
 }
 //죽음상태
 void UEnemyFSM::DieState()
 {
+	//계속 아래로 내려가고싶다
+	//등속운동공식 P = P0+vt
+	FVector P0 = me->GetActorLocation();
+	FVector vt = FVector::DownVector * dieSpeed * GetWorld()->DeltaTimeSeconds;
+	FVector P = P0 + vt;
+	me->SetActorLocation(P);
 
+	//만약2미터이상내려왔다면
+	if (P.Z < -200.0f)
+	{
+		//제거시킨다
+		me->Destroy();
+	}
 }
 
 //피격알림 이벤트 함수
@@ -182,16 +229,24 @@ void UEnemyFSM::OnDamageProcess()
 	//만약에 체력이 남아있다면 
 	if (hp > 0)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("?"));
 		//상태를 피격으로 전환
 		mState = EEnemyState::Damage;
+		
 	}
 	//그렇지않으먄
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("zugum"));
 		//상태를 죽음으로 전환
 		mState = EEnemyState::Die;
+		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	}
+
 	//애니메이션상태 동기화
 	anim->animState = mState;
+
+	ai->StopMovement();
 }
 

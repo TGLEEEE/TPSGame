@@ -91,6 +91,10 @@ public:
 	//Enemy를 소유하고 있는 AlController
 	UPROPERTY()
 		class AAIController* ai;
+
+	//아래로 사라지는 속도
+	UPROPERTY(EditAnywhere, Category = FSM)
+		float dieSpeed = 50.0f;
 		
 	//bool canMove = true;
 
