@@ -12,7 +12,9 @@
 #include <Particles/ParticleSystem.h>
 #include <Blueprint/UserWidget.h>
 #include <Components/CapsuleComponent.h>
+#include <Components/StaticMeshComponent.h>
 #include "EnemyFSM.h"
+#include "Grenade.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -63,14 +65,13 @@ AMyPlayer::AMyPlayer()
 	}
 	// ¶óÀÌÇÃ
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
+	rifleComp->SetupAttachment(GetMesh());
+	rifleComp->SetRelativeLocation(FVector(-30, 0, 120));
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
 	if (tempRifle.Succeeded())
 	{
 		rifleComp->SetSkeletalMesh(tempRifle.Object);
 	}
-	rifleComp->SetupAttachment(GetMesh());
-	rifleComp->SetRelativeLocation(FVector(-30, 0, 120));
-	
 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempBulletEffect(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_Impact_Metal_Medium_01.P_Impact_Metal_Medium_01'"));
 	if (tempBulletEffect.Succeeded())
 	{
@@ -81,6 +82,17 @@ AMyPlayer::AMyPlayer()
 	{
 		rifleMuzzleFire = tempMuzzleFire.Object;
 	}
+	// ¼ö·ùÅº
+	grenadeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Greande Mesh"));
+	grenadeComp->SetupAttachment(GetMesh());
+	grenadeComp->SetRelativeLocation(FVector(-30, 0, 120));
+	ConstructorHelpers::FObjectFinder<UStaticMesh>tempGrenade(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/GrenadeLauncherA_Ammo.GrenadeLauncherA_Ammo'"));
+	if (tempGrenade.Succeeded())
+    {
+	    grenadeComp->SetStaticMesh(tempGrenade.Object);
+    }
+	grenadeComp->SetRelativeScale3D(FVector(3.f));
+
 }
 
 // Called when the game starts or when spawned
@@ -89,10 +101,11 @@ void AMyPlayer::BeginPlay()
 	Super::BeginPlay();
 	ArmRifle();
 
-	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
-	crossIdleUI->AddToViewport();
+	// À§Á¬
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
+	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
+	crossIdleUI->AddToViewport();
 }
 
 // Called every frame
@@ -214,12 +227,14 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			nowWeapon = value;
 			rifleComp->SetVisibility(true);
 			rocketLauncherComp->SetVisibility(false);
+			grenadeComp->SetVisibility(false);
 		break;
 	case 
 		WeaponList::RocketLauncher:
 			nowWeapon = value;
 			rifleComp->SetVisibility(false);
 			rocketLauncherComp->SetVisibility(true);
+			grenadeComp->SetVisibility(false);
 		break;
 	case
 		WeaponList::Knife:
@@ -241,7 +256,9 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 				playerCamera->SetFieldOfView(90.f);
 			}
 			nowWeapon = value;
-			UE_LOG(LogTemp, Warning, TEXT("4"));
+			rifleComp->SetVisibility(false);
+			rocketLauncherComp->SetVisibility(false);
+			grenadeComp->SetVisibility(true);
 		break;
 	default:
 		break;
@@ -267,7 +284,7 @@ void AMyPlayer::FireRifle()
 			UEnemyFSM* enemyfsm = Cast<UEnemyFSM>(enemy->fsm);
 			if (enemyfsm)
 			{
-				enemyfsm->OnDamageProcess();
+				enemyfsm->OnDamageProcess(1);
 				CrossHit();
  			}
 		}
@@ -295,7 +312,9 @@ void AMyPlayer::FireKnife()
 
 void AMyPlayer::FireGrenade()
 {
-	UE_LOG(LogTemp, Warning, TEXT("grenade attack"));
+//	UE_LOG(LogTemp, Warning, TEXT("grenade attack"));
+	GetWorld()->SpawnActor<AGrenade>(grenadeFactory, GetActorLocation()+FVector(0, 0, 120.f), GetControlRotation());
+
 }
 
 void AMyPlayer::Zoom()
@@ -315,6 +334,7 @@ void AMyPlayer::Zoom()
 	case WeaponList::Knife:
 		break;
 	case WeaponList::Grenade:
+		UGameplayStatics::PredictProjectilePath()
 		break;
 	default:
 		break;

@@ -206,6 +206,7 @@ void UEnemyFSM::DamageState()
 //죽음상태
 void UEnemyFSM::DieState()
 {
+
 	//계속 아래로 내려가고싶다
 	//등속운동공식 P = P0+vt
 	FVector P0 = me->GetActorLocation();
@@ -219,13 +220,15 @@ void UEnemyFSM::DieState()
 		//제거시킨다
 		me->Destroy();
 	}
+
 }
 
 //피격알림 이벤트 함수
-void UEnemyFSM::OnDamageProcess()
+void UEnemyFSM::OnDamageProcess(int val)
 {
+	UE_LOG(LogTemp, Warning, TEXT("enemy hited"));
 	//체력감소 
-	hp--;
+	hp -= val;
 	//만약에 체력이 남아있다면 
 	if (hp > 0)
 	{

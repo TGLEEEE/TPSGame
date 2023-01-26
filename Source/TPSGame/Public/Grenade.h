@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "RocketExplosion.generated.h"
+#include "Grenade.generated.h"
 
 UCLASS()
-class TPSGAME_API ARocketExplosion : public AActor
+class TPSGAME_API AGrenade : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ARocketExplosion();
+	AGrenade();
 
 protected:
 	// Called when the game starts or when spawned
@@ -24,12 +24,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditDefaultsOnly)
-	class URadialForceComponent* radialForceComp;
+	class UStaticMeshComponent* grenadeComp;
 	UPROPERTY(EditDefaultsOnly)
-	class USphereComponent* sphereComp;
+	class UProjectileMovementComponent* projectileComp;
 	UPROPERTY(EditDefaultsOnly)
-	class UParticleSystemComponent* particleComp;
-	UFUNCTION()
-	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	void SelfDestroy();
+	TSubclassOf<class AGrenadeExplosion> explosion;
+	void SelfExplosion();
+
+
 };

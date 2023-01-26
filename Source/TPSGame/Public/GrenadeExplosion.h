@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "RocketExplosion.generated.h"
+#include "GrenadeExplosion.generated.h"
 
 UCLASS()
-class TPSGAME_API ARocketExplosion : public AActor
+class TPSGAME_API AGrenadeExplosion : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ARocketExplosion();
+	AGrenadeExplosion();
 
 protected:
 	// Called when the game starts or when spawned

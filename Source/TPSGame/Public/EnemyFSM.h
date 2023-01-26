@@ -74,7 +74,7 @@ public:
 	float attackDelayTime= 2.0f;
 
 	//피격 알림 이벤트 함수
-	void OnDamageProcess();
+	void OnDamageProcess(int val);
 
 	//체력
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = FSM)
