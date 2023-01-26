@@ -92,6 +92,7 @@ AMyPlayer::AMyPlayer()
 	    grenadeComp->SetStaticMesh(tempGrenade.Object);
     }
 	grenadeComp->SetRelativeScale3D(FVector(3.f));
+
 }
 
 // Called when the game starts or when spawned
@@ -99,10 +100,12 @@ void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	ArmRifle();
-	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
-	crossIdleUI->AddToViewport();
+
+	// À§Á¬
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
+	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
+	crossIdleUI->AddToViewport();
 }
 
 // Called every frame
@@ -310,7 +313,7 @@ void AMyPlayer::FireKnife()
 void AMyPlayer::FireGrenade()
 {
 //	UE_LOG(LogTemp, Warning, TEXT("grenade attack"));
-	GetWorld()->SpawnActor<AGrenade>(grenadeFactory, GetActorLocation()+FVector(0, 0, 120.f), FRotator::ZeroRotator);
+	GetWorld()->SpawnActor<AGrenade>(grenadeFactory, GetActorLocation()+FVector(0, 0, 120.f), GetControlRotation());
 
 }
 
@@ -331,6 +334,7 @@ void AMyPlayer::Zoom()
 	case WeaponList::Knife:
 		break;
 	case WeaponList::Grenade:
+		UGameplayStatics::PredictProjectilePath()
 		break;
 	default:
 		break;

@@ -34,7 +34,8 @@ AGrenadeExplosion::AGrenadeExplosion()
 void AGrenadeExplosion::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	FTimerHandle destroyHandle;
+
 }
 
 // Called every frame
@@ -51,5 +52,5 @@ void AGrenadeExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 
 void AGrenadeExplosion::SelfDestroy()
 {
-
+	Destroy();
 }

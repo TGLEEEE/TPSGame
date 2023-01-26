@@ -26,6 +26,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* grenadeComp;
 	UPROPERTY(EditDefaultsOnly)
+	class UProjectileMovementComponent* projectileComp;
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AGrenadeExplosion> explosion;
 	void SelfExplosion();
 

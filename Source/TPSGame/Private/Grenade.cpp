@@ -6,6 +6,7 @@
 #include "GrenadeExplosion.h"
 #include "Components/SphereComponent.h"
 #include "GrenadeExplosion.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
 AGrenade::AGrenade()
@@ -22,6 +23,15 @@ AGrenade::AGrenade()
 		grenadeComp->SetStaticMesh(tempGrenade.Object);
 	}
 	grenadeComp->SetRelativeScale3D(FVector(3.f));
+
+	projectileComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
+	projectileComp->InitialSpeed = 1000.f;
+	projectileComp->MaxSpeed = 1000.f;
+	projectileComp->ProjectileGravityScale = 1.f;
+	projectileComp->bShouldBounce = true;
+	projectileComp->Bounciness = 0.05f;
+	projectileComp->SetUpdatedComponent(grenadeComp);
+	projectileComp->SetVelocityInLocalSpace(FVector(1.f, 0, 0.5f));
 }
 
 // Called when the game starts or when spawned
