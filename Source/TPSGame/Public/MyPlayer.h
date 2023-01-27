@@ -87,12 +87,20 @@ private:
 	bool bisHitUIOn;
 	bool bisZooming;
 
+	UPROPERTY(EditAnywhere)
 	UParticleSystem* bulletEffectFactory;
+	UPROPERTY(EditAnywhere)
 	UParticleSystem* rifleMuzzleFire;
+	UPROPERTY(EditAnywhere)
 	UParticleSystem* rocketMuzzleFront;
+	UPROPERTY(EditAnywhere)
 	UParticleSystem* rocketMuzzleBack;
+
+	UPROPERTY(EditAnywhere)
 	UUserWidget* crossIdleUI;
+	UPROPERTY(EditAnywhere)
 	UUserWidget* crossZoomUI;
+	UPROPERTY(EditAnywhere)
 	UUserWidget* crossHitUI;
 	FVector dir;
 	WeaponList nowWeapon;
