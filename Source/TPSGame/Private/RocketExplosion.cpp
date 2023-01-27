@@ -62,7 +62,6 @@ void ARocketExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent,
 			fsm->OnDamageProcess(10);
 		}
 	}
-	sphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ARocketExplosion::SelfDestroy()

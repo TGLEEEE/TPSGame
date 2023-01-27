@@ -61,7 +61,6 @@ void AGrenadeExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 			fsm->OnDamageProcess(5);
 		}
 	}
-	sphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AGrenadeExplosion::SelfDestroy()
