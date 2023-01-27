@@ -12,8 +12,8 @@ AEnemy::AEnemy()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-// 	campsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("campsuleComp"));
-// 	SetRootComponent(campsuleComp); 
+ 	//campsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("campsuleComp"));
+	//SetRootComponent(campsuleComp); 
 
 	//1.스켈레탈메시 데이터로드
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Zoombie/copzombie_l_actisdato_UE.copzombie_l_actisdato_UE'"));
@@ -24,6 +24,9 @@ AEnemy::AEnemy()
 		GetMesh()->SetSkeletalMesh(tempMesh.Object);
 		//1-3. 메시위치와 회전설정campsuleComp
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
+
+		
+
 	}
 	//EnemyFSM컴포넌트 추가
 	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));

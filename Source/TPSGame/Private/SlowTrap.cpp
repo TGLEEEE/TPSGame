@@ -4,6 +4,8 @@
 #include "SlowTrap.h"
 #include <Components/BoxComponent.h>
 #include "EnemyFSM.h"
+#include "Enemy.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ASlowTrap::ASlowTrap()
@@ -18,6 +20,7 @@ ASlowTrap::ASlowTrap()
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));
 	meshComp->SetupAttachment(RootComponent);
 
+	boxComp->SetCollisionProfileName(TEXT("SlowTrap"));
 
 }
 
@@ -26,7 +29,8 @@ void ASlowTrap::BeginPlay()
 {
 	Super::BeginPlay();
 	
-//	boxComp->OnComponentBeginOverlap.AddDynamic(this, &ASlowTrap::InSlowTrap);
+	boxComp->OnComponentBeginOverlap.AddDynamic(this, &ASlowTrap::InSlowTrap);
+	boxComp->OnComponentEndOverlap.AddDynamic(this, &ASlowTrap::OutSlowTrap);
 }
 
 // Called every frame
@@ -34,16 +38,35 @@ void ASlowTrap::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
 }
 
-// void ASlowTrap::InSlowTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-// {
-// 	UEnemyFSM* enemy = Cast<UEnemyFSM>(OtherActor);
-// 	if (enemy)
-// 	{
-// 		//플레이어에잇는 canfire변수를 False로만든다
-// 		enemy->canMove = false;
-// 	}
-// 
-// }
+ void ASlowTrap::InSlowTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+ {
+	// UE_LOG(LogTemp, Warning, TEXT("dasss"));
+
+ 	AEnemy* enemy = Cast<AEnemy>(OtherActor);
+ 	if (enemy)
+ 	{
+		enemy->GetCharacterMovement()->MaxWalkSpeed = 100;
+		
+		//플레이어에잇는 canMove변수를 False로만든다
+		//UEnemyFSM* FSMEnemy = Cast<UEnemyFSM>(enemy->fsm);
+		//if (FSMEnemy)
+		//{
+		//}
+ 	}
+ 
+ }
+
+void ASlowTrap::OutSlowTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	AEnemy* enemy = Cast<AEnemy>(OtherActor);
+	if (enemy)
+	{
+		enemy->GetCharacterMovement()->MaxWalkSpeed = 600;
+	}
+}
+
 
