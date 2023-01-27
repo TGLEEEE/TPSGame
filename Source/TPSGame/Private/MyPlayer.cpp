@@ -22,7 +22,7 @@ AMyPlayer::AMyPlayer()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	// 캐릭터 메시
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Player/character.character'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Player/Ch17_nonPBR_UE.Ch17_nonPBR_UE'"));
 	if (mesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(mesh.Object);
@@ -50,8 +50,8 @@ AMyPlayer::AMyPlayer()
 	{
 		rocketLauncherComp->SetSkeletalMesh(tempRocketLauncher.Object);
 	}
-	rocketLauncherComp->SetupAttachment(GetMesh());
-	rocketLauncherComp->SetRelativeLocation(FVector(-30, 0, 120));
+	rocketLauncherComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	rocketLauncherComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 7.81f), FRotator(79.94f, -149.69f, -318.51f));
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRocketMuzzleFront(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_RocketLauncher_MuzzleFlash_Front_01.P_RocketLauncher_MuzzleFlash_Front_01'"));
 	if (tempRocketMuzzleFront.Succeeded())
@@ -65,8 +65,8 @@ AMyPlayer::AMyPlayer()
 	}
 	// 라이플
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
-	rifleComp->SetupAttachment(GetMesh());
-	rifleComp->SetRelativeLocation(FVector(-30, 0, 120));
+	rifleComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	rifleComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 7.81f), FRotator(79.94f, -149.69f, -318.51f));
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
 	if (tempRifle.Succeeded())
 	{
@@ -99,13 +99,12 @@ AMyPlayer::AMyPlayer()
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	ArmRifle();
-
 	// 위젯
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	crossIdleUI->AddToViewport();
+	ArmRifle();
 }
 
 // Called every frame
@@ -238,22 +237,24 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 		break;
 	case
 		WeaponList::Knife:
-			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher)
+			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
 			{
 				crossZoomUI->RemoveFromParent();
 				crossIdleUI->AddToViewport();
 				playerCamera->SetFieldOfView(90);
+				bisZooming = false;
 			}
 			nowWeapon = value;
 			UE_LOG(LogTemp, Warning, TEXT("3"));
 		break;
 	case
 		WeaponList::Grenade:
-			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher)
+			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
 			{
 				crossZoomUI->RemoveFromParent();
 				crossIdleUI->AddToViewport();
 				playerCamera->SetFieldOfView(90.f);
+				bisZooming = false;
 			}
 			nowWeapon = value;
 			rifleComp->SetVisibility(false);
@@ -325,11 +326,13 @@ void AMyPlayer::Zoom()
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
 		playerCamera->SetFieldOfView(60.f);
+		bisZooming = true;
 		break;
 	case WeaponList::RocketLauncher:
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
 		playerCamera->SetFieldOfView(60.f);
+		bisZooming = true;
 		break;
 	case WeaponList::Knife:
 		break;
@@ -348,11 +351,14 @@ void AMyPlayer::ZoomOut()
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90.f);
+		bisZooming = false;
 		break;
 	case WeaponList::RocketLauncher:
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90.f);
+		bisZooming = false;
+		break;
 	case WeaponList::Knife:
 		break;
 	case WeaponList::Grenade:
@@ -368,7 +374,6 @@ void AMyPlayer::CrossHit()
 	{
 		bisHitUIOn = true;
 		crossHitUI->AddToViewport();
-		FTimerHandle crossHitTimerhandle;
 		GetWorld()->GetTimerManager().SetTimer(crossHitTimerhandle, FTimerDelegate::CreateLambda([&]()
 			{
 				crossHitUI->RemoveFromParent();

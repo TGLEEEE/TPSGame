@@ -40,7 +40,7 @@ void AGrenade::BeginPlay()
 	Super::BeginPlay();
 
 	FTimerHandle exTimerhandle;
-	GetWorldTimerManager().SetTimer(exTimerhandle, this, &AGrenade::SelfExplosion, 3.f, false);
+	GetWorldTimerManager().SetTimer(exTimerhandle, this, &AGrenade::SelfExplosion, 2.f, false);
 }
 
 // Called every frame

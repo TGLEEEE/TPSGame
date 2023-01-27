@@ -16,7 +16,7 @@ AEnemy::AEnemy()
 	//SetRootComponent(campsuleComp); 
 
 	//1.스켈레탈메시 데이터로드
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Zoombie/character.character'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Zoombie/copzombie_l_actisdato_UE.copzombie_l_actisdato_UE'"));
 	//1-1스켈레탈 메시 데이터로드 성공시
 	if (tempMesh.Succeeded())
 	{
