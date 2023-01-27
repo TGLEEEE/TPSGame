@@ -39,7 +39,7 @@ void ARocketExplosion::BeginPlay()
 	Super::BeginPlay();
 
 	radialForceComp->FireImpulse();
-	GetWorld()->GetTimerManager().SetTimer(destroyTimer, this, &ARocketExplosion::SelfDestroy, 3.f, false);
+	GetWorld()->GetTimerManager().SetTimer(destroyTimer, this, &ARocketExplosion::SelfDestroy, 1.5f, false);
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &ARocketExplosion::OnOverlap);
 }
 

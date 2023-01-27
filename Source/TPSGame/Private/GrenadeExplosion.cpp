@@ -40,7 +40,7 @@ void AGrenadeExplosion::BeginPlay()
 
 	radialForceComp->FireImpulse();
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &AGrenadeExplosion::OnOverlap);
-	GetWorldTimerManager().SetTimer(destroyHandle, this, &AGrenadeExplosion::SelfDestroy, 3.f);
+	GetWorldTimerManager().SetTimer(destroyHandle, this, &AGrenadeExplosion::SelfDestroy, 1.5f);
 }
 
 // Called every frame

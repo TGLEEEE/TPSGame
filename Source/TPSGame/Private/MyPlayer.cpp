@@ -50,8 +50,8 @@ AMyPlayer::AMyPlayer()
 	{
 		rocketLauncherComp->SetSkeletalMesh(tempRocketLauncher.Object);
 	}
-	rocketLauncherComp->SetupAttachment(GetMesh());
-	rocketLauncherComp->SetRelativeLocation(FVector(-30, 0, 120));
+	rocketLauncherComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	rocketLauncherComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 7.81f), FRotator(79.94f, -149.69f, -318.51f));
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRocketMuzzleFront(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_RocketLauncher_MuzzleFlash_Front_01.P_RocketLauncher_MuzzleFlash_Front_01'"));
 	if (tempRocketMuzzleFront.Succeeded())
@@ -65,8 +65,8 @@ AMyPlayer::AMyPlayer()
 	}
 	// ∂Û¿Ã«√
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
-	rifleComp->SetupAttachment(GetMesh());
-	rifleComp->SetRelativeLocation(FVector(-30, 0, 120));
+	rifleComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	rifleComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 7.81f), FRotator(79.94f, -149.69f, -318.51f));
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
 	if (tempRifle.Succeeded())
 	{
