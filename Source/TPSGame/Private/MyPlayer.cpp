@@ -250,7 +250,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 		break;
 	case
 		WeaponList::Grenade:
-			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
+			if ((nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher) && bisZooming)
 			{
 				crossZoomUI->RemoveFromParent();
 				crossIdleUI->AddToViewport();

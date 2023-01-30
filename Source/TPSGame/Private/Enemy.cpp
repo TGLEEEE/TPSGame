@@ -14,6 +14,7 @@ AEnemy::AEnemy()
 
  	//campsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("campsuleComp"));
 	//SetRootComponent(campsuleComp); 
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("EnemyPreset"));
 
 	//1.스켈레탈메시 데이터로드
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Zoombie/copzombie_l_actisdato_UE.copzombie_l_actisdato_UE'"));

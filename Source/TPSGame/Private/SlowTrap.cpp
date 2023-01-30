@@ -20,7 +20,7 @@ ASlowTrap::ASlowTrap()
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));
 	meshComp->SetupAttachment(RootComponent);
 
-	boxComp->SetCollisionProfileName(TEXT("SlowTrap"));
+	boxComp->SetCollisionProfileName(TEXT("TrapPreset"));
 
 }
 

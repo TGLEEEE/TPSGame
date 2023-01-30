@@ -22,7 +22,7 @@ AGrenadeExplosion::AGrenadeExplosion()
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
 	sphereComp->SetupAttachment(RootComponent);
 	sphereComp->SetSphereRadius(400.f);
-	sphereComp->SetCollisionProfileName(TEXT("PlayerPreset"));
+	sphereComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 
 	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
 	particleComp->SetupAttachment(RootComponent);

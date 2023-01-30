@@ -17,7 +17,7 @@ ARocketAmmo::ARocketAmmo()
 	sphereComp=CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
 	SetRootComponent(sphereComp);
 	sphereComp->SetSphereRadius(16.f);
-	sphereComp->SetCollisionProfileName(TEXT("BlockAll"));
+	sphereComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 
 	MeshComp=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Skeletal Mesh"));
 	MeshComp->SetupAttachment(sphereComp);

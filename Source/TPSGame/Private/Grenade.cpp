@@ -23,6 +23,7 @@ AGrenade::AGrenade()
 		grenadeComp->SetStaticMesh(tempGrenade.Object);
 	}
 	grenadeComp->SetRelativeScale3D(FVector(3.f));
+	grenadeComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 
 	projectileComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
 	projectileComp->InitialSpeed = 1000.f;

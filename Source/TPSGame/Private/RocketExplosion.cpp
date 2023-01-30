@@ -23,6 +23,7 @@ ARocketExplosion::ARocketExplosion()
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
 	sphereComp->SetupAttachment(RootComponent);
 	sphereComp->SetSphereRadius(600.f);
+	sphereComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 
 	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
 	particleComp->SetupAttachment(RootComponent);
