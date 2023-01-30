@@ -32,4 +32,7 @@ public:
 
  	//UPROPERTY(EditAnywhere)
  	//class UCapsuleComponent* campsuleComp;
+
+	
+
 };

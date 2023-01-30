@@ -53,7 +53,7 @@ public:
 
 	//대기시간
 	UPROPERTY(EditDefaultsOnly, Category=FSM)
-	float idleDelayTime = 2; 
+	float idleDelayTime = 0.6f; 
 	//경과시간
 	float currentTime = 0;
 	
@@ -82,7 +82,7 @@ public:
 
 	//피격상태 대기시간
 	UPROPERTY(EditAnywhere, Category=FSM)
-	float damageDelayTime = 0.8f;
+	float damageDelayTime = 0.4f;
 
 	//사용중인 애니메이션블루프린트
 	UPROPERTY()
@@ -97,6 +97,8 @@ public:
 		float dieSpeed = 50.0f;
 		
 	bool canMove = true;
+
+	float dieDelayTime = 5.0f;
 
 		
 };

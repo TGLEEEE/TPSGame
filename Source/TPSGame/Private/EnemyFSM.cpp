@@ -206,21 +206,24 @@ void UEnemyFSM::DamageState()
 //죽음상태
 void UEnemyFSM::DieState()
 {
-
-	//계속 아래로 내려가고싶다
-	//등속운동공식 P = P0+vt
-	FVector P0 = me->GetActorLocation();
-	FVector vt = FVector::DownVector * dieSpeed * GetWorld()->DeltaTimeSeconds;
-	FVector P = P0 + vt;
-	me->SetActorLocation(P);
-
-	//만약2미터이상내려왔다면
-	if (P.Z < -200.0f)
+	currentTime += GetWorld()->DeltaTimeSeconds;
+	if (currentTime > dieDelayTime)
 	{
-		//제거시킨다
-		me->Destroy();
-	}
+		//계속 아래로 내려가고싶다
+		//등속운동공식 P = P0+vt
+		FVector P0 = me->GetActorLocation();
+		FVector vt = FVector::DownVector * dieSpeed * GetWorld()->DeltaTimeSeconds;
+		FVector P = P0 + vt;
+		me->SetActorLocation(P);
 
+		//만약2미터이상내려왔다면
+		if (P.Z < -200.0f)
+		{
+			//제거시킨다
+			me->Destroy();
+		}
+
+	}
 }
 
 //피격알림 이벤트 함수
@@ -235,7 +238,13 @@ void UEnemyFSM::OnDamageProcess(int val)
 		UE_LOG(LogTemp, Warning, TEXT("?"));
 		//상태를 피격으로 전환
 		mState = EEnemyState::Damage;
-		
+
+		currentTime = 0;
+		//피격애니메이션 재생
+		int32 index = FMath::RandRange(0, 1);
+		FString sectionName = FString::Printf(TEXT("Damage & d"), 0);
+		anim->PlayDamageAnim(FName(*sectionName));
+
 	}
 	//그렇지않으먄
 	else
@@ -243,7 +252,10 @@ void UEnemyFSM::OnDamageProcess(int val)
 		UE_LOG(LogTemp, Warning, TEXT("zugum"));
 		//상태를 죽음으로 전환
 		mState = EEnemyState::Die;
+		//캡슐 충돌체 비활성화
 		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		//죽음 애니메이션 재생
+		anim->PlayDamageAnim(TEXT("Die"));
 
 	}
 
