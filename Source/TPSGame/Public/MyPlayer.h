@@ -90,11 +90,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* bulletEffectFactory;
 	UPROPERTY(EditAnywhere)
-	UParticleSystem* rifleMuzzleFire;
+	UAnimSequence* animRifleFire;
 	UPROPERTY(EditAnywhere)
-	UParticleSystem* rocketMuzzleFront;
-	UPROPERTY(EditAnywhere)
-	UParticleSystem* rocketMuzzleBack;
+	UAnimSequence* animRockerLauncherFire;
 
 	UPROPERTY(EditAnywhere)
 	UUserWidget* crossIdleUI;
