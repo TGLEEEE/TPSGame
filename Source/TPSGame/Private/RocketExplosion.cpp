@@ -23,7 +23,7 @@ ARocketExplosion::ARocketExplosion()
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
 	sphereComp->SetupAttachment(RootComponent);
 	sphereComp->SetSphereRadius(600.f);
-	sphereComp->SetCollisionProfileName(TEXT("WeaponPreset"));
+	sphereComp->SetCollisionProfileName(TEXT("ExplosionPreset"));
 
 	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
 	particleComp->SetupAttachment(RootComponent);
@@ -40,7 +40,7 @@ void ARocketExplosion::BeginPlay()
 	Super::BeginPlay();
 
 	radialForceComp->FireImpulse();
-	GetWorld()->GetTimerManager().SetTimer(destroyTimer, this, &ARocketExplosion::SelfDestroy, 1.5f, false);
+	GetWorld()->GetTimerManager().SetTimer(destroyTimer, this, &ARocketExplosion::SelfDestroy, 3.f, false);
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &ARocketExplosion::OnOverlap);
 }
 
