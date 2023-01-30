@@ -15,6 +15,7 @@
 #include <Components/StaticMeshComponent.h>
 #include "EnemyFSM.h"
 #include "Grenade.h"
+#include "RocketAmmoPre.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -300,7 +301,7 @@ void AMyPlayer::FireRifle()
 void AMyPlayer::FireRocketLauncher()
 {
 	FVector rocketLoc = rocketLauncherComp->GetSocketLocation(TEXT("FirePosition"));
-	GetWorld()->SpawnActor<ARocketAmmo>(rocketFactory, rocketLoc, GetControlRotation());
+	GetWorld()->SpawnActor<ARocketAmmoPre>(rocketFactory, rocketLoc, GetControlRotation());
 	// πﬂªÁΩ√ »≠ø∞ ¿Ã∆Â∆Æ
 	UGameplayStatics::SpawnEmitterAttached(rocketMuzzleFront, rocketLauncherComp, FName("MuzzleFlash"));
 	UGameplayStatics::SpawnEmitterAttached(rocketMuzzleBack, rocketLauncherComp, FName("MuzzleFlashRear"));
