@@ -44,8 +44,8 @@ public:
 	void CreateEnemy();
 
 	//½Ã°£
-	//float currentTime = 0;
+	float currentTime = 0;
 
-	//UPROPERTY(EditDefaultsOnly)
-	//float waveTime = 10;
+	UPROPERTY(EditDefaultsOnly)
+	float waveTime = 10;
 };

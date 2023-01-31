@@ -40,8 +40,11 @@ void UEnemyFSM::BeginPlay()
 	//UEnemyAnim*할당
 	anim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
 
+	
 	//AAIController 할당하기
 	ai = Cast<AAIController>(me->GetController());
+
+	
 
 }
 

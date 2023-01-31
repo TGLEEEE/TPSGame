@@ -39,12 +39,12 @@ void AEnemyManager::CreateEnemy()
 	//점 생성 및배치하기
 	GetWorld()->SpawnActor<AEnemy>(enemyFactory, spawnPoints[index]->GetActorLocation(), FRotator(0));
 
-	//currentTime += GetWorld()->DeltaTimeSeconds;
-	//if (currentTime > waveTime)
-	//{
+//	currentTime += GetWorld()->DeltaTimeSeconds;
+//	if (currentTime > waveTime)
+//	{
 	//다시 랜덤 시간에 CreateEnemy함수가 호출되도록 나이머 설정
 	float createTimer = FMath::RandRange(minTime, maxTime);
 	GetWorld()->GetTimerManager().SetTimer(spawnTimerHandle, this, &AEnemyManager::CreateEnemy, createTimer);
-	//}
+//	}
 
 }
