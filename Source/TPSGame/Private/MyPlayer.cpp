@@ -17,6 +17,7 @@
 #include "Grenade.h"
 #include "RocketAmmoPre.h"
 #include "Animation/AnimSequence.h"
+#include "Engine/StaticMeshSocket.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -68,6 +69,16 @@ AMyPlayer::AMyPlayer()
 	{
 		bulletEffectFactory = tempBulletEffect.Object;
 	}
+	// 나이프
+	knifeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Knife Mesh"));
+	knifeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	knifeComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 7.81f), FRotator(79.94f, -149.69f, -318.51f));
+	knifeComp->SetCollisionProfileName(TEXT("WeaponPreset"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh>tempKnife(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Knife_StaticMesh.Knife_StaticMesh'"));
+    if (tempKnife.Succeeded())
+    {
+	    knifeComp->SetStaticMesh(tempKnife.Object);
+    }
 	// 수류탄
 	grenadeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Greande Mesh"));
 	grenadeComp->SetupAttachment(GetMesh());
@@ -91,6 +102,8 @@ void AMyPlayer::BeginPlay()
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	crossIdleUI->AddToViewport();
 	ArmRifle();
+
+	knifeComp->OnComponentBeginOverlap.AddDynamic(this, &AMyPlayer::KnifeOverlap);
 }
 
 // Called every frame
@@ -212,6 +225,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			nowWeapon = value;
 			rifleComp->SetVisibility(true);
 			rocketLauncherComp->SetVisibility(false);
+			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
 		break;
 	case 
@@ -219,32 +233,25 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			nowWeapon = value;
 			rifleComp->SetVisibility(false);
 			rocketLauncherComp->SetVisibility(true);
+			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
 		break;
 	case
 		WeaponList::Knife:
-			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
-			{
-				crossZoomUI->RemoveFromParent();
-				crossIdleUI->AddToViewport();
-				playerCamera->SetFieldOfView(90);
-				bisZooming = false;
-			}
-			nowWeapon = value;
-			UE_LOG(LogTemp, Warning, TEXT("3"));
-		break;
-	case
-		WeaponList::Grenade:
-			if ((nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher) && bisZooming)
-			{
-				crossZoomUI->RemoveFromParent();
-				crossIdleUI->AddToViewport();
-				playerCamera->SetFieldOfView(90.f);
-				bisZooming = false;
-			}
+			ChangeWeaponZooming();
 			nowWeapon = value;
 			rifleComp->SetVisibility(false);
 			rocketLauncherComp->SetVisibility(false);
+			knifeComp->SetVisibility(true);
+			grenadeComp->SetVisibility(false);
+		break;
+	case
+		WeaponList::Grenade:
+			ChangeWeaponZooming();
+			nowWeapon = value;
+			rifleComp->SetVisibility(false);
+			rocketLauncherComp->SetVisibility(false);
+			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(true);
 		break;
 	default:
@@ -364,6 +371,32 @@ void AMyPlayer::CrossHit()
 				crossHitUI->RemoveFromParent();
 				bisHitUIOn = false;
 			}), 1.f, false);
+	}
+}
+
+void AMyPlayer::ChangeWeaponZooming()
+{
+	if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
+	{
+		crossZoomUI->RemoveFromParent();
+		crossIdleUI->AddToViewport();
+		playerCamera->SetFieldOfView(90);
+		bisZooming = false;
+	}
+}
+
+void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AEnemy* enemy = Cast<AEnemy>(OtherActor);
+	if (enemy)
+	{
+		UEnemyFSM* fsm = Cast<UEnemyFSM>(enemy->fsm);
+		if (fsm)
+		{
+			fsm->OnDamageProcess(1);
+			CrossHit();
+		}
 	}
 }
 

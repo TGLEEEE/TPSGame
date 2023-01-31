@@ -44,6 +44,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rifleComp;
 	UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent* knifeComp;
+	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* grenadeComp;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
@@ -82,10 +84,10 @@ private:
 	void Zoom();
 	void ZoomOut();
 	void CrossHit();
+	void ChangeWeaponZooming();
 
-	int playerHP = 100;
-	bool bisHitUIOn;
-	bool bisZooming;
+	UFUNCTION()
+	void KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* bulletEffectFactory;
@@ -94,15 +96,19 @@ private:
 	UPROPERTY(EditAnywhere)
 	UAnimSequence* animRockerLauncherFire;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	UUserWidget* crossIdleUI;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	UUserWidget* crossZoomUI;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	UUserWidget* crossHitUI;
 	FVector dir;
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;
+
+	int playerHP = 100;
+	bool bisHitUIOn;
+	bool bisZooming;
 
 };
