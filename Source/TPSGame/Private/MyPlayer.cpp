@@ -15,6 +15,8 @@
 #include <Components/StaticMeshComponent.h>
 #include "EnemyFSM.h"
 #include "Grenade.h"
+#include "RocketAmmoPre.h"
+#include "Animation/AnimSequence.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -52,17 +54,6 @@ AMyPlayer::AMyPlayer()
 	}
 	rocketLauncherComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
 	rocketLauncherComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 7.81f), FRotator(79.94f, -149.69f, -318.51f));
-
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRocketMuzzleFront(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_RocketLauncher_MuzzleFlash_Front_01.P_RocketLauncher_MuzzleFlash_Front_01'"));
-	if (tempRocketMuzzleFront.Succeeded())
-	{
-		rocketMuzzleFront = tempRocketMuzzleFront.Object;
-	}
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRocketMuzzleBack(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_RocketLauncher_MuzzleFlash_Rear_01.P_RocketLauncher_MuzzleFlash_Rear_01'"));
-	if (tempRocketMuzzleBack.Succeeded())
-	{
-		rocketMuzzleBack = tempRocketMuzzleBack.Object;
-	}
 	// ¶óÀÌÇÃ
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
 	rifleComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
@@ -76,11 +67,6 @@ AMyPlayer::AMyPlayer()
 	if (tempBulletEffect.Succeeded())
 	{
 		bulletEffectFactory = tempBulletEffect.Object;
-	}
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempMuzzleFire(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_AssaultRifle_MuzzleFlash.P_AssaultRifle_MuzzleFlash'"));
-	if (tempMuzzleFire.Succeeded())
-	{
-		rifleMuzzleFire = tempMuzzleFire.Object;
 	}
 	// ¼ö·ùÅº
 	grenadeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Greande Mesh"));
@@ -249,7 +235,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 		break;
 	case
 		WeaponList::Grenade:
-			if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
+			if ((nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher) && bisZooming)
 			{
 				crossZoomUI->RemoveFromParent();
 				crossIdleUI->AddToViewport();
@@ -293,17 +279,16 @@ void AMyPlayer::FireRifle()
 	// ¹Ýµ¿
 	AddControllerPitchInput(-0.1f);
 	AddControllerYawInput(FMath::RandRange(-0.05f, 0.05f));
-	// ÃÑ±¸ È­¿° ÀÌÆåÆ®
-	UGameplayStatics::SpawnEmitterAttached(rifleMuzzleFire, rifleComp, FName("MuzzleFlash"));
+	
+	rifleComp->PlayAnimation(animRifleFire, false);
 }
 
 void AMyPlayer::FireRocketLauncher()
 {
 	FVector rocketLoc = rocketLauncherComp->GetSocketLocation(TEXT("FirePosition"));
-	GetWorld()->SpawnActor<ARocketAmmo>(rocketFactory, rocketLoc, GetControlRotation());
-	// ¹ß»ç½Ã È­¿° ÀÌÆåÆ®
-	UGameplayStatics::SpawnEmitterAttached(rocketMuzzleFront, rocketLauncherComp, FName("MuzzleFlash"));
-	UGameplayStatics::SpawnEmitterAttached(rocketMuzzleBack, rocketLauncherComp, FName("MuzzleFlashRear"));
+	GetWorld()->SpawnActor<ARocketAmmoPre>(rocketFactory, rocketLoc, GetControlRotation());
+
+	rocketLauncherComp->PlayAnimation(animRockerLauncherFire, false);
 }
 
 void AMyPlayer::FireKnife()

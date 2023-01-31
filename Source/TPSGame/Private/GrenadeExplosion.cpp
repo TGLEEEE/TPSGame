@@ -22,7 +22,7 @@ AGrenadeExplosion::AGrenadeExplosion()
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
 	sphereComp->SetupAttachment(RootComponent);
 	sphereComp->SetSphereRadius(400.f);
-	sphereComp->SetCollisionProfileName(TEXT("PlayerPreset"));
+	sphereComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 
 	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
 	particleComp->SetupAttachment(RootComponent);
@@ -40,7 +40,7 @@ void AGrenadeExplosion::BeginPlay()
 
 	radialForceComp->FireImpulse();
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &AGrenadeExplosion::OnOverlap);
-	GetWorldTimerManager().SetTimer(destroyHandle, this, &AGrenadeExplosion::SelfDestroy, 1.5f);
+	GetWorldTimerManager().SetTimer(destroyHandle, this, &AGrenadeExplosion::SelfDestroy, 3.f);
 }
 
 // Called every frame
