@@ -95,10 +95,12 @@ public:
 	//아래로 사라지는 속도
 	UPROPERTY(EditAnywhere, Category = FSM)
 		float dieSpeed = 50.0f;
-		
+
+	//적의 움직임 제어 
 	bool canMove = true;
 
-	float dieDelayTime = 5.0f;
+	//시체 남기는 시간
+	float dieDelayTime = 10.0f;
 
 		
 };
