@@ -35,17 +35,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY()
 	class USpringArmComponent* playerSpringArm;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY()
 	class UCameraComponent* playerCamera;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY()
 	class USkeletalMeshComponent* rocketLauncherComp;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY()
 	class USkeletalMeshComponent* rifleComp;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY()
 	class UStaticMeshComponent* knifeComp;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY()
 	class UStaticMeshComponent* grenadeComp;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
@@ -59,6 +59,9 @@ public:
 	TSubclassOf<class UUserWidget> crossHitFactory;
 	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayGrenadeAnimMontage(FName sectionName);
 
 	void SetPlayerHP(int hp);
 	int GetPlayerHP();
@@ -116,5 +119,4 @@ private:
 	bool bisZooming;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
-
 };

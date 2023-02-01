@@ -116,7 +116,6 @@ void AMyPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// 월드기준 dir를 플레이어기준 dir로 변화하기 위해 플레이어 rotaion을 트랜스폼으로 만듬
-//	FTransform playerTrans = GetControlRotation();
 	FTransform playerTrans(GetControlRotation());
 	// 플레이어 트랜스폼에 맞게 dir 변환
 	FVector newDir = playerTrans.TransformVector(dir);
@@ -125,7 +124,6 @@ void AMyPlayer::Tick(float DeltaTime)
 	newDir.Normalize();
 	// 변환된 dir로 이동 (속도는 self에)
 	AddMovementInput(newDir);
-	
 }
 
 // Called to bind functionality to input
@@ -269,6 +267,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(false);
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(true);
+			PlayGrenadeAnimMontage(TEXT("Set"));
 		break;
 	default:
 		break;

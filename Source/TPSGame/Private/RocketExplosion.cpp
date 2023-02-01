@@ -4,7 +4,6 @@
 #include "RocketExplosion.h"
 #include <PhysicsEngine/RadialForceComponent.h>
 #include <Components/SphereComponent.h>
-#include <Particles/ParticleSystemComponent.h>
 #include "Enemy.h"
 #include "EnemyFSM.h"
 #include <Kismet/GameplayStatics.h>
@@ -17,21 +16,14 @@ ARocketExplosion::ARocketExplosion()
 
 	radialForceComp = CreateDefaultSubobject<URadialForceComponent>(TEXT("Radial Force Component"));
 	SetRootComponent(radialForceComp);
-	radialForceComp->Radius = 600.f;
+	radialForceComp->Radius = 500.f;
 	radialForceComp->ImpulseStrength = 40000.f;
 
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
 	sphereComp->SetupAttachment(RootComponent);
-	sphereComp->SetSphereRadius(600.f);
+	sphereComp->SetSphereRadius(500.f);
 	sphereComp->SetCollisionProfileName(TEXT("ExplosionPreset"));
 
-	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
-	particleComp->SetupAttachment(RootComponent);
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempExplosionFX(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_RocketLauncher_Explosion_01.P_RocketLauncher_Explosion_01'"));
-	if (tempExplosionFX.Succeeded())
-	{
-		particleComp->SetTemplate(tempExplosionFX.Object);
-	}
 }	
 
 // Called when the game starts or when spawned
@@ -40,8 +32,10 @@ void ARocketExplosion::BeginPlay()
 	Super::BeginPlay();
 
 	radialForceComp->FireImpulse();
-	GetWorld()->GetTimerManager().SetTimer(destroyTimer, this, &ARocketExplosion::SelfDestroy, 3.f, false);
+	GetWorld()->GetTimerManager().SetTimer(destroyTimer, this, &ARocketExplosion::SelfDestroy, 0.5f, false);
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &ARocketExplosion::OnOverlap);
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), rocketExplosionFX, GetActorTransform());
 }
 
 // Called every frame
