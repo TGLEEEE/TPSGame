@@ -15,6 +15,7 @@
 #include <Components/StaticMeshComponent.h>
 #include "EnemyFSM.h"
 #include "Grenade.h"
+#include "MyPlayerAnim.h"
 #include "RocketAmmoPre.h"
 #include "Animation/AnimSequence.h"
 #include "Engine/StaticMeshSocket.h"
@@ -104,6 +105,9 @@ void AMyPlayer::BeginPlay()
 	ArmRifle();
 
 	knifeComp->OnComponentBeginOverlap.AddDynamic(this, &AMyPlayer::KnifeOverlap);
+
+	// 기본 걷기 속도
+	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 }
 
 // Called every frame
@@ -142,6 +146,8 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Pressed, this, &AMyPlayer::ArmGrenade);
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Pressed, this, &AMyPlayer::Zoom);
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &AMyPlayer::ZoomOut);
+	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AMyPlayer::InputActionRun);
+	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AMyPlayer::InputActionRunReleased);
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -194,6 +200,16 @@ void AMyPlayer::InputActionFire()
 void AMyPlayer::InputActionFireReleased()
 {
 	GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+}
+
+void AMyPlayer::InputActionRun()
+{
+	GetCharacterMovement()->MaxWalkSpeed = runSpeed;
+}
+
+void AMyPlayer::InputActionRunReleased()
+{
+	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 }
 
 void AMyPlayer::ArmRifle()
@@ -286,8 +302,16 @@ void AMyPlayer::FireRifle()
 	// 반동
 	AddControllerPitchInput(-0.1f);
 	AddControllerYawInput(FMath::RandRange(-0.05f, 0.05f));
-	
+
+	// 라이플 애니메이션
 	rifleComp->PlayAnimation(animRifleFire, false);
+
+	// 반동 애니메이션
+	auto anim = Cast<UMyPlayerAnim>(GetMesh()->GetAnimInstance());
+	if (anim)
+	{
+		anim->FireAnim();
+	}
 }
 
 void AMyPlayer::FireRocketLauncher()

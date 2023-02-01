@@ -23,4 +23,8 @@ public:
 	float rightVel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bisFalling;
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* fireAnim;
+	
+	void FireAnim();
 };

@@ -72,6 +72,8 @@ private:
 	void InputActionJump();
 	void InputActionFire();
 	void InputActionFireReleased();
+	void InputActionRun();
+	void InputActionRunReleased();
 	void ArmRocketLauncher();
 	void ArmRifle();
 	void ArmKnife();
@@ -110,5 +112,7 @@ private:
 	int playerHP = 100;
 	bool bisHitUIOn;
 	bool bisZooming;
+	float walkSpeed = 400.f;
+	float runSpeed = 800.f;
 
 };

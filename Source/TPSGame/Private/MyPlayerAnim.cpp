@@ -18,3 +18,8 @@ void UMyPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 		bisFalling = player->GetCharacterMovement()->IsFalling();
 	}
 }
+
+void UMyPlayerAnim::FireAnim()
+{
+	Montage_Play(fireAnim);
+}
