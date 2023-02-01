@@ -9,7 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "NavigationSystem.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Navigation/PathFollowingComponent.h"
 
 
 
@@ -86,6 +86,7 @@ void UEnemyFSM::IdleState()
 	{
 		//3. 이동상태로 전환하고싶다
 		mState = EEnemyState::Move;
+		bDoOnce = false;
 		//4. 경과시간 초기화
 		currentTime = 0;
 		//UE_LOG(LogTemp, Warning, TEXT("2after move"));
@@ -110,7 +111,13 @@ void UEnemyFSM::MoveState()
 
 	//방향으로 이동하고싶다
 	//me->AddMovementInput(dir.GetSafeNormal());
-	ai->MoveToLocation(destination);
+	if (false == bDoOnce)
+	{
+		bDoOnce = true;
+		ai->MoveToActor(target);
+		
+	}
+
 
 
 /*
@@ -183,6 +190,7 @@ void UEnemyFSM::AttackState()
 		{
 			//3. 상태를 이동으로 전환하고 싶다
 			mState = EEnemyState::Move;
+			bDoOnce = false;
 			//애니메이션 상태 동기화
 		anim->animState = mState;
 		}

@@ -45,6 +45,7 @@ void AEnemyManager::CreateEnemy()
 	//다시 랜덤 시간에 CreateEnemy함수가 호출되도록 나이머 설정
 	float createTimer = FMath::RandRange(minTime, maxTime);
 	GetWorld()->GetTimerManager().SetTimer(spawnTimerHandle, this, &AEnemyManager::CreateEnemy, createTimer);
+
 //	}
 
 }
