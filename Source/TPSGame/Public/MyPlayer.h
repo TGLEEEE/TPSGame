@@ -97,6 +97,8 @@ private:
 	UAnimSequence* animRifleFire;
 	UPROPERTY(EditAnywhere)
 	UAnimSequence* animRockerLauncherFire;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UCameraShakeBase>rocketCamShakeFactory;
 
 	UPROPERTY()
 	UUserWidget* crossIdleUI;

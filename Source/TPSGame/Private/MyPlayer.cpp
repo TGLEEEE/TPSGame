@@ -55,11 +55,11 @@ AMyPlayer::AMyPlayer()
 		rocketLauncherComp->SetSkeletalMesh(tempRocketLauncher.Object);
 	}
 	rocketLauncherComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
-	rocketLauncherComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 7.81f), FRotator(79.94f, -149.69f, -318.51f));
+	rocketLauncherComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 5.f), FRotator(79.94f, -149.69f, -318.51f));
 	// 라이플
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
 	rifleComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
-	rifleComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 7.81f), FRotator(79.94f, -149.69f, -318.51f));
+	rifleComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 5.f), FRotator(79.94f, -149.69f, -318.51f));
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
 	if (tempRifle.Succeeded())
 	{
@@ -73,7 +73,7 @@ AMyPlayer::AMyPlayer()
 	// 나이프
 	knifeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Knife Mesh"));
 	knifeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
-	knifeComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 7.81f), FRotator(79.94f, -149.69f, -318.51f));
+	knifeComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 5.f), FRotator(79.94f, -149.69f, -318.51f));
 	knifeComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh>tempKnife(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Knife_StaticMesh.Knife_StaticMesh'"));
     if (tempKnife.Succeeded())
@@ -300,8 +300,8 @@ void AMyPlayer::FireRifle()
 		}
 	}
 	// 반동
-	AddControllerPitchInput(-0.1f);
-	AddControllerYawInput(FMath::RandRange(-0.05f, 0.05f));
+	AddControllerPitchInput(-0.15f);
+	AddControllerYawInput(FMath::RandRange(-0.1f, 0.1f));
 
 	// 라이플 애니메이션
 	rifleComp->PlayAnimation(animRifleFire, false);
@@ -320,6 +320,10 @@ void AMyPlayer::FireRocketLauncher()
 	GetWorld()->SpawnActor<ARocketAmmoPre>(rocketFactory, rocketLoc, GetControlRotation());
 
 	rocketLauncherComp->PlayAnimation(animRockerLauncherFire, false);
+
+	// 카메라 쉐이크
+	auto playerCamManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+	playerCamManager->StartCameraShake(rocketCamShakeFactory);
 }
 
 void AMyPlayer::FireKnife()
