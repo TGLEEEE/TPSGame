@@ -141,7 +141,8 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Rifle"), IE_Pressed, this, &AMyPlayer::ArmRifle);
 	PlayerInputComponent->BindAction(TEXT("RocketLauncher"), IE_Pressed, this, &AMyPlayer::ArmRocketLauncher);
 	PlayerInputComponent->BindAction(TEXT("Knife"), IE_Pressed, this, &AMyPlayer::ArmKnife);
-	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Pressed, this, &AMyPlayer::ArmGrenade);
+	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Pressed, this, &AMyPlayer::SetGrenade);
+	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Released, this, &AMyPlayer::FireGrenade);
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Pressed, this, &AMyPlayer::Zoom);
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &AMyPlayer::ZoomOut);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AMyPlayer::InputActionRun);
@@ -332,9 +333,9 @@ void AMyPlayer::FireKnife()
 
 void AMyPlayer::FireGrenade()
 {
-//	UE_LOG(LogTemp, Warning, TEXT("grenade attack"));
+	PlayGrenadeAnimMontage(TEXT("Go"));
 	GetWorld()->SpawnActor<AGrenade>(grenadeFactory, GetActorLocation()+FVector(0, 0, 120.f), GetControlRotation());
-
+	grenadeComp->SetVisibility(false);
 }
 
 void AMyPlayer::Zoom()
@@ -410,6 +411,12 @@ void AMyPlayer::ChangeWeaponZooming()
 		playerCamera->SetFieldOfView(90);
 		bisZooming = false;
 	}
+}
+
+void AMyPlayer::SetGrenade()
+{
+	grenadeComp->SetVisibility(true);
+	PlayGrenadeAnimMontage(TEXT("Set"));
 }
 
 void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
