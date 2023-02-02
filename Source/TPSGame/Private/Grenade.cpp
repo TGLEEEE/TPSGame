@@ -15,14 +15,13 @@ AGrenade::AGrenade()
 	PrimaryActorTick.bCanEverTick = true;
 
 	grenadeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
-	SetRootComponent(grenadeComp);
-	//grenadeComp->SetupAttachment(RootComponent);
+	grenadeComp->SetupAttachment(RootComponent);
 	ConstructorHelpers::FObjectFinder<UStaticMesh>tempGrenade(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/GrenadeLauncherA_Ammo.GrenadeLauncherA_Ammo'"));
 	if (tempGrenade.Succeeded())
 	{
 		grenadeComp->SetStaticMesh(tempGrenade.Object);
 	}
-	grenadeComp->SetRelativeScale3D(FVector(3.f));
+	grenadeComp->SetRelativeScale3D(FVector(2.f));
 	grenadeComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 
 	projectileComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
@@ -30,7 +29,7 @@ AGrenade::AGrenade()
 	projectileComp->MaxSpeed = 1000.f;
 	projectileComp->ProjectileGravityScale = 1.f;
 	projectileComp->bShouldBounce = true;
-	projectileComp->Bounciness = 0.05f;
+	projectileComp->Bounciness = 0.02f;
 	projectileComp->SetUpdatedComponent(grenadeComp);
 	projectileComp->SetVelocityInLocalSpace(FVector(1.f, 0, 0.5f));
 }

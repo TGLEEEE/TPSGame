@@ -98,7 +98,9 @@ AMyPlayer::AMyPlayer()
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	// MyPlayerAnim 캐스팅
 	anim = Cast<UMyPlayerAnim>(GetMesh()->GetAnimInstance());
+
 	// 위젯
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
@@ -126,6 +128,12 @@ void AMyPlayer::Tick(float DeltaTime)
 	newDir.Normalize();
 	// 변환된 dir로 이동 (속도는 self에)
 	AddMovementInput(newDir);
+
+	// 수류탄 스폰 위치
+	grenadeFireLoc = GetActorLocation() + FVector(8.f, 27.f, 120.f);
+
+	// 수류탄 스폰 velocity를 플레이어 로테이션에 맞게 주고 싶다
+	grenadeLaunchVelocity = playerTrans.TransformVector(FVector(1.f, 0, 0.5f));
 }
 
 // Called to bind functionality to input
@@ -316,7 +324,7 @@ void AMyPlayer::FireKnife()
 
 void AMyPlayer::FireGrenade()
 {
-	GetWorld()->SpawnActor<AGrenade>(grenadeFactory, GetActorLocation()+FVector(8.f, 27.f, 94.f), GetControlRotation());
+	AActor* greActor = GetWorld()->SpawnActor<AGrenade>(grenadeFactory, grenadeFireLoc, GetControlRotation());
 }
 
 void AMyPlayer::Zoom()
@@ -396,6 +404,15 @@ void AMyPlayer::PlaySetGrenadeAnim()
 	{
 		anim->PlayGrenadeAnim(TEXT("Set"));
 	}
+	FPredictProjectilePathParams param;
+	param.StartLocation = grenadeFireLoc;
+	param.LaunchVelocity = grenadeLaunchVelocity * 1000.f;
+	param.ProjectileRadius = 6.f;
+	param.DrawDebugTime = 5.f;
+	param.SimFrequency = 30.f;
+	param.DrawDebugType = EDrawDebugTrace::ForDuration;
+	FPredictProjectilePathResult result;
+	bool bHit = UGameplayStatics::PredictProjectilePath(GetWorld(), param, result);
 }
 
 void AMyPlayer::PlayThrowGrenadeAnim()

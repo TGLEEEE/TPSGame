@@ -117,4 +117,6 @@ private:
 	bool bisZooming;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
+	FVector grenadeFireLoc;
+	FVector grenadeLaunchVelocity;
 };
