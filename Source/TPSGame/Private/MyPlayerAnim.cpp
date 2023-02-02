@@ -19,7 +19,35 @@ void UMyPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
+void UMyPlayerAnim::AnimNotify_Get()
+{
+	AMyPlayer* player = Cast<AMyPlayer>(TryGetPawnOwner());
+	if (player)
+	{
+		player->grenadeComp->SetVisibility(true);
+	}
+}
+
+void UMyPlayerAnim::AnimNotify_Throw()
+{
+	AMyPlayer* player = Cast<AMyPlayer>(TryGetPawnOwner());
+	if (player)
+	{
+		player->grenadeComp->SetVisibility(false);
+		player->FireGrenade();
+	}
+}
+
 void UMyPlayerAnim::FireAnim()
 {
-	Montage_Play(fireAnim);
+	Montage_Play(fireAnimMontage);
+}
+
+void UMyPlayerAnim::PlayGrenadeAnim(FName sectionName)
+{
+	AMyPlayer* player = Cast<AMyPlayer>(TryGetPawnOwner());
+	if (player)
+	{
+		player->PlayAnimMontage(grenadeAnimMontage, 2.f, sectionName);
+	}
 }

@@ -12,7 +12,6 @@ enum class WeaponList : uint8
 	Rifle,
 	RocketLauncher,
 	Knife,
-	Grenade
 };
 
 UCLASS()
@@ -35,17 +34,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class USpringArmComponent* playerSpringArm;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UCameraComponent* playerCamera;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rocketLauncherComp;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rifleComp;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* knifeComp;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* grenadeComp;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
@@ -59,12 +58,11 @@ public:
 	TSubclassOf<class UUserWidget> crossHitFactory;
 	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void PlayGrenadeAnimMontage(FName sectionName);
+	int GetPlayerHP();
 
 	void SetPlayerHP(int hp);
-	int GetPlayerHP();
+	void FireGrenade();
+	class UMyPlayerAnim* anim;
 
 private:
 
@@ -80,17 +78,16 @@ private:
 	void ArmRocketLauncher();
 	void ArmRifle();
 	void ArmKnife();
-	void ArmGrenade();
 	void ChangeWeapon(WeaponList value);
 	void FireRifle();
 	void FireRocketLauncher();
 	void FireKnife();
-	void FireGrenade();
 	void Zoom();
 	void ZoomOut();
 	void CrossHit();
 	void ChangeWeaponZooming();
-	void SetGrenade();
+	void PlaySetGrenadeAnim();
+	void PlayThrowGrenadeAnim();
 
 	UFUNCTION()
 	void KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

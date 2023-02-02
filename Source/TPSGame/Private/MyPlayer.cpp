@@ -54,12 +54,12 @@ AMyPlayer::AMyPlayer()
 	{
 		rocketLauncherComp->SetSkeletalMesh(tempRocketLauncher.Object);
 	}
-	rocketLauncherComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
-	rocketLauncherComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 5.f), FRotator(79.94f, -149.69f, -318.51f));
+	rocketLauncherComp->SetupAttachment(GetMesh(), TEXT("handLSoc"));
+	rocketLauncherComp->SetRelativeLocationAndRotation(FVector(25.32f, 1.74f, -11.17f), FRotator(19.04f, -243.28f, -13.75f));
 	// 라이플
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
-	rifleComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
-	rifleComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 5.f), FRotator(79.94f, -149.69f, -318.51f));
+	rifleComp->SetupAttachment(GetMesh(), TEXT("handLSoc"));
+	rifleComp->SetRelativeLocationAndRotation(FVector(25.32f, 1.74f, -11.17f), FRotator(19.04f, -243.28f, -13.75f));
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRifle(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'"));
 	if (tempRifle.Succeeded())
 	{
@@ -72,7 +72,7 @@ AMyPlayer::AMyPlayer()
 	}
 	// 나이프
 	knifeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Knife Mesh"));
-	knifeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	knifeComp->SetupAttachment(GetMesh(), TEXT("handLSoc"));
 	knifeComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 5.f), FRotator(79.94f, -149.69f, -318.51f));
 	knifeComp->SetCollisionProfileName(TEXT("WeaponPreset"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh>tempKnife(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Knife_StaticMesh.Knife_StaticMesh'"));
@@ -82,14 +82,15 @@ AMyPlayer::AMyPlayer()
     }
 	// 수류탄
 	grenadeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Greande Mesh"));
-	grenadeComp->SetupAttachment(GetMesh());
+	grenadeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
 	grenadeComp->SetRelativeLocation(FVector(-30, 0, 120));
+	grenadeComp->SetRelativeLocationAndRotation(FVector(0.65f, -9.24f, 4.f), FRotator(0.f, -15.f, 0.f));
 	ConstructorHelpers::FObjectFinder<UStaticMesh>tempGrenade(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/GrenadeLauncherA_Ammo.GrenadeLauncherA_Ammo'"));
 	if (tempGrenade.Succeeded())
     {
 	    grenadeComp->SetStaticMesh(tempGrenade.Object);
     }
-	grenadeComp->SetRelativeScale3D(FVector(3.f));
+	grenadeComp->SetRelativeScale3D(FVector(2.f));
 
 }
 
@@ -97,6 +98,7 @@ AMyPlayer::AMyPlayer()
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	anim = Cast<UMyPlayerAnim>(GetMesh()->GetAnimInstance());
 	// 위젯
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
@@ -141,8 +143,8 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Rifle"), IE_Pressed, this, &AMyPlayer::ArmRifle);
 	PlayerInputComponent->BindAction(TEXT("RocketLauncher"), IE_Pressed, this, &AMyPlayer::ArmRocketLauncher);
 	PlayerInputComponent->BindAction(TEXT("Knife"), IE_Pressed, this, &AMyPlayer::ArmKnife);
-	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Pressed, this, &AMyPlayer::SetGrenade);
-	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Released, this, &AMyPlayer::FireGrenade);
+	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Pressed, this, &AMyPlayer::PlaySetGrenadeAnim);
+	PlayerInputComponent->BindAction(TEXT("Grenade"), IE_Released, this, &AMyPlayer::PlayThrowGrenadeAnim);
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Pressed, this, &AMyPlayer::Zoom);
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &AMyPlayer::ZoomOut);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AMyPlayer::InputActionRun);
@@ -188,9 +190,6 @@ void AMyPlayer::InputActionFire()
 	case WeaponList::Knife:
 		FireKnife();
 		break;
-	case WeaponList::Grenade:
-		FireGrenade();
-		break;
 	default:
 		break;
 	}
@@ -226,11 +225,6 @@ void AMyPlayer::ArmKnife()
 	ChangeWeapon(WeaponList::Knife);
 }
 
-void AMyPlayer::ArmGrenade()
-{
-	ChangeWeapon(WeaponList::Grenade);
-}
-
 void AMyPlayer::ChangeWeapon(WeaponList value)
 {
 	switch (value)
@@ -259,16 +253,6 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(false);
 			knifeComp->SetVisibility(true);
 			grenadeComp->SetVisibility(false);
-		break;
-	case
-		WeaponList::Grenade:
-			ChangeWeaponZooming();
-			nowWeapon = value;
-			rifleComp->SetVisibility(false);
-			rocketLauncherComp->SetVisibility(false);
-			knifeComp->SetVisibility(false);
-			grenadeComp->SetVisibility(true);
-			PlayGrenadeAnimMontage(TEXT("Set"));
 		break;
 	default:
 		break;
@@ -307,7 +291,6 @@ void AMyPlayer::FireRifle()
 	rifleComp->PlayAnimation(animRifleFire, false);
 
 	// 반동 애니메이션
-	auto anim = Cast<UMyPlayerAnim>(GetMesh()->GetAnimInstance());
 	if (anim)
 	{
 		anim->FireAnim();
@@ -333,9 +316,7 @@ void AMyPlayer::FireKnife()
 
 void AMyPlayer::FireGrenade()
 {
-	PlayGrenadeAnimMontage(TEXT("Go"));
-	GetWorld()->SpawnActor<AGrenade>(grenadeFactory, GetActorLocation()+FVector(0, 0, 120.f), GetControlRotation());
-	grenadeComp->SetVisibility(false);
+	GetWorld()->SpawnActor<AGrenade>(grenadeFactory, GetActorLocation()+FVector(8.f, 27.f, 94.f), GetControlRotation());
 }
 
 void AMyPlayer::Zoom()
@@ -355,8 +336,6 @@ void AMyPlayer::Zoom()
 		bisZooming = true;
 		break;
 	case WeaponList::Knife:
-		break;
-	case WeaponList::Grenade:
 		break;
 	default:
 		break;
@@ -380,8 +359,6 @@ void AMyPlayer::ZoomOut()
 		bisZooming = false;
 		break;
 	case WeaponList::Knife:
-		break;
-	case WeaponList::Grenade:
 		break;
 	default:
 		break;
@@ -413,14 +390,24 @@ void AMyPlayer::ChangeWeaponZooming()
 	}
 }
 
-void AMyPlayer::SetGrenade()
+void AMyPlayer::PlaySetGrenadeAnim()
 {
-	grenadeComp->SetVisibility(true);
-	PlayGrenadeAnimMontage(TEXT("Set"));
+	if (anim)
+	{
+		anim->PlayGrenadeAnim(TEXT("Set"));
+	}
+}
+
+void AMyPlayer::PlayThrowGrenadeAnim()
+{
+	if (anim)
+	{
+		anim->PlayGrenadeAnim(TEXT("Go"));
+	}
 }
 
 void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AEnemy* enemy = Cast<AEnemy>(OtherActor);
 	if (enemy)

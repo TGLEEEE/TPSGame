@@ -24,7 +24,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bisFalling;
 	UPROPERTY(EditDefaultsOnly)
-	class UAnimMontage* fireAnim;
-	
+	class UAnimMontage* fireAnimMontage;
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* grenadeAnimMontage;
+
+	UFUNCTION()
+	void AnimNotify_Get();
+	UFUNCTION()
+	void AnimNotify_Throw();
+	UFUNCTION()
 	void FireAnim();
+	UFUNCTION()
+	void PlayGrenadeAnim(FName sectionName);
 };
