@@ -5,11 +5,15 @@
 #include "MyPlayer.h"
 #include <GameFramework/CharacterMovementComponent.h>
 
+void UMyPlayerAnim::NativeBeginPlay()
+{
+	Super::NativeBeginPlay();
+	player = Cast<AMyPlayer>(TryGetPawnOwner());
+}
+
 void UMyPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-
-	AMyPlayer* player = Cast<AMyPlayer>(TryGetPawnOwner());
 	if (player)
 	{
 		FVector vel = player->GetVelocity();
@@ -21,20 +25,20 @@ void UMyPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 void UMyPlayerAnim::AnimNotify_Get()
 {
-	AMyPlayer* player = Cast<AMyPlayer>(TryGetPawnOwner());
 	if (player)
 	{
 		player->grenadeComp->SetVisibility(true);
+		player->bIsGrenadeAiming = true;
 	}
 }
 
 void UMyPlayerAnim::AnimNotify_Throw()
 {
-	AMyPlayer* player = Cast<AMyPlayer>(TryGetPawnOwner());
 	if (player)
 	{
 		player->grenadeComp->SetVisibility(false);
 		player->FireGrenade();
+		player->bIsGrenadeAiming = false;
 	}
 }
 
@@ -45,7 +49,6 @@ void UMyPlayerAnim::FireAnim()
 
 void UMyPlayerAnim::PlayGrenadeAnim(FName sectionName)
 {
-	AMyPlayer* player = Cast<AMyPlayer>(TryGetPawnOwner());
 	if (player)
 	{
 		player->PlayAnimMontage(grenadeAnimMontage, 2.f, sectionName);

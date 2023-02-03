@@ -63,6 +63,7 @@ public:
 	void SetPlayerHP(int hp);
 	void FireGrenade();
 	class UMyPlayerAnim* anim;
+	bool bIsGrenadeAiming;
 
 private:
 
@@ -88,6 +89,7 @@ private:
 	void ChangeWeaponZooming();
 	void PlaySetGrenadeAnim();
 	void PlayThrowGrenadeAnim();
+	void PredictGrenadePath();
 
 	UFUNCTION()
 	void KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -107,16 +109,17 @@ private:
 	UUserWidget* crossZoomUI;
 	UPROPERTY()
 	UUserWidget* crossHitUI;
-	FVector dir;
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;
+	FVector dir;
+	FVector grenadeFireLoc;
+	FVector grenadeLaunchVelocity;
 
 	int playerHP = 100;
 	bool bisHitUIOn;
 	bool bisZooming;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
-	FVector grenadeFireLoc;
-	FVector grenadeLaunchVelocity;
+
 };

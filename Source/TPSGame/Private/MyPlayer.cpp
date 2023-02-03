@@ -134,6 +134,11 @@ void AMyPlayer::Tick(float DeltaTime)
 
 	// 수류탄 스폰 velocity를 플레이어 로테이션에 맞게 주고 싶다
 	grenadeLaunchVelocity = playerTrans.TransformVector(FVector(1.f, 0, 0.5f));
+
+	if (bIsGrenadeAiming)
+	{
+		PredictGrenadePath();
+	}
 }
 
 // Called to bind functionality to input
@@ -404,15 +409,6 @@ void AMyPlayer::PlaySetGrenadeAnim()
 	{
 		anim->PlayGrenadeAnim(TEXT("Set"));
 	}
-	FPredictProjectilePathParams param;
-	param.StartLocation = grenadeFireLoc;
-	param.LaunchVelocity = grenadeLaunchVelocity * 1000.f;
-	param.ProjectileRadius = 6.f;
-	param.DrawDebugTime = 5.f;
-	param.SimFrequency = 30.f;
-	param.DrawDebugType = EDrawDebugTrace::ForDuration;
-	FPredictProjectilePathResult result;
-	bool bHit = UGameplayStatics::PredictProjectilePath(GetWorld(), param, result);
 }
 
 void AMyPlayer::PlayThrowGrenadeAnim()
@@ -421,6 +417,19 @@ void AMyPlayer::PlayThrowGrenadeAnim()
 	{
 		anim->PlayGrenadeAnim(TEXT("Go"));
 	}
+}
+
+void AMyPlayer::PredictGrenadePath()
+{
+	FPredictProjectilePathResult predictResult;
+	FPredictProjectilePathParams predictParam;
+	predictParam.StartLocation = grenadeFireLoc;
+	predictParam.LaunchVelocity = grenadeLaunchVelocity * 1000.f;
+	predictParam.ProjectileRadius = 6.f;
+	predictParam.DrawDebugType = EDrawDebugTrace::ForOneFrame;
+	predictParam.SimFrequency = 30.f;
+	predictParam.MaxSimTime = 5.f;
+	UGameplayStatics::PredictProjectilePath(GetWorld(), predictParam, predictResult);
 }
 
 void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
