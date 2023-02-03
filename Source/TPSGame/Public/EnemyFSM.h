@@ -104,5 +104,5 @@ public:
 	//시체 남기는 시간
 	float dieDelayTime = 10.0f;
 
-		
+	FTimerHandle aiTimerHandle;		
 };

@@ -45,7 +45,10 @@ void UEnemyFSM::BeginPlay()
 	ai = Cast<AAIController>(me->GetController());
 
 	
-
+	GetWorld()->GetTimerManager().SetTimer(aiTimerHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			bDoOnce = false;
+		}), 3.f, true);
 }
 
 
@@ -278,4 +281,5 @@ void UEnemyFSM::OnDamageProcess(int val)
 
 	ai->StopMovement();
 }
+
 
