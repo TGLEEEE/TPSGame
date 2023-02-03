@@ -39,7 +39,8 @@ public:
 	//상대변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSM)
 	EEnemyState mState = EEnemyState :: Idle;
-	
+	bool bDoOnce;
+
 	//대기상태
 	void IdleState();
 	//이동상태
@@ -88,6 +89,7 @@ public:
 	UPROPERTY()
 	class UEnemyAnim* anim;
 
+	
 	//Enemy를 소유하고 있는 AlController
 	UPROPERTY()
 		class AAIController* ai;
