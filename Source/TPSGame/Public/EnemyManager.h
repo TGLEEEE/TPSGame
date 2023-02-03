@@ -48,4 +48,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float waveTime = 10;
+
+	UPROPERTY(EditAnywhere, Category = SpawnSettings)
+	bool spawnStart;
+
 };
