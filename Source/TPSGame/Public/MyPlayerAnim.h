@@ -13,7 +13,9 @@ UCLASS()
 class TPSGAME_API UMyPlayerAnim : public UAnimInstance
 {
 	GENERATED_BODY()
-	
+protected:
+	virtual void NativeBeginPlay() override;
+
 public:
 	void NativeUpdateAnimation(float DeltaSeconds) override;
 
@@ -23,4 +25,18 @@ public:
 	float rightVel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bisFalling;
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* fireAnimMontage;
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* grenadeAnimMontage;
+	class AMyPlayer* player;
+
+	UFUNCTION()
+	void AnimNotify_Get();
+	UFUNCTION()
+	void AnimNotify_Throw();
+	UFUNCTION()
+	void FireAnim();
+	UFUNCTION()
+	void PlayGrenadeAnim(FName sectionName);
 };

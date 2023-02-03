@@ -4,7 +4,7 @@
 #include "GrenadeExplosion.h"
 #include <PhysicsEngine/RadialForceComponent.h>
 #include <Components/SphereComponent.h>
-#include <Particles/ParticleSystemComponent.h>
+#include <Kismet/GameplayStatics.h>
 #include "EnemyFSM.h"
 #include "Enemy.h"
 
@@ -16,21 +16,14 @@ AGrenadeExplosion::AGrenadeExplosion()
 
 	radialForceComp = CreateDefaultSubobject<URadialForceComponent>(TEXT("Radial Force Component"));
 	SetRootComponent(radialForceComp);
-	radialForceComp->Radius = 400.f;
+	radialForceComp->Radius = 300.f;
 	radialForceComp->ImpulseStrength = 10000.f;
 
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
 	sphereComp->SetupAttachment(RootComponent);
-	sphereComp->SetSphereRadius(400.f);
-	sphereComp->SetCollisionProfileName(TEXT("WeaponPreset"));
+	sphereComp->SetSphereRadius(300.f);
+	sphereComp->SetCollisionProfileName(TEXT("ExplosionPreset"));
 
-	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle Component"));
-	particleComp->SetupAttachment(RootComponent);
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempExplosionFX(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Weapon/MilitaryWeapSilver/FX/P_Grenade_Explosion_01.P_Grenade_Explosion_01'"));
-	if (tempExplosionFX.Succeeded())
-	{
-		particleComp->SetTemplate(tempExplosionFX.Object);
-	}
 }
 
 // Called when the game starts or when spawned
@@ -40,7 +33,8 @@ void AGrenadeExplosion::BeginPlay()
 
 	radialForceComp->FireImpulse();
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &AGrenadeExplosion::OnOverlap);
-	GetWorldTimerManager().SetTimer(destroyHandle, this, &AGrenadeExplosion::SelfDestroy, 3.f);
+	GetWorldTimerManager().SetTimer(destroyHandle, this, &AGrenadeExplosion::SelfDestroy, 0.5f);
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), grenadeExplosionFX, GetActorTransform());
 }
 
 // Called every frame

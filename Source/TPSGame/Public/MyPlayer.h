@@ -12,7 +12,6 @@ enum class WeaponList : uint8
 	Rifle,
 	RocketLauncher,
 	Knife,
-	Grenade
 };
 
 UCLASS()
@@ -44,6 +43,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rifleComp;
 	UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent* knifeComp;
+	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* grenadeComp;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
@@ -57,9 +58,12 @@ public:
 	TSubclassOf<class UUserWidget> crossHitFactory;
 	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
+	int GetPlayerHP();
 
 	void SetPlayerHP(int hp);
-	int GetPlayerHP();
+	void FireGrenade();
+	class UMyPlayerAnim* anim;
+	bool bIsGrenadeAiming;
 
 private:
 
@@ -70,22 +74,25 @@ private:
 	void InputActionJump();
 	void InputActionFire();
 	void InputActionFireReleased();
+	void InputActionRun();
+	void InputActionRunReleased();
 	void ArmRocketLauncher();
 	void ArmRifle();
 	void ArmKnife();
-	void ArmGrenade();
 	void ChangeWeapon(WeaponList value);
 	void FireRifle();
 	void FireRocketLauncher();
 	void FireKnife();
-	void FireGrenade();
 	void Zoom();
 	void ZoomOut();
 	void CrossHit();
+	void ChangeWeaponZooming();
+	void PlaySetGrenadeAnim();
+	void PlayThrowGrenadeAnim();
+	void PredictGrenadePath();
 
-	int playerHP = 100;
-	bool bisHitUIOn;
-	bool bisZooming;
+	UFUNCTION()
+	void KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* bulletEffectFactory;
@@ -93,16 +100,26 @@ private:
 	UAnimSequence* animRifleFire;
 	UPROPERTY(EditAnywhere)
 	UAnimSequence* animRockerLauncherFire;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UCameraShakeBase>rocketCamShakeFactory;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	UUserWidget* crossIdleUI;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	UUserWidget* crossZoomUI;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	UUserWidget* crossHitUI;
-	FVector dir;
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;
+	FVector dir;
+	FVector grenadeFireLoc;
+	FVector grenadeLaunchVelocity;
+
+	int playerHP = 100;
+	bool bisHitUIOn;
+	bool bisZooming;
+	float walkSpeed = 400.f;
+	float runSpeed = 800.f;
 
 };

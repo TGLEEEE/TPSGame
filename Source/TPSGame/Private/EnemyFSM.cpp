@@ -256,7 +256,7 @@ void UEnemyFSM::OnDamageProcess(int val)
 		currentTime = 0;
 		//피격애니메이션 재생
 		int32 index = FMath::RandRange(0, 1);
-		FString sectionName = FString::Printf(TEXT("Damage & d"), 0);
+		FString sectionName = FString::Printf(TEXT("Damage%d"), index);
 		anim->PlayDamageAnim(FName(*sectionName));
 
 	}

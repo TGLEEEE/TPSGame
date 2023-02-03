@@ -31,5 +31,4 @@ public:
 	TSubclassOf<class AGrenadeExplosion> explosion;
 	void SelfExplosion();
 
-
 };
