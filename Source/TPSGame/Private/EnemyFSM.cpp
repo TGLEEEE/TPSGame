@@ -75,6 +75,8 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		break;
 	}
 
+
+
 }
 //대기상태 - (이후에 플레이어가 나타날때까지) 
 void UEnemyFSM::IdleState()
@@ -115,6 +117,7 @@ void UEnemyFSM::MoveState()
 	{
 		bDoOnce = true;
 		ai->MoveToActor(target);
+		
 		
 	}
 
