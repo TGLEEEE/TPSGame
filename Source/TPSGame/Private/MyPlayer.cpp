@@ -91,7 +91,6 @@ AMyPlayer::AMyPlayer()
 	    grenadeComp->SetStaticMesh(tempGrenade.Object);
     }
 	grenadeComp->SetRelativeScale3D(FVector(2.f));
-
 }
 
 // Called when the game starts or when spawned
