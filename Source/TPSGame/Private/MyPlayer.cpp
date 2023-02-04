@@ -72,10 +72,10 @@ AMyPlayer::AMyPlayer()
 	}
 	// ³ªÀÌÇÁ
 	knifeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Knife Mesh"));
-	knifeComp->SetupAttachment(GetMesh(), TEXT("handLSoc"));
-	knifeComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 5.f), FRotator(79.94f, -149.69f, -318.51f));
+	knifeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	knifeComp->SetRelativeLocationAndRotation(FVector(97.76f, -26.10f, 5.42f), FRotator(89.13f, -192.53f, 177.53f));
 	knifeComp->SetCollisionProfileName(TEXT("WeaponPreset"));
-	ConstructorHelpers::FObjectFinder<UStaticMesh>tempKnife(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Knife_StaticMesh.Knife_StaticMesh'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh>tempKnife(TEXT("/Script/Engine.StaticMesh'/Game/Construction_VOL2/Meshes/SM_Shovel_01.SM_Shovel_01'"));
     if (tempKnife.Succeeded())
     {
 	    knifeComp->SetStaticMesh(tempKnife.Object);
@@ -200,6 +200,7 @@ void AMyPlayer::InputActionFire()
 		FireRocketLauncher();
 		break;
 	case WeaponList::Knife:
+		bIsKnifeAttackPressing = true;
 		FireKnife();
 		break;
 	default:
@@ -209,7 +210,19 @@ void AMyPlayer::InputActionFire()
 
 void AMyPlayer::InputActionFireReleased()
 {
-	GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+	switch (nowWeapon)
+	{
+	case WeaponList::Rifle:
+		GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+		break;
+	case WeaponList::RocketLauncher:
+		break;
+	case WeaponList::Knife:
+		bIsKnifeAttackPressing = false;
+		break;
+	default:
+		break;
+	}
 }
 
 void AMyPlayer::InputActionRun()
@@ -248,6 +261,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(false);
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
+			anim->bisKnifeMode = false;
 		break;
 	case 
 		WeaponList::RocketLauncher:
@@ -256,6 +270,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(true);
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
+			anim->bisKnifeMode = false;
 		break;
 	case
 		WeaponList::Knife:
@@ -265,6 +280,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(false);
 			knifeComp->SetVisibility(true);
 			grenadeComp->SetVisibility(false);
+			anim->bisKnifeMode = true;
 		break;
 	default:
 		break;
@@ -323,7 +339,10 @@ void AMyPlayer::FireRocketLauncher()
 
 void AMyPlayer::FireKnife()
 {
-	UE_LOG(LogTemp, Warning, TEXT("knife attack"));
+	if (anim)
+	{
+		anim->PlayKnifeAttackAnim(TEXT("FirstAttack"));
+	}
 }
 
 void AMyPlayer::FireGrenade()
@@ -339,13 +358,13 @@ void AMyPlayer::Zoom()
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
 		playerCamera->SetFieldOfView(60.f);
-		bisZooming = true;
+		bIsZooming = true;
 		break;
 	case WeaponList::RocketLauncher:
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
 		playerCamera->SetFieldOfView(60.f);
-		bisZooming = true;
+		bIsZooming = true;
 		break;
 	case WeaponList::Knife:
 		break;
@@ -362,13 +381,13 @@ void AMyPlayer::ZoomOut()
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90.f);
-		bisZooming = false;
+		bIsZooming = false;
 		break;
 	case WeaponList::RocketLauncher:
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90.f);
-		bisZooming = false;
+		bIsZooming = false;
 		break;
 	case WeaponList::Knife:
 		break;
@@ -379,32 +398,32 @@ void AMyPlayer::ZoomOut()
 
 void AMyPlayer::CrossHit()
 {
-	if (!bisHitUIOn)
+	if (!bIsHitUIOn)
 	{
-		bisHitUIOn = true;
+		bIsHitUIOn = true;
 		crossHitUI->AddToViewport();
 		GetWorld()->GetTimerManager().SetTimer(crossHitTimerhandle, FTimerDelegate::CreateLambda([&]()
 			{
 				crossHitUI->RemoveFromParent();
-				bisHitUIOn = false;
+				bIsHitUIOn = false;
 			}), 1.f, false);
 	}
 }
 
 void AMyPlayer::ChangeWeaponZooming()
 {
-	if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
+	if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bIsZooming)
 	{
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90);
-		bisZooming = false;
+		bIsZooming = false;
 	}
 }
 
 void AMyPlayer::PlaySetGrenadeAnim()
 {
-	if (anim)
+	if (anim && !anim->bisKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Set"));
 	}
@@ -412,7 +431,7 @@ void AMyPlayer::PlaySetGrenadeAnim()
 
 void AMyPlayer::PlayThrowGrenadeAnim()
 {
-	if (anim)
+	if (anim && !anim->bisKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Go"));
 	}

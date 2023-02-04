@@ -58,12 +58,14 @@ public:
 	TSubclassOf<class UUserWidget> crossHitFactory;
 	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
-	int GetPlayerHP();
+	bool bIsGrenadeAiming;
+	bool bIsKnifeAttackPressing;
+	class UMyPlayerAnim* anim;
 
+	int GetPlayerHP();
 	void SetPlayerHP(int hp);
 	void FireGrenade();
-	class UMyPlayerAnim* anim;
-	bool bIsGrenadeAiming;
+	void CrossHit();
 
 private:
 
@@ -85,7 +87,6 @@ private:
 	void FireKnife();
 	void Zoom();
 	void ZoomOut();
-	void CrossHit();
 	void ChangeWeaponZooming();
 	void PlaySetGrenadeAnim();
 	void PlayThrowGrenadeAnim();
@@ -117,8 +118,8 @@ private:
 	FVector grenadeLaunchVelocity;
 
 	int playerHP = 100;
-	bool bisHitUIOn;
-	bool bisZooming;
+	bool bIsHitUIOn;
+	bool bIsZooming;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
 

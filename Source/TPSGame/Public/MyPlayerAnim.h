@@ -25,10 +25,14 @@ public:
 	float rightVel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bisFalling;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bisKnifeMode;
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* fireAnimMontage;
 	UPROPERTY(EditDefaultsOnly)
-	class UAnimMontage* grenadeAnimMontage;
+	class UAnimMontage* grenadeAnimMontage;	
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* knifeAnimMontage;
 	class AMyPlayer* player;
 
 	UFUNCTION()
@@ -36,7 +40,11 @@ public:
 	UFUNCTION()
 	void AnimNotify_Throw();
 	UFUNCTION()
+	void AnimNotify_FirstAttackEnd();
+	UFUNCTION()
 	void FireAnim();
 	UFUNCTION()
 	void PlayGrenadeAnim(FName sectionName);
+	UFUNCTION()
+	void PlayKnifeAttackAnim(FName sectionName);
 };

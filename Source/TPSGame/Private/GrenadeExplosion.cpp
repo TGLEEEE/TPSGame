@@ -7,6 +7,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "EnemyFSM.h"
 #include "Enemy.h"
+#include "EngineUtils.h"
 
 // Sets default values
 AGrenadeExplosion::AGrenadeExplosion()
@@ -53,6 +54,10 @@ void AGrenadeExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		if (fsm)
 		{
 			fsm->OnDamageProcess(5);
+		}
+		for (AMyPlayer* player : TActorRange<AMyPlayer>(GetWorld()))
+		{
+			player->CrossHit();
 		}
 	}
 }

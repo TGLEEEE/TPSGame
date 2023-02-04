@@ -7,6 +7,7 @@
 #include "Enemy.h"
 #include "EnemyFSM.h"
 #include <Kismet/GameplayStatics.h>
+#include "EngineUtils.h"
 
 // Sets default values
 ARocketExplosion::ARocketExplosion()
@@ -55,6 +56,10 @@ void ARocketExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (fsm)
 		{
 			fsm->OnDamageProcess(10);
+		}
+		for (AMyPlayer* player : TActorRange<AMyPlayer>(GetWorld()))
+		{
+			player->CrossHit();
 		}
 	}
 }
