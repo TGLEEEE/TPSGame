@@ -76,6 +76,9 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	case EEnemyState::Die:
 		DieState();
 		break;
+	case EEnemyState::Climb:
+		ClimbState();
+		break;
 	}
 
 
@@ -243,16 +246,21 @@ void UEnemyFSM::DieState()
 	}
 }
 
+void UEnemyFSM::ClimbState()
+{
+
+}
+
 //피격알림 이벤트 함수
 void UEnemyFSM::OnDamageProcess(int val)
 {
-	UE_LOG(LogTemp, Warning, TEXT("enemy hited"));
+	//UE_LOG(LogTemp, Warning, TEXT("enemy hited"));
 	//체력감소 
 	hp -= val;
 	//만약에 체력이 남아있다면 
 	if (hp > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("?"));
+		//UE_LOG(LogTemp, Warning, TEXT("?"));
 		//상태를 피격으로 전환
 		mState = EEnemyState::Damage;
 
@@ -266,7 +274,7 @@ void UEnemyFSM::OnDamageProcess(int val)
 	//그렇지않으먄
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("zugum"));
+		//UE_LOG(LogTemp, Warning, TEXT("zugum"));
 		//상태를 죽음으로 전환
 		mState = EEnemyState::Die;
 		//캡슐 충돌체 비활성화

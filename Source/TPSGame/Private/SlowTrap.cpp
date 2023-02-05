@@ -50,7 +50,7 @@ void ASlowTrap::Tick(float DeltaTime)
  	{
 		enemy->GetCharacterMovement()->MaxWalkSpeed = 100;
 		
-		//플레이어에잇는 canMove변수를 False로만든다
+		//enemy에잇는 canMove변수를 False로만든다
 		//UEnemyFSM* FSMEnemy = Cast<UEnemyFSM>(enemy->fsm);
 		//if (FSMEnemy)
 		//{
