@@ -46,6 +46,8 @@ public:
 	class UStaticMeshComponent* knifeComp;
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* grenadeComp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USplineComponent* splineComp;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
 	UPROPERTY(EditDefaultsOnly)
@@ -66,6 +68,12 @@ public:
 	void SetPlayerHP(int hp);
 	void FireGrenade();
 	void CrossHit();
+
+	// 수류탄 궤적 그리기 BP로 구현위해
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FVector> predictPathLoc;
+	UFUNCTION(BlueprintImplementableEvent)
+	void DrawGrenadePath();
 
 private:
 

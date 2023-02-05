@@ -19,6 +19,7 @@
 #include "RocketAmmoPre.h"
 #include "Animation/AnimSequence.h"
 #include "Engine/StaticMeshSocket.h"
+#include <Components/SplineComponent.h>
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -91,6 +92,11 @@ AMyPlayer::AMyPlayer()
 	    grenadeComp->SetStaticMesh(tempGrenade.Object);
     }
 	grenadeComp->SetRelativeScale3D(FVector(2.f));
+	// 수류탄 궤적 스플라인
+	splineComp = CreateDefaultSubobject<USplineComponent>(TEXT("Spline Comp"));
+	splineComp->SetupAttachment(GetMesh());
+	splineComp->SetRelativeLocation(FVector(8.f, 27.f, 120.f));
+
 }
 
 // Called when the game starts or when spawned
@@ -105,6 +111,8 @@ void AMyPlayer::BeginPlay()
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	crossIdleUI->AddToViewport();
+
+	// 시작시 장비
 	ArmRifle();
 
 	knifeComp->OnComponentBeginOverlap.AddDynamic(this, &AMyPlayer::KnifeOverlap);
@@ -443,11 +451,17 @@ void AMyPlayer::PredictGrenadePath()
 	FPredictProjectilePathParams predictParam;
 	predictParam.StartLocation = grenadeFireLoc;
 	predictParam.LaunchVelocity = grenadeLaunchVelocity * 1000.f;
-	predictParam.ProjectileRadius = 6.f;
-	predictParam.DrawDebugType = EDrawDebugTrace::ForOneFrame;
-	predictParam.SimFrequency = 30.f;
-	predictParam.MaxSimTime = 5.f;
+	predictParam.DrawDebugType = EDrawDebugTrace::None;
+	predictParam.SimFrequency = 20.f;
+	predictParam.MaxSimTime = 10.f;
 	UGameplayStatics::PredictProjectilePath(GetWorld(), predictParam, predictResult);
+
+	for (FPredictProjectilePathPointData pathDataToLoc : predictResult.PathData)
+	{
+		predictPathLoc.Add(pathDataToLoc.Location);
+	}
+	DrawGrenadePath();
+	predictPathLoc.Empty();
 }
 
 void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
