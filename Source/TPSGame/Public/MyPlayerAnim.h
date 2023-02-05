@@ -24,9 +24,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float rightVel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool bisFalling;
+	bool bIsFalling;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool bisKnifeMode;
+	bool bIsKnifeMode;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsDead;
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* fireAnimMontage;
 	UPROPERTY(EditDefaultsOnly)

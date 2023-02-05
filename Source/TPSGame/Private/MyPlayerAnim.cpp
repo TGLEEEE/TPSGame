@@ -19,7 +19,7 @@ void UMyPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 		FVector vel = player->GetVelocity();
 		forwardVel = FVector::DotProduct(vel, player->GetActorForwardVector());
 		rightVel = FVector::DotProduct(vel, player->GetActorRightVector());
-		bisFalling = player->GetCharacterMovement()->IsFalling();
+		bIsFalling = player->GetCharacterMovement()->IsFalling();
 	}
 }
 

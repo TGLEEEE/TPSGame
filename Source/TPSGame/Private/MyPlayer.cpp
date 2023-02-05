@@ -270,7 +270,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(false);
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
-			anim->bisKnifeMode = false;
+			anim->bIsKnifeMode = false;
 		break;
 	case 
 		WeaponList::RocketLauncher:
@@ -279,7 +279,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(true);
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
-			anim->bisKnifeMode = false;
+			anim->bIsKnifeMode = false;
 		break;
 	case
 		WeaponList::Knife:
@@ -289,7 +289,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(false);
 			knifeComp->SetVisibility(true);
 			grenadeComp->SetVisibility(false);
-			anim->bisKnifeMode = true;
+			anim->bIsKnifeMode = true;
 		break;
 	default:
 		break;
@@ -451,7 +451,7 @@ void AMyPlayer::ChangeWeaponZooming()
 
 void AMyPlayer::PlaySetGrenadeAnim()
 {
-	if (anim && !anim->bisKnifeMode)
+	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Set"));
 	}
@@ -459,7 +459,7 @@ void AMyPlayer::PlaySetGrenadeAnim()
 
 void AMyPlayer::PlayThrowGrenadeAnim()
 {
-	if (anim && !anim->bisKnifeMode)
+	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Go"));
 	}
