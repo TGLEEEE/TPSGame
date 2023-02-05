@@ -59,6 +59,16 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> crossHitFactory;
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> warningTextFactory;
+	UPROPERTY()
+	UUserWidget* crossIdleUI;
+	UPROPERTY()
+	UUserWidget* crossZoomUI;
+	UPROPERTY()
+	UUserWidget* crossHitUI;
+	UPROPERTY()
+	UUserWidget* warningTextUI;
+	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
 	bool bIsGrenadeAiming;
 	bool bIsKnifeAttackPressing;
@@ -112,12 +122,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCameraShakeBase>rocketCamShakeFactory;
 
-	UPROPERTY()
-	UUserWidget* crossIdleUI;
-	UPROPERTY()
-	UUserWidget* crossZoomUI;
-	UPROPERTY()
-	UUserWidget* crossHitUI;
+
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;

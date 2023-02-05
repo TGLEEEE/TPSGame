@@ -110,6 +110,7 @@ void AMyPlayer::BeginPlay()
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
+	warningTextUI = CreateWidget(GetWorld(), warningTextFactory);
 	crossIdleUI->AddToViewport();
 
 	// 시작시 장비
