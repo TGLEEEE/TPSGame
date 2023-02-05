@@ -15,5 +15,10 @@ class TPSGAME_API AWorldWarGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsStarted;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bCanSpawnZombie;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int currentCountdown;
 };

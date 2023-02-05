@@ -20,6 +20,7 @@
 #include "Animation/AnimSequence.h"
 #include "Engine/StaticMeshSocket.h"
 #include <Components/SplineComponent.h>
+#include "WorldWarGameMode.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -103,9 +104,9 @@ AMyPlayer::AMyPlayer()
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	// MyPlayerAnim 캐스팅
+	// 캐스팅
 	anim = Cast<UMyPlayerAnim>(GetMesh()->GetAnimInstance());
-
+	gm = Cast<AWorldWarGameMode>(GetWorld()->GetAuthGameMode());
 	// 위젯
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
@@ -126,7 +127,6 @@ void AMyPlayer::BeginPlay()
 void AMyPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	// 월드기준 dir를 플레이어기준 dir로 변화하기 위해 플레이어 rotaion을 트랜스폼으로 만듬
 	FTransform playerTrans(GetControlRotation());
 	// 플레이어 트랜스폼에 맞게 dir 변환
@@ -417,6 +417,25 @@ void AMyPlayer::CrossHit()
 				bIsHitUIOn = false;
 			}), 1.f, false);
 	}
+}
+
+void AMyPlayer::CountdownTimer(int time)
+{
+	gm->currentCountdown = time;
+	FTimerHandle countdownHandle;
+	GetWorldTimerManager().SetTimer(countdownHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			if (gm->currentCountdown > 0)
+			{
+				gm->currentCountdown--;
+			}
+			else
+			{
+				gm->currentCountdown = 0;
+				GetWorldTimerManager().ClearTimer(countdownHandle);
+				gm->bCanSpawnZombie = !gm->bCanSpawnZombie;
+			}
+		}),1.f , true);
 }
 
 void AMyPlayer::ChangeWeaponZooming()

@@ -73,11 +73,13 @@ public:
 	bool bIsGrenadeAiming;
 	bool bIsKnifeAttackPressing;
 	class UMyPlayerAnim* anim;
+	class AWorldWarGameMode* gm;
 
 	int GetPlayerHP();
 	void SetPlayerHP(int hp);
 	void FireGrenade();
 	void CrossHit();
+	void CountdownTimer(int time);
 
 	// 수류탄 궤적 그리기 BP로 구현위해
 	UPROPERTY(BlueprintReadWrite)
