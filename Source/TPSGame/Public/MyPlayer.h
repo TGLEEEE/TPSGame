@@ -46,6 +46,8 @@ public:
 	class UStaticMeshComponent* knifeComp;
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* grenadeComp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USplineComponent* splineComp;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARocketAmmo> rocketFactory;
 	UPROPERTY(EditDefaultsOnly)
@@ -57,13 +59,33 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> crossHitFactory;
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> warningTextFactory;
+	UPROPERTY()
+	UUserWidget* crossIdleUI;
+	UPROPERTY()
+	UUserWidget* crossZoomUI;
+	UPROPERTY()
+	UUserWidget* crossHitUI;
+	UPROPERTY()
+	UUserWidget* warningTextUI;
+	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
-	int GetPlayerHP();
+	bool bIsGrenadeAiming;
+	bool bIsKnifeAttackPressing;
+	class UMyPlayerAnim* anim;
+	class AWorldWarGameMode* gm;
 
+	int GetPlayerHP();
 	void SetPlayerHP(int hp);
 	void FireGrenade();
-	class UMyPlayerAnim* anim;
-	bool bIsGrenadeAiming;
+	void CrossHit();
+	void CountdownTimer(int time);
+
+	// 수류탄 궤적 그리기 BP로 구현위해
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FVector> predictPathLoc;
+	UFUNCTION(BlueprintImplementableEvent)
+	void DrawGrenadePath();
 
 private:
 
@@ -85,7 +107,6 @@ private:
 	void FireKnife();
 	void Zoom();
 	void ZoomOut();
-	void CrossHit();
 	void ChangeWeaponZooming();
 	void PlaySetGrenadeAnim();
 	void PlayThrowGrenadeAnim();
@@ -103,12 +124,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCameraShakeBase>rocketCamShakeFactory;
 
-	UPROPERTY()
-	UUserWidget* crossIdleUI;
-	UPROPERTY()
-	UUserWidget* crossZoomUI;
-	UPROPERTY()
-	UUserWidget* crossHitUI;
+
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;
@@ -117,8 +133,8 @@ private:
 	FVector grenadeLaunchVelocity;
 
 	int playerHP = 100;
-	bool bisHitUIOn;
-	bool bisZooming;
+	bool bIsHitUIOn;
+	bool bIsZooming;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
 

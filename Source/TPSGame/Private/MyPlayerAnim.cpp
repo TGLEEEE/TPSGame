@@ -19,7 +19,7 @@ void UMyPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 		FVector vel = player->GetVelocity();
 		forwardVel = FVector::DotProduct(vel, player->GetActorForwardVector());
 		rightVel = FVector::DotProduct(vel, player->GetActorRightVector());
-		bisFalling = player->GetCharacterMovement()->IsFalling();
+		bIsFalling = player->GetCharacterMovement()->IsFalling();
 	}
 }
 
@@ -42,6 +42,14 @@ void UMyPlayerAnim::AnimNotify_Throw()
 	}
 }
 
+void UMyPlayerAnim::AnimNotify_FirstAttackEnd()
+{
+	if (player->bIsKnifeAttackPressing)
+	{
+		PlayKnifeAttackAnim(TEXT("SecondAttack"));
+	}
+}
+
 void UMyPlayerAnim::FireAnim()
 {
 	Montage_Play(fireAnimMontage);
@@ -52,5 +60,13 @@ void UMyPlayerAnim::PlayGrenadeAnim(FName sectionName)
 	if (player)
 	{
 		player->PlayAnimMontage(grenadeAnimMontage, 2.f, sectionName);
+	}
+}
+
+void UMyPlayerAnim::PlayKnifeAttackAnim(FName sectionName)
+{
+	if (player)
+	{
+		player->PlayAnimMontage(knifeAnimMontage, 1.2f, sectionName);
 	}
 }

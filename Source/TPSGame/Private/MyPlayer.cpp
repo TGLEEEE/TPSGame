@@ -19,6 +19,8 @@
 #include "RocketAmmoPre.h"
 #include "Animation/AnimSequence.h"
 #include "Engine/StaticMeshSocket.h"
+#include <Components/SplineComponent.h>
+#include "WorldWarGameMode.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -72,10 +74,10 @@ AMyPlayer::AMyPlayer()
 	}
 	// 나이프
 	knifeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Knife Mesh"));
-	knifeComp->SetupAttachment(GetMesh(), TEXT("handLSoc"));
-	knifeComp->SetRelativeLocationAndRotation(FVector(-0.31f, -5.36f, 5.f), FRotator(79.94f, -149.69f, -318.51f));
+	knifeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	knifeComp->SetRelativeLocationAndRotation(FVector(97.76f, -26.10f, 5.42f), FRotator(89.13f, -192.53f, 177.53f));
 	knifeComp->SetCollisionProfileName(TEXT("WeaponPreset"));
-	ConstructorHelpers::FObjectFinder<UStaticMesh>tempKnife(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Knife_StaticMesh.Knife_StaticMesh'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh>tempKnife(TEXT("/Script/Engine.StaticMesh'/Game/Construction_VOL2/Meshes/SM_Shovel_01.SM_Shovel_01'"));
     if (tempKnife.Succeeded())
     {
 	    knifeComp->SetStaticMesh(tempKnife.Object);
@@ -91,20 +93,28 @@ AMyPlayer::AMyPlayer()
 	    grenadeComp->SetStaticMesh(tempGrenade.Object);
     }
 	grenadeComp->SetRelativeScale3D(FVector(2.f));
+	// 수류탄 궤적 스플라인
+	splineComp = CreateDefaultSubobject<USplineComponent>(TEXT("Spline Comp"));
+	splineComp->SetupAttachment(GetMesh());
+	splineComp->SetRelativeLocation(FVector(8.f, 27.f, 120.f));
+
 }
 
 // Called when the game starts or when spawned
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	// MyPlayerAnim 캐스팅
+	// 캐스팅
 	anim = Cast<UMyPlayerAnim>(GetMesh()->GetAnimInstance());
-
+	gm = Cast<AWorldWarGameMode>(GetWorld()->GetAuthGameMode());
 	// 위젯
 	crossZoomUI = CreateWidget(GetWorld(), crossZoomFactory);
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
+	warningTextUI = CreateWidget(GetWorld(), warningTextFactory);
 	crossIdleUI->AddToViewport();
+
+	// 시작시 장비
 	ArmRifle();
 
 	knifeComp->OnComponentBeginOverlap.AddDynamic(this, &AMyPlayer::KnifeOverlap);
@@ -117,7 +127,6 @@ void AMyPlayer::BeginPlay()
 void AMyPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	// 월드기준 dir를 플레이어기준 dir로 변화하기 위해 플레이어 rotaion을 트랜스폼으로 만듬
 	FTransform playerTrans(GetControlRotation());
 	// 플레이어 트랜스폼에 맞게 dir 변환
@@ -200,6 +209,7 @@ void AMyPlayer::InputActionFire()
 		FireRocketLauncher();
 		break;
 	case WeaponList::Knife:
+		bIsKnifeAttackPressing = true;
 		FireKnife();
 		break;
 	default:
@@ -209,7 +219,19 @@ void AMyPlayer::InputActionFire()
 
 void AMyPlayer::InputActionFireReleased()
 {
-	GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+	switch (nowWeapon)
+	{
+	case WeaponList::Rifle:
+		GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+		break;
+	case WeaponList::RocketLauncher:
+		break;
+	case WeaponList::Knife:
+		bIsKnifeAttackPressing = false;
+		break;
+	default:
+		break;
+	}
 }
 
 void AMyPlayer::InputActionRun()
@@ -248,6 +270,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(false);
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
+			anim->bIsKnifeMode = false;
 		break;
 	case 
 		WeaponList::RocketLauncher:
@@ -256,6 +279,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(true);
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
+			anim->bIsKnifeMode = false;
 		break;
 	case
 		WeaponList::Knife:
@@ -265,6 +289,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			rocketLauncherComp->SetVisibility(false);
 			knifeComp->SetVisibility(true);
 			grenadeComp->SetVisibility(false);
+			anim->bIsKnifeMode = true;
 		break;
 	default:
 		break;
@@ -323,7 +348,10 @@ void AMyPlayer::FireRocketLauncher()
 
 void AMyPlayer::FireKnife()
 {
-	UE_LOG(LogTemp, Warning, TEXT("knife attack"));
+	if (anim)
+	{
+		anim->PlayKnifeAttackAnim(TEXT("FirstAttack"));
+	}
 }
 
 void AMyPlayer::FireGrenade()
@@ -339,13 +367,13 @@ void AMyPlayer::Zoom()
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
 		playerCamera->SetFieldOfView(60.f);
-		bisZooming = true;
+		bIsZooming = true;
 		break;
 	case WeaponList::RocketLauncher:
 		crossIdleUI->RemoveFromParent();
 		crossZoomUI->AddToViewport();
 		playerCamera->SetFieldOfView(60.f);
-		bisZooming = true;
+		bIsZooming = true;
 		break;
 	case WeaponList::Knife:
 		break;
@@ -362,13 +390,13 @@ void AMyPlayer::ZoomOut()
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90.f);
-		bisZooming = false;
+		bIsZooming = false;
 		break;
 	case WeaponList::RocketLauncher:
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90.f);
-		bisZooming = false;
+		bIsZooming = false;
 		break;
 	case WeaponList::Knife:
 		break;
@@ -379,32 +407,51 @@ void AMyPlayer::ZoomOut()
 
 void AMyPlayer::CrossHit()
 {
-	if (!bisHitUIOn)
+	if (!bIsHitUIOn)
 	{
-		bisHitUIOn = true;
+		bIsHitUIOn = true;
 		crossHitUI->AddToViewport();
 		GetWorld()->GetTimerManager().SetTimer(crossHitTimerhandle, FTimerDelegate::CreateLambda([&]()
 			{
 				crossHitUI->RemoveFromParent();
-				bisHitUIOn = false;
+				bIsHitUIOn = false;
 			}), 1.f, false);
 	}
 }
 
+void AMyPlayer::CountdownTimer(int time)
+{
+	gm->currentCountdown = time;
+	FTimerHandle countdownHandle;
+	GetWorldTimerManager().SetTimer(countdownHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			if (gm->currentCountdown > 0)
+			{
+				gm->currentCountdown--;
+			}
+			else
+			{
+				gm->currentCountdown = 0;
+				GetWorldTimerManager().ClearTimer(countdownHandle);
+				gm->bCanSpawnZombie = !gm->bCanSpawnZombie;
+			}
+		}),1.f , true);
+}
+
 void AMyPlayer::ChangeWeaponZooming()
 {
-	if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bisZooming)
+	if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bIsZooming)
 	{
 		crossZoomUI->RemoveFromParent();
 		crossIdleUI->AddToViewport();
 		playerCamera->SetFieldOfView(90);
-		bisZooming = false;
+		bIsZooming = false;
 	}
 }
 
 void AMyPlayer::PlaySetGrenadeAnim()
 {
-	if (anim)
+	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Set"));
 	}
@@ -412,7 +459,7 @@ void AMyPlayer::PlaySetGrenadeAnim()
 
 void AMyPlayer::PlayThrowGrenadeAnim()
 {
-	if (anim)
+	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Go"));
 	}
@@ -424,11 +471,17 @@ void AMyPlayer::PredictGrenadePath()
 	FPredictProjectilePathParams predictParam;
 	predictParam.StartLocation = grenadeFireLoc;
 	predictParam.LaunchVelocity = grenadeLaunchVelocity * 1000.f;
-	predictParam.ProjectileRadius = 6.f;
-	predictParam.DrawDebugType = EDrawDebugTrace::ForOneFrame;
-	predictParam.SimFrequency = 30.f;
-	predictParam.MaxSimTime = 5.f;
+	predictParam.DrawDebugType = EDrawDebugTrace::None;
+	predictParam.SimFrequency = 20.f;
+	predictParam.MaxSimTime = 10.f;
 	UGameplayStatics::PredictProjectilePath(GetWorld(), predictParam, predictResult);
+
+	for (FPredictProjectilePathPointData pathDataToLoc : predictResult.PathData)
+	{
+		predictPathLoc.Add(pathDataToLoc.Location);
+	}
+	DrawGrenadePath();
+	predictPathLoc.Empty();
 }
 
 void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
