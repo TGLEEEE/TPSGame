@@ -16,6 +16,7 @@ enum class EEnemyState : uint8
 	Attack,
 	Damage,
 	Die,
+	Climb,
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -51,6 +52,8 @@ public:
 	void DamageState();
 	//죽음상태
 	void DieState();
+	//오르기
+	void ClimbState();
 
 	//대기시간
 	UPROPERTY(EditDefaultsOnly, Category=FSM)
