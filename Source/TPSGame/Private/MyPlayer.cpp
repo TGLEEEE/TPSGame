@@ -422,7 +422,6 @@ void AMyPlayer::CrossHit()
 void AMyPlayer::CountdownTimer(int time)
 {
 	gm->currentCountdown = time;
-	FTimerHandle countdownHandle;
 	GetWorldTimerManager().SetTimer(countdownHandle, FTimerDelegate::CreateLambda([&]()
 		{
 			if (gm->currentCountdown > 0)
@@ -432,10 +431,29 @@ void AMyPlayer::CountdownTimer(int time)
 			else
 			{
 				gm->currentCountdown = 0;
-				GetWorldTimerManager().ClearTimer(countdownHandle);
 				gm->bCanSpawnZombie = !gm->bCanSpawnZombie;
+				GetWorldTimerManager().ClearTimer(countdownHandle);
+				//UE_LOG(LogTemp, Warning, TEXT("timeout"));
 			}
 		}),1.f , true);
+}
+
+void AMyPlayer::PlayerDamagedProcess(int value)
+{
+	if (playerHP > 0)
+	{
+		playerHP -= value;
+		UE_LOG(LogTemp, Warning, TEXT("outch"));
+	}
+	else
+	{
+		anim->bIsDead = true;
+		playerCamera->SetRelativeLocationAndRotation(FVector(200.f, 0.f, 600.f), FRotator(270.f, 0.f, 0.f));
+		bUseControllerRotationYaw = false;
+		playerSpringArm->bUsePawnControlRotation = false;
+		playerCamera->bUsePawnControlRotation = false;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
 }
 
 void AMyPlayer::ChangeWeaponZooming()
@@ -497,15 +515,5 @@ void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 			CrossHit();
 		}
 	}
-}
-
-void AMyPlayer::SetPlayerHP(int hp)
-{
-	playerHP = hp;
-}
-
-int AMyPlayer::GetPlayerHP()
-{
-	return playerHP;
 }
 

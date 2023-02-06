@@ -3,12 +3,13 @@
 
 #include "EnemyManager.h"
 #include "Enemy.h"
+#include "WorldWarGameMode.h"
 
 // Sets default values
 AEnemyManager::AEnemyManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 }
 
@@ -18,34 +19,43 @@ void AEnemyManager::BeginPlay()
 	Super::BeginPlay();
 
 	//랜덤생성시간 구하기
-	float createTime = FMath::RandRange(minTime, maxTime);
+	createTime = FMath::RandRange(minTime, maxTime);
 
 	//2.Timer Manager한테 알람 등록
-	GetWorld()->GetTimerManager().SetTimer(spawnTimerHandle, this, &AEnemyManager::CreateEnemy, createTime);
-
+	//GetWorld()->GetTimerManager().SetTimer(spawnTimerHandle, this, &AEnemyManager::CreateEnemy, createTime);
+	gm = Cast<AWorldWarGameMode>(GetWorld()->GetAuthGameMode());
 }
 
 // Called every frame
 void AEnemyManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+/*
 	currentTime += GetWorld()->DeltaTimeSeconds;
 	if (currentTime > waveTime)
 	{
 		CreateEnemy();
 	}
 	currentTime = 0;
+*/
+
+	if (gm->bCanSpawnZombie && stage == 0)
+	{
+		GetWorld()->GetTimerManager().SetTimer(spawnTimerHandle, this, &AEnemyManager::CreateEnemy, createTime);
+		stage++;
+	}
+
+	if (!gm->bCanSpawnZombie && stage == 1)
+	{
+		GetWorldTimerManager().ClearTimer(spawnTimerHandle);
+		stage++;
+	}
+
 }
 
 
 void AEnemyManager::CreateEnemy()
 {
-	if(!spawnStart)
-	{
-		return;
-	}
-	else
 	{
 		//랜덤 위치구하기
 		int index = FMath::RandRange(0, spawnPoints.Num() - 1);
@@ -56,12 +66,5 @@ void AEnemyManager::CreateEnemy()
 		float createTimer = FMath::RandRange(minTime, maxTime);
 		GetWorld()->GetTimerManager().SetTimer(spawnTimerHandle, this, &AEnemyManager::CreateEnemy, createTimer);
 	}
-
-	
-
-	
-
-
-
 }
 

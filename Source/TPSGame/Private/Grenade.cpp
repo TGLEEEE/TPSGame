@@ -15,7 +15,7 @@ AGrenade::AGrenade()
 	PrimaryActorTick.bCanEverTick = true;
 
 	grenadeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
-	grenadeComp->SetupAttachment(RootComponent);
+	SetRootComponent(grenadeComp);
 	ConstructorHelpers::FObjectFinder<UStaticMesh>tempGrenade(TEXT("/Script/Engine.StaticMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/GrenadeLauncherA_Ammo.GrenadeLauncherA_Ammo'"));
 	if (tempGrenade.Succeeded())
 	{

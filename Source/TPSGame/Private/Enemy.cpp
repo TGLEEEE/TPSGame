@@ -4,7 +4,7 @@
 #include "Enemy.h"
 #include "EnemyFSM.h"
 #include <Components/CapsuleComponent.h>
-
+#include "Components/BoxComponent.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -12,8 +12,6 @@ AEnemy::AEnemy()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
- 	//campsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("campsuleComp"));
-	//SetRootComponent(campsuleComp); 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("EnemyPreset"));
 
 	//1.스켈레탈메시 데이터로드
@@ -43,13 +41,18 @@ AEnemy::AEnemy()
 	//AIController부터 Possess될수 있도록 설정
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	// 데미지 박스
+	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Damage BoxComp"));
+	boxComp->SetBoxExtent(FVector(40, 40, 10));
+	boxComp->SetupAttachment(RootComponent);
+	boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlap);
 }
 
 // Called every frame
@@ -66,3 +69,12 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void AEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AMyPlayer* player = Cast<AMyPlayer>(OtherActor);
+	if (player)
+	{
+		player->PlayerDamagedProcess(1);
+	}
+}

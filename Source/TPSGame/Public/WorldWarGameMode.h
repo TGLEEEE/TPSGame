@@ -21,4 +21,5 @@ public:
 	bool bCanSpawnZombie;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int currentCountdown;
+
 };

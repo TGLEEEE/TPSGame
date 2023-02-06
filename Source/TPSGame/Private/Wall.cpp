@@ -39,13 +39,11 @@ void AWall::InWall(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	AEnemy* enemy = Cast<AEnemy>(OtherActor);
 	if (enemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("dasd"));
+		//UE_LOG(LogTemp, Warning, TEXT("dasd"));
 		currentTime += GetWorld()->DeltaTimeSeconds;
 		FVector P0 = enemy->GetActorLocation();
 		FVector vt = FVector(0,0,1) * 200 * GetWorld()->DeltaTimeSeconds;
 		FVector P = P0 + vt;
-
-
 	}
 	
 }
