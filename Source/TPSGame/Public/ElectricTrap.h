@@ -31,18 +31,21 @@ public:
 	//UFUNCTION(BlueprintCallable)
 	//	void OutElectricTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	float currentTime = 0;
-	float shockTime = 3;
-	bool bHit;
+	//float currentTime = 0;
+	//float shockTime = 3;
 
 public:
 
 	// 전기공장
-	UPROPERTY(EditAnywhere)
-		class UParticleSystem* bulletElectricFactory;
+	//UPROPERTY(EditAnywhere)
+		//class UParticleSystem* bulletElectricFactory;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 		class USphereComponent* sphereComp;
 
+	UPROPERTY(EditAnywhere)
+		class UStaticMeshComponent* meshComp;
+	UPROPERTY(EditAnywhere)
+		class UParticleSystemComponent* particleComp;
 
 };
