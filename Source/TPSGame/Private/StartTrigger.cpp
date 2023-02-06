@@ -31,11 +31,20 @@ void AStartTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (gm->bCanSpawnZombie && !bDoOnce)
+	{
+		FTimerHandle tempHandle;
+		GetWorldTimerManager().SetTimer(tempHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			player->CountdownTimer(120);
+		}), 2, false);
+		bDoOnce = true;
+	}
 }
 
 void AStartTrigger::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AMyPlayer* player = Cast<AMyPlayer>(OtherActor);
+	player = Cast<AMyPlayer>(OtherActor);
 	if (player && !gm->bIsStarted)
 	{
 		player->warningTextUI->AddToViewport();

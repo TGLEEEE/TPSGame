@@ -8,6 +8,7 @@
 #include "EnemyAnim.h"
 #include "Components/CapsuleComponent.h"
 #include "NavigationSystem.h"
+#include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Navigation/PathFollowingComponent.h"
 
@@ -187,7 +188,6 @@ void UEnemyFSM::AttackState()
 			//---------
 			currentTime = 0;
 			anim->bAttackPlay = true;
-	
 		}
 
 	

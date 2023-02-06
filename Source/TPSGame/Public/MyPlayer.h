@@ -75,11 +75,10 @@ public:
 	class UMyPlayerAnim* anim;
 	class AWorldWarGameMode* gm;
 
-	int GetPlayerHP();
-	void SetPlayerHP(int hp);
 	void FireGrenade();
 	void CrossHit();
 	void CountdownTimer(int time);
+	void PlayerDamagedProcess(int value);
 
 	// 수류탄 궤적 그리기 BP로 구현위해
 	UPROPERTY(BlueprintReadWrite)
@@ -128,11 +127,12 @@ private:
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;
+	FTimerHandle countdownHandle;
 	FVector dir;
 	FVector grenadeFireLoc;
 	FVector grenadeLaunchVelocity;
 
-	int playerHP = 100;
+	int playerHP = 20;
 	bool bIsHitUIOn;
 	bool bIsZooming;
 	float walkSpeed = 400.f;

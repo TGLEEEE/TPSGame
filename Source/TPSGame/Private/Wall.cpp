@@ -44,8 +44,6 @@ void AWall::InWall(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		FVector P0 = enemy->GetActorLocation();
 		FVector vt = FVector(0,0,1) * 200 * GetWorld()->DeltaTimeSeconds;
 		FVector P = P0 + vt;
-
-
 	}
 	
 }
