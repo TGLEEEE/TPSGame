@@ -24,9 +24,10 @@ void AElectricTrap::BeginPlay()
 	Super::BeginPlay();
 	
 
-	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	SetRootComponent(sphereComp);
-	sphereComp->SetCollisionProfileName(TEXT("TrapPreset"));
+	//sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	//SetRootComponent(sphereComp);
+	//sphereComp->SetCollisionProfileName(TEXT("TrapPreset"));
+
 }
 
 // Called every frame
