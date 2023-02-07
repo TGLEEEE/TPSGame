@@ -79,6 +79,7 @@ public:
 	void CrossHit();
 	void CountdownTimer(int time);
 	void PlayerDamagedProcess(int value);
+	void SpawnBloodEffect(FVector loc, FRotator rot);
 
 	// 수류탄 궤적 그리기 BP로 구현위해
 	UPROPERTY(BlueprintReadWrite)
@@ -122,6 +123,8 @@ private:
 	UAnimSequence* animRockerLauncherFire;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCameraShakeBase>rocketCamShakeFactory;
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* bloodFx;
 
 
 	WeaponList nowWeapon;
@@ -137,5 +140,6 @@ private:
 	bool bIsZooming;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
+
 
 };

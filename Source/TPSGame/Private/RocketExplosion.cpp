@@ -59,7 +59,11 @@ void ARocketExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent,
 		}
 		for (AMyPlayer* player : TActorRange<AMyPlayer>(GetWorld()))
 		{
-			player->CrossHit();
+			if (player)
+			{
+				player->SpawnBloodEffect(enemy->GetActorLocation(), enemy->GetActorRotation());
+				player->CrossHit();
+			}
 		}
 	}
 }

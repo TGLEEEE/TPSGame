@@ -248,7 +248,7 @@ void UEnemyFSM::DieState()
 
 void UEnemyFSM::ClimbState()
 {
-
+	
 }
 
 //피격알림 이벤트 함수
@@ -279,6 +279,7 @@ void UEnemyFSM::OnDamageProcess(int val)
 		mState = EEnemyState::Die;
 		//캡슐 충돌체 비활성화
 		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		me->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		//죽음 애니메이션 재생
 		anim->PlayDamageAnim(TEXT("Die"));
 

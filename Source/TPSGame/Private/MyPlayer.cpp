@@ -319,6 +319,7 @@ void AMyPlayer::FireRifle()
 			if (enemyfsm)
 			{
 				enemyfsm->OnDamageProcess(1);
+				SpawnBloodEffect(trans.GetLocation(), trans.Rotator());
 				CrossHit();
  			}
 		}
@@ -461,6 +462,14 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 	}
 }
 
+void AMyPlayer::SpawnBloodEffect(FVector loc, FRotator rot)
+{
+	FTransform trans;
+	trans.SetLocation(loc);
+	trans.SetRotation(FQuat::MakeFromRotator(rot));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bloodFx, trans);
+}
+
 void AMyPlayer::ChangeWeaponZooming()
 {
 	if (nowWeapon == WeaponList::Rifle || nowWeapon == WeaponList::RocketLauncher && bIsZooming)
@@ -516,6 +525,7 @@ void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 		UEnemyFSM* fsm = Cast<UEnemyFSM>(enemy->fsm);
 		if (fsm)
 		{
+			SpawnBloodEffect(enemy->GetActorLocation(), enemy->GetActorRotation() + FRotator(0, 0, -30));
 			fsm->OnDamageProcess(1);
 			CrossHit();
 		}
