@@ -48,6 +48,17 @@ void UMyPlayerAnim::AnimNotify_FirstAttackEnd()
 	{
 		PlayKnifeAttackAnim(TEXT("SecondAttack"));
 	}
+	else
+	{
+		player->knifeComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		player->GetCharacterMovement()->MaxWalkSpeed = 400;
+	}
+}
+
+void UMyPlayerAnim::AnimNotify_SecondAttackEnd()
+{
+	player->knifeComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	player->GetCharacterMovement()->MaxWalkSpeed = 400;
 }
 
 void UMyPlayerAnim::FireAnim()

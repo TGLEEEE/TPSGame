@@ -77,6 +77,7 @@ AMyPlayer::AMyPlayer()
 	knifeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
 	knifeComp->SetRelativeLocationAndRotation(FVector(97.76f, -26.10f, 5.42f), FRotator(89.13f, -192.53f, 177.53f));
 	knifeComp->SetCollisionProfileName(TEXT("WeaponPreset"));
+	knifeComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ConstructorHelpers::FObjectFinder<UStaticMesh>tempKnife(TEXT("/Script/Engine.StaticMesh'/Game/Construction_VOL2/Meshes/SM_Shovel_01.SM_Shovel_01'"));
     if (tempKnife.Succeeded())
     {
@@ -280,6 +281,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
 			anim->bIsKnifeMode = false;
+			GetWorldTimerManager().ClearTimer(rifleTimerhandle);
 		break;
 	case
 		WeaponList::Knife:
@@ -290,6 +292,7 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			knifeComp->SetVisibility(true);
 			grenadeComp->SetVisibility(false);
 			anim->bIsKnifeMode = true;
+			GetWorldTimerManager().ClearTimer(rifleTimerhandle);
 		break;
 	default:
 		break;
@@ -351,6 +354,8 @@ void AMyPlayer::FireKnife()
 	if (anim)
 	{
 		anim->PlayKnifeAttackAnim(TEXT("FirstAttack"));
+		knifeComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		GetCharacterMovement()->MaxWalkSpeed = 0;
 	}
 }
 
