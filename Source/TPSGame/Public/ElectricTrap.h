@@ -48,4 +48,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UParticleSystemComponent* particleComp;
 
+	class AEnemy* enemy;
+
 };

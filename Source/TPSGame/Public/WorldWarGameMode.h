@@ -13,7 +13,12 @@ UCLASS()
 class TPSGAME_API AWorldWarGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsStarted;
@@ -22,4 +27,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int currentCountdown;
 
+	//
+public:
+	UPROPERTY(EditAnywhere, Category=MyWidgetSetting)
+	TSubclassOf<class UStartWidget> startWidget;
+
+private:
+	class UStartWidget* start_UI;
 };

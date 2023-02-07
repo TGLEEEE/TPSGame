@@ -57,15 +57,23 @@ void AElectricTrap::Tick(float DeltaTime)
 void AElectricTrap::InElectricTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 
-	AEnemy* enemy = Cast<AEnemy>(OtherActor);
+	enemy = Cast<AEnemy>(OtherActor);
 	if (nullptr != enemy)
 	{
 		enemy->GetCharacterMovement()->MaxWalkSpeed = 0;
+
+		FTimerHandle moveHandle;
+		GetWorldTimerManager().SetTimer(moveHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			enemy->GetCharacterMovement()->MaxWalkSpeed = 600;
+		}),3 , false);
+		/*
 		UEnemyFSM* FSMEnemy = Cast<UEnemyFSM>(enemy->fsm);
 		if (FSMEnemy)
 		{
 			//FSMEnemy->canMove = false;
 		}
+		*/
 	}
 }
 
