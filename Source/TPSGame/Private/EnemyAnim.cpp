@@ -22,7 +22,7 @@ void UEnemyAnim::AnimNotify_EnemyAttackStart()
 	if (me)
 	{
 		me->boxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		UE_LOG(LogTemp, Warning, TEXT("collision on"));
+		//UE_LOG(LogTemp, Warning, TEXT("collision on"));
 	}
 }
 
@@ -31,6 +31,6 @@ void UEnemyAnim::AnimNotify_EnemyAttackEnd()
 	if (me)
 	{
 		me->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		UE_LOG(LogTemp, Warning, TEXT("collision off"));
+		//UE_LOG(LogTemp, Warning, TEXT("collision off"));
 	}
 }

@@ -59,6 +59,7 @@ void UMyPlayerAnim::AnimNotify_SecondAttackEnd()
 {
 	player->knifeComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	player->GetCharacterMovement()->MaxWalkSpeed = 400;
+	GetWorld()->SpawnActor<AActor>(player->knifeEffect, player->knifeComp->GetComponentLocation(), FRotator::ZeroRotator);
 }
 
 void UMyPlayerAnim::FireAnim()

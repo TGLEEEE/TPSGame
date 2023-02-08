@@ -60,6 +60,10 @@ public:
 	TSubclassOf<class UUserWidget> crossHitFactory;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> warningTextFactory;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> nowWeaponWidgetFactory;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AActor> knifeEffect;
 	UPROPERTY()
 	UUserWidget* crossIdleUI;
 	UPROPERTY()
@@ -68,6 +72,8 @@ public:
 	UUserWidget* crossHitUI;
 	UPROPERTY()
 	UUserWidget* warningTextUI;
+	UPROPERTY()
+	UUserWidget* nowWeaponUI;
 	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
 	bool bIsGrenadeAiming;
@@ -87,6 +93,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void DrawGrenadePath();
 
+	// 위젯 애니메이션
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim))
+	class UWidgetAnimation* SelectRifle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim))
+	class UWidgetAnimation* SelectRocketLauncher;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim))
+	class UWidgetAnimation* SelectSpade;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim))
+	class UWidgetAnimation* SelectGrenade;
+	FTimerHandle selectWeaponHandle;
 private:
 
 	void InputAxisLookUp(float value);
@@ -140,6 +156,5 @@ private:
 	bool bIsZooming;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
-
 
 };

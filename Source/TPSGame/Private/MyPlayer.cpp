@@ -113,15 +113,19 @@ void AMyPlayer::BeginPlay()
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	warningTextUI = CreateWidget(GetWorld(), warningTextFactory);
+	nowWeaponUI = CreateWidget(GetWorld(), nowWeaponWidgetFactory);
+	nowWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+	nowWeaponUI->AddToViewport();
 	crossIdleUI->AddToViewport();
 
 	// 시작시 장비
-	ArmRifle();
+	ArmKnife();
 
 	knifeComp->OnComponentBeginOverlap.AddDynamic(this, &AMyPlayer::KnifeOverlap);
 
 	// 기본 걷기 속도
 	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+
 }
 
 // Called every frame
@@ -272,6 +276,24 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
 			anim->bIsKnifeMode = false;
+			
+			nowWeaponUI->SetVisibility(ESlateVisibility::Visible);
+			nowWeaponUI->PlayAnimation(SelectRifle);
+			/*
+			if (GetWorldTimerManager().IsTimerActive(selectWeaponHandle))
+			{
+				GetWorldTimerManager().ClearTimer(selectWeaponHandle);
+				GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
+					{
+						nowWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+					}), 1.f, false);
+			}
+			*/
+			GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				nowWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+			}), 1.f, false);
+			
 		break;
 	case 
 		WeaponList::RocketLauncher:
@@ -310,7 +332,7 @@ void AMyPlayer::FireRifle()
 	if (isHit)
 	{
 		FTransform trans(hitInfo.ImpactPoint);
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, trans);
+
 		// 적 데미지
 		AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
 		if (enemy)
@@ -322,6 +344,10 @@ void AMyPlayer::FireRifle()
 				SpawnBloodEffect(trans.GetLocation(), trans.Rotator());
 				CrossHit();
  			}
+		}
+		else
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, trans);
 		}
 	}
 	// 반동
@@ -459,6 +485,12 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 		playerSpringArm->bUsePawnControlRotation = false;
 		playerCamera->bUsePawnControlRotation = false;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
+		GetCharacterMovement()->MaxWalkSpeed = 0;
+		FTimerHandle th;
+		GetWorldTimerManager().SetTimer(th, FTimerDelegate::CreateLambda([&]()
+		{
+			// 게임오버 위젯 실행
+		}), 3.f, false);
 	}
 }
 
