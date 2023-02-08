@@ -21,6 +21,7 @@
 #include "Engine/StaticMeshSocket.h"
 #include <Components/SplineComponent.h>
 #include "WorldWarGameMode.h"
+#include "SelectWeaponWidget.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -113,9 +114,9 @@ void AMyPlayer::BeginPlay()
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	warningTextUI = CreateWidget(GetWorld(), warningTextFactory);
-	nowWeaponUI = CreateWidget(GetWorld(), nowWeaponWidgetFactory);
-	nowWeaponUI->SetVisibility(ESlateVisibility::Hidden);
-	nowWeaponUI->AddToViewport();
+	selectWeaponUI = CreateWidget<USelectWeaponWidget>(GetWorld(), selectWeaponWidgetFactory);
+	selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+	selectWeaponUI->AddToViewport();
 	crossIdleUI->AddToViewport();
 
 	// 시작시 장비
@@ -277,23 +278,13 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			grenadeComp->SetVisibility(false);
 			anim->bIsKnifeMode = false;
 			
-			nowWeaponUI->SetVisibility(ESlateVisibility::Visible);
-			nowWeaponUI->PlayAnimation(SelectRifle);
-			/*
-			if (GetWorldTimerManager().IsTimerActive(selectWeaponHandle))
-			{
-				GetWorldTimerManager().ClearTimer(selectWeaponHandle);
-				GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
-					{
-						nowWeaponUI->SetVisibility(ESlateVisibility::Hidden);
-					}), 1.f, false);
-			}
-			*/
+			// 선택무기 UI처리
+			selectWeaponUI->SetVisibility(ESlateVisibility::Visible);
+			selectWeaponUI->PlayAnimation(selectWeaponUI->selectRifle);
 			GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
 			{
-				nowWeaponUI->SetVisibility(ESlateVisibility::Hidden);
-			}), 1.f, false);
-			
+				selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+			}), 1.01f, false);
 		break;
 	case 
 		WeaponList::RocketLauncher:
@@ -304,6 +295,14 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			grenadeComp->SetVisibility(false);
 			anim->bIsKnifeMode = false;
 			GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+
+			// 선택무기 UI처리
+			selectWeaponUI->SetVisibility(ESlateVisibility::Visible);
+			selectWeaponUI->PlayAnimation(selectWeaponUI->selectRocketLauncher);
+			GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
+				{
+					selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+				}), 1.01f, false);
 		break;
 	case
 		WeaponList::Knife:
@@ -315,6 +314,14 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			grenadeComp->SetVisibility(false);
 			anim->bIsKnifeMode = true;
 			GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+
+			// 선택무기 UI처리
+			selectWeaponUI->SetVisibility(ESlateVisibility::Visible);
+			selectWeaponUI->PlayAnimation(selectWeaponUI->selectSpade);
+			GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
+				{
+					selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+				}), 1.01f, false);
 		break;
 	default:
 		break;
@@ -518,6 +525,14 @@ void AMyPlayer::PlaySetGrenadeAnim()
 	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Set"));
+
+		// 선택무기 UI처리
+		selectWeaponUI->SetVisibility(ESlateVisibility::Visible);
+		selectWeaponUI->PlayAnimation(selectWeaponUI->selectGrenade);
+		GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+			}), 1.01f, false);
 	}
 }
 

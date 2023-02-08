@@ -61,7 +61,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> warningTextFactory;
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UUserWidget> nowWeaponWidgetFactory;
+	TSubclassOf<class USelectWeaponWidget> selectWeaponWidgetFactory;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AActor> knifeEffect;
 	UPROPERTY()
@@ -73,7 +73,7 @@ public:
 	UPROPERTY()
 	UUserWidget* warningTextUI;
 	UPROPERTY()
-	UUserWidget* nowWeaponUI;
+	USelectWeaponWidget* selectWeaponUI;
 	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
 	bool bIsGrenadeAiming;
@@ -93,16 +93,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void DrawGrenadePath();
 
-	// 위젯 애니메이션
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim))
-	class UWidgetAnimation* SelectRifle;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim))
-	class UWidgetAnimation* SelectRocketLauncher;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim))
-	class UWidgetAnimation* SelectSpade;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim))
-	class UWidgetAnimation* SelectGrenade;
-	FTimerHandle selectWeaponHandle;
 private:
 
 	void InputAxisLookUp(float value);
@@ -147,6 +137,7 @@ private:
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;
 	FTimerHandle countdownHandle;
+	FTimerHandle selectWeaponHandle;
 	FVector dir;
 	FVector grenadeFireLoc;
 	FVector grenadeLaunchVelocity;
