@@ -25,14 +25,14 @@ public:
 
 
 
-	UFUNCTION(BlueprintCallable)
-		void InElectricTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	//UFUNCTION(BlueprintCallable)
+		//void InElectricTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& /SweepResult);
 
 	//UFUNCTION(BlueprintCallable)
 	//	void OutElectricTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	//float currentTime = 0;
-	//float shockTime = 3;
+	float currentTime = 0;
+	float shockTime = 3.f;
 
 public:
 
@@ -49,5 +49,6 @@ public:
 		class UParticleSystemComponent* particleComp;
 
 	class AEnemy* enemy;
+	FTimerHandle moveHandle;
 
 };

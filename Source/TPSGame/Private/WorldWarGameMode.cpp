@@ -2,6 +2,8 @@
 
 
 #include "WorldWarGameMode.h"
+
+#include "GameOverWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 #include "StartWidget.h"
@@ -22,4 +24,17 @@ void AWorldWarGameMode::BeginPlay()
 	//마우스 커설르 화면에 보이게 한다
 		GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 	
+}
+
+void AWorldWarGameMode::ShowGameOver()
+{
+	//게임 오버를 화면에 띄운다
+	over_UI = CreateWidget<UGameOverWidget>(GetWorld(), gameOverWidget);
+
+	if(over_UI != nullptr)
+	{
+		over_UI->AddToViewport();
+	}
+	
+	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }

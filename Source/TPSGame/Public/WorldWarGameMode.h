@@ -27,11 +27,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int currentCountdown;
 
-	//
 public:
-	UPROPERTY(EditAnywhere, Category=MyWidgetSetting)
+	UPROPERTY(EditAnywhere, Category = MyWidgetSetting)
 	TSubclassOf<class UStartWidget> startWidget;
 
-private:
+	UPROPERTY(EditAnywhere, Category = MyWidgetSetting)
+	TSubclassOf<class UGameOverWidget> gameOverWidget;
+
+	void ShowGameOver();
+
 	class UStartWidget* start_UI;
+	class UGameOverWidget* over_UI;
 };
