@@ -37,6 +37,7 @@ void ARocketExplosion::BeginPlay()
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &ARocketExplosion::OnOverlap);
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), rocketExplosionFX, GetActorTransform());
+	UGameplayStatics::PlaySoundAtLocation(this, explosionSound, GetActorLocation());
 }
 
 // Called every frame

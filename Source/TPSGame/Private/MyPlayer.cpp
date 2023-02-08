@@ -566,6 +566,7 @@ void AMyPlayer::PredictGrenadePath()
 void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UGameplayStatics::PlaySound2D(this, spadeSound, 2.f, 0.2f);
 	AEnemy* enemy = Cast<AEnemy>(OtherActor);
 	if (enemy)
 	{

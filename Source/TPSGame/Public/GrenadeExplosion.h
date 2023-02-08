@@ -29,6 +29,9 @@ public:
 	class USphereComponent* sphereComp;
 	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystem* grenadeExplosionFX;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* explosionSound;
+
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	void SelfDestroy();

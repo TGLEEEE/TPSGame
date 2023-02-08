@@ -75,7 +75,15 @@ public:
 	UPROPERTY()
 	USelectWeaponWidget* selectWeaponUI;
 	UPROPERTY(EditDefaultsOnly)
+	USoundBase* grenadeSetSound;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* grenadeGoSound;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* spadeSound;
+
+	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
+
 	bool bIsGrenadeAiming;
 	bool bIsKnifeAttackPressing;
 	class UMyPlayerAnim* anim;

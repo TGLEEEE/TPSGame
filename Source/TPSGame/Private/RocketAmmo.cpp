@@ -7,6 +7,7 @@
 #include <GameFramework/ProjectileMovementComponent.h>
 #include "RocketExplosion.h"
 #include <Particles/ParticleSystemComponent.h>
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 ARocketAmmo::ARocketAmmo()
@@ -51,13 +52,13 @@ void ARocketAmmo::BeginPlay()
 	Super::BeginPlay();
 	
 	sphereComp->OnComponentHit.AddDynamic(this, &ARocketAmmo::OnHit);
+	UGameplayStatics::PlaySoundAtLocation(this, inAirSound, GetActorLocation());
 }
 
 // Called every frame
 void ARocketAmmo::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ARocketAmmo::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

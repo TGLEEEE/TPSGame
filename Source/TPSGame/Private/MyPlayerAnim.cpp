@@ -4,6 +4,7 @@
 #include "MyPlayerAnim.h"
 #include "MyPlayer.h"
 #include <GameFramework/CharacterMovementComponent.h>
+#include <Kismet/GameplayStatics.h>
 
 void UMyPlayerAnim::NativeBeginPlay()
 {
@@ -29,6 +30,7 @@ void UMyPlayerAnim::AnimNotify_Get()
 	{
 		player->grenadeComp->SetVisibility(true);
 		player->bIsGrenadeAiming = true;
+		UGameplayStatics::PlaySound2D(this, player->grenadeSetSound);
 	}
 }
 
@@ -39,6 +41,7 @@ void UMyPlayerAnim::AnimNotify_Throw()
 		player->grenadeComp->SetVisibility(false);
 		player->FireGrenade();
 		player->bIsGrenadeAiming = false;
+		UGameplayStatics::PlaySound2D(GetWorld(), player->grenadeGoSound);
 	}
 }
 
@@ -60,6 +63,7 @@ void UMyPlayerAnim::AnimNotify_SecondAttackEnd()
 	player->knifeComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	player->GetCharacterMovement()->MaxWalkSpeed = 400;
 	GetWorld()->SpawnActor<AActor>(player->knifeEffect, player->knifeComp->GetComponentLocation(), FRotator::ZeroRotator);
+	UGameplayStatics::PlaySound2D(this, player->spadeSound, 2.f);
 }
 
 void UMyPlayerAnim::FireAnim()
