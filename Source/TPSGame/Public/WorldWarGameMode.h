@@ -35,6 +35,7 @@ public:
 	TSubclassOf<class UGameOverWidget> gameOverWidget;
 
 	void ShowGameOver();
+	void ShowEnding();
 
 	class UStartWidget* start_UI;
 	class UGameOverWidget* over_UI;
