@@ -16,6 +16,7 @@ public:
 	ARealElectricTrap();
 
 protected:
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -28,7 +29,7 @@ public:
 	TSubclassOf <class AElectricTrap> electricFactory;
 
 	UPROPERTY(EditAnywhere, Category = ElectricSetting)
-		class UArrowComponent* arrow;
+	class UArrowComponent* arrow;
 
 	UFUNCTION(BlueprintCallable)
 	void InRealElectricTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -40,6 +41,4 @@ public:
 	float shockTime = 3;
 	class AEnemy* enemy;
 	FTimerHandle moveHandle;
-
-
 };
