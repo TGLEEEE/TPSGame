@@ -30,7 +30,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = ElectricSetting)
 		class UArrowComponent* arrow;
 
+	UFUNCTION(BlueprintCallable)
+	void InRealElectricTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY(EditAnywhere)
+	class UBoxComponent* boxComp;
+
 	float currentTime = 0;
-	float shockTime = 10;
+	float shockTime = 3;
+	class AEnemy* enemy;
+	FTimerHandle moveHandle;
+
 
 };

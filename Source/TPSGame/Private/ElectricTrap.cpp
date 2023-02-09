@@ -10,7 +10,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "PhysicsEngine/RadialForceComponent.h"
 
 // Sets default values
 AElectricTrap::AElectricTrap()
@@ -21,7 +20,7 @@ AElectricTrap::AElectricTrap()
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	SetRootComponent(sphereComp);
 	sphereComp->SetCollisionProfileName(TEXT("TrapPreset"));
-	sphereComp->SetSphereRadius(100.0f);
+	sphereComp->SetSphereRadius(250.0f);
 
 	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("particleComp"));
 	particleComp->SetupAttachment(RootComponent);
@@ -37,8 +36,8 @@ void AElectricTrap::BeginPlay()
 {
 	Super::BeginPlay();
 
-	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &AElectricTrap::InElectricTrap);
-	//boxComp->OnComponentEndOverlap.AddDynamic(this, &AElectricTrap::OutElectricTrap);
+	//sphereComp->OnComponentBeginOverlap.AddDynamic(this, &AElectricTrap::InElectricTrap);
+
 
 	
 }
@@ -47,27 +46,38 @@ void AElectricTrap::BeginPlay()
 void AElectricTrap::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
 
+	currentTime += DeltaTime;
+	if (currentTime > shockTime)
+	{
+		Destroy();
+
+	}
 	
 }
 
 	
-
+/*
 void AElectricTrap::InElectricTrap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 
-	AEnemy* enemy = Cast<AEnemy>(OtherActor);
+	enemy = Cast<AEnemy>(OtherActor);
 	if (nullptr != enemy)
 	{
 		enemy->GetCharacterMovement()->MaxWalkSpeed = 0;
+
+		GetWorldTimerManager().SetTimer(moveHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			enemy->GetCharacterMovement()->MaxWalkSpeed = 600;
+		}),1.5f , false);
+		/*
 		UEnemyFSM* FSMEnemy = Cast<UEnemyFSM>(enemy->fsm);
 		if (FSMEnemy)
 		{
 			//FSMEnemy->canMove = false;
 		}
-	}
-}
+		*/
+
 
 
 //}

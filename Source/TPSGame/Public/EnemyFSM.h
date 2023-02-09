@@ -17,6 +17,7 @@ enum class EEnemyState : uint8
 	Damage,
 	Die,
 	Climb,
+	Dive,
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -54,6 +55,7 @@ public:
 	void DieState();
 	//오르기
 	void ClimbState();
+	
 
 	//대기시간
 	UPROPERTY(EditDefaultsOnly, Category=FSM)
@@ -107,5 +109,7 @@ public:
 	//시체 남기는 시간
 	float dieDelayTime = 10.0f;
 
-	FTimerHandle aiTimerHandle;		
+	FTimerHandle aiTimerHandle;
+
+	
 };

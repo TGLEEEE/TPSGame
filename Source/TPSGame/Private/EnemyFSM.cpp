@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "NavigationSystem.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Navigation/PathFollowingComponent.h"
 
@@ -80,6 +81,7 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	case EEnemyState::Climb:
 		ClimbState();
 		break;
+
 	}
 
 
@@ -250,6 +252,8 @@ void UEnemyFSM::ClimbState()
 {
 	
 }
+
+
 
 //피격알림 이벤트 함수
 void UEnemyFSM::OnDamageProcess(int val)
