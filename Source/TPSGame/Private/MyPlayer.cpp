@@ -116,6 +116,7 @@ void AMyPlayer::BeginPlay()
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	warningTextUI = CreateWidget(GetWorld(), warningTextFactory);
+	onHitUI = CreateWidget(GetWorld(), onHitFactory);
 	selectWeaponUI = CreateWidget<USelectWeaponWidget>(GetWorld(), selectWeaponWidgetFactory);
 	selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
 	selectWeaponUI->AddToViewport();
@@ -131,6 +132,8 @@ void AMyPlayer::BeginPlay()
 
 	ammoRifle = ammoRifleMax;
 	ammoRocketLauncher = ammoRocketLauncherMax;
+
+	playerHP = playerMaxHP;
 }
 
 // Called every frame
@@ -181,6 +184,21 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AMyPlayer::InputActionRun);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AMyPlayer::InputActionRunReleased);
 	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &AMyPlayer::ReloadWeapon);
+}
+
+int AMyPlayer::GetPlayerHP()
+{
+	return playerHP;
+}
+
+int AMyPlayer::GetPlayerMaxHP()
+{
+	return playerMaxHP;
+}
+
+WeaponList AMyPlayer::GetNowWeapon()
+{
+	return nowWeapon;
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -514,7 +532,13 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 	if (playerHP > 0)
 	{
 		playerHP -= value;
-		UE_LOG(LogTemp, Warning, TEXT("outch"));
+		onHitUI->AddToViewport();
+		FTimerHandle hitHandle;
+		GetWorldTimerManager().SetTimer(hitHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				onHitUI->RemoveFromParent();
+			}), 0.2f, false);
+		//UE_LOG(LogTemp, Warning, TEXT("outch"));
 	}
 	else
 	{
