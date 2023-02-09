@@ -15,23 +15,21 @@ ARealElectricTrap::ARealElectricTrap()
 	PrimaryActorTick.bCanEverTick = true;
 
 	arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("arrow"));
-	arrow->SetupAttachment(RootComponent);
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("boxComp"));
 	boxComp->SetCollisionProfileName(TEXT("TrapPreset"));
 	boxComp->SetBoxExtent(FVector(240, 380, 10));
-
-
+	SetRootComponent(boxComp);
+	arrow->SetupAttachment(RootComponent);
 
 }
+
 
 // Called when the game starts or when spawned
 void ARealElectricTrap::BeginPlay()
 {
 	Super::BeginPlay();
-	boxComp->OnComponentBeginOverlap.AddDynamic(this, &ARealElectricTrap::InRealElectricTrap);
-
-	
+	boxComp->OnComponentBeginOverlap.AddDynamic(this, &ARealElectricTrap::InRealElectricTrap);	
 }
 
 // Called every frame
@@ -48,7 +46,6 @@ void ARealElectricTrap::Tick(float DeltaTime)
 
 
 		currentTime = 0;
-
 	}
 }
 
@@ -57,22 +54,7 @@ void ARealElectricTrap::InRealElectricTrap(UPrimitiveComponent* OverlappedCompon
 	enemy = Cast<AEnemy>(OtherActor);
 	if (nullptr != enemy)
 	{
-
-		UE_LOG(LogTemp, Warning, TEXT("ssshock"));
-		enemy->GetCharacterMovement()->MaxWalkSpeed = 0;
-
-		GetWorldTimerManager().SetTimer(moveHandle, FTimerDelegate::CreateLambda([&]()
-			{
-				enemy->GetCharacterMovement()->MaxWalkSpeed = 600;
-			}), 1.5f, false);
-
-		/*
-		UEnemyFSM* FSMEnemy = Cast<UEnemyFSM>(enemy->fsm);
-		if (FSMEnemy)
-		{
-			//FSMEnemy->canMove = false;
-		}
-		*/
+		enemy->PauseWalk(3.f);
 	}
 }
 
