@@ -127,6 +127,8 @@ void AMyPlayer::BeginPlay()
 	// 기본 걷기 속도
 	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 
+	ammoRifle = ammoRifleMax;
+	ammoRocketLauncher = ammoRocketLauncherMax;
 }
 
 // Called every frame
@@ -176,6 +178,7 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &AMyPlayer::ZoomOut);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AMyPlayer::InputActionRun);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AMyPlayer::InputActionRunReleased);
+	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &AMyPlayer::ReloadWeapon);
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -330,6 +333,16 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 
 void AMyPlayer::FireRifle()
 {
+	// 총알 차감
+	if (ammoRifle <= 0)
+	{
+		return;
+	}
+	else
+	{
+		ammoRifle--;
+	}
+
 	// 라인트레이스
 	FHitResult hitInfo;
 	FVector startLoc = playerCamera->GetComponentLocation();
@@ -373,6 +386,15 @@ void AMyPlayer::FireRifle()
 
 void AMyPlayer::FireRocketLauncher()
 {
+	if (ammoRocketLauncher <= 0)
+	{
+		return;
+	}
+	else
+	{
+		ammoRocketLauncher--;
+	}
+
 	FVector rocketLoc = rocketLauncherComp->GetSocketLocation(TEXT("FirePosition"));
 	GetWorld()->SpawnActor<ARocketAmmoPre>(rocketFactory, rocketLoc, GetControlRotation());
 
@@ -395,7 +417,15 @@ void AMyPlayer::FireKnife()
 
 void AMyPlayer::FireGrenade()
 {
-	AActor* greActor = GetWorld()->SpawnActor<AGrenade>(grenadeFactory, grenadeFireLoc, GetControlRotation());
+	if (ammoGrenadeCanReloadCount > 0)
+	{
+		AActor* greActor = GetWorld()->SpawnActor<AGrenade>(grenadeFactory, grenadeFireLoc, GetControlRotation());
+		ammoGrenadeCanReloadCount--;
+	}
+	else
+	{
+		return;
+	}
 }
 
 void AMyPlayer::Zoom()
@@ -580,3 +610,33 @@ void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	}
 }
 
+void AMyPlayer::ReloadWeapon()
+{
+	switch (nowWeapon)
+	{
+		case WeaponList::Rifle:
+			if (ammoRifleCanReloadCount > 0)
+			{
+				ammoRifle = ammoRifleMax;
+				ammoRifleCanReloadCount--;
+			}
+			else
+			{
+				return;
+			}
+		break;
+		case WeaponList::RocketLauncher:
+			if (ammoRocketLauncherCanReloadCount > 0)
+			{
+				ammoRocketLauncher = ammoRocketLauncherMax;
+				ammoRocketLauncherCanReloadCount--;
+			}
+			else
+			{
+				return;
+			}
+		break;
+		case WeaponList::Knife: 
+		break;
+	}
+}

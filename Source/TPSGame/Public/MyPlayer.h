@@ -156,4 +156,17 @@ private:
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
 
+	// 재장전 관련
+	int ammoRifle;
+	int ammoRifleMax = 30;
+	int ammoRocketLauncher;
+	int ammoRocketLauncherMax = 1;
+
+	// 임시값 대입
+	int ammoRifleCanReloadCount = 1;
+	int ammoRocketLauncherCanReloadCount = 1;
+	// ammoGrenade 상호작용시 증가하게
+	int ammoGrenadeCanReloadCount = 1;
+
+	void ReloadWeapon();
 };
