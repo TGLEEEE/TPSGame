@@ -13,7 +13,8 @@ void AWorldWarGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	start_UI = CreateWidget<UStartWidget>(GetWorld(), startWidget);
-
+	over_UI = CreateWidget<UGameOverWidget>(GetWorld(), gameOverWidget);
+	
 	if (start_UI != nullptr)
 	{
 		//생성된 위젯을 뷰포트에 그린다.

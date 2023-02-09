@@ -20,6 +20,8 @@
 #include "Animation/AnimSequence.h"
 #include "Engine/StaticMeshSocket.h"
 #include <Components/SplineComponent.h>
+
+#include "GameOverWidget.h"
 #include "WorldWarGameMode.h"
 #include "SelectWeaponWidget.h"
 
@@ -476,7 +478,7 @@ void AMyPlayer::ZoomOut()
 
 void AMyPlayer::CrossHit()
 {
-	if (!bIsHitUIOn)
+	if (!bIsHitUIOn && !anim->bIsDead)
 	{
 		bIsHitUIOn = true;
 		crossHitUI->AddToViewport();
@@ -516,18 +518,21 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 	}
 	else
 	{
-		anim->bIsDead = true;
-		playerCamera->SetRelativeLocationAndRotation(FVector(200.f, 0.f, 600.f), FRotator(270.f, 0.f, 0.f));
-		bUseControllerRotationYaw = false;
-		playerSpringArm->bUsePawnControlRotation = false;
-		playerCamera->bUsePawnControlRotation = false;
-		GetCharacterMovement()->bOrientRotationToMovement = false;
-		GetCharacterMovement()->MaxWalkSpeed = 0;
-		FTimerHandle th;
-		GetWorldTimerManager().SetTimer(th, FTimerDelegate::CreateLambda([&]()
+		if (!anim->bIsDead)
 		{
-			// 게임오버 위젯 실행
-		}), 3.f, false);
+			anim->bIsDead = true;
+			playerCamera->SetRelativeLocationAndRotation(FVector(200.f, 0.f, 600.f), FRotator(270.f, 0.f, 0.f));
+			bUseControllerRotationYaw = false;
+			playerSpringArm->bUsePawnControlRotation = false;
+			playerCamera->bUsePawnControlRotation = false;
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+			GetCharacterMovement()->MaxWalkSpeed = 0;
+			FTimerHandle th;
+			GetWorldTimerManager().SetTimer(th, FTimerDelegate::CreateLambda([&]()
+				{
+					gm->ShowGameOver();
+				}), 3.f, false);
+		}
 	}
 }
 

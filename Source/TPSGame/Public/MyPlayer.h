@@ -150,7 +150,7 @@ private:
 	FVector grenadeFireLoc;
 	FVector grenadeLaunchVelocity;
 
-	int playerHP = 20;
+	int playerHP = 2;
 	bool bIsHitUIOn;
 	bool bIsZooming;
 	float walkSpeed = 400.f;
