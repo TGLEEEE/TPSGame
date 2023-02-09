@@ -37,6 +37,7 @@ void ARocketExplosion::BeginPlay()
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &ARocketExplosion::OnOverlap);
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), rocketExplosionFX, GetActorTransform());
+	UGameplayStatics::PlaySoundAtLocation(this, explosionSound, GetActorLocation());
 }
 
 // Called every frame
@@ -59,7 +60,11 @@ void ARocketExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent,
 		}
 		for (AMyPlayer* player : TActorRange<AMyPlayer>(GetWorld()))
 		{
-			player->CrossHit();
+			if (player)
+			{
+				player->SpawnBloodEffect(enemy->GetActorLocation(), enemy->GetActorRotation());
+				player->CrossHit();
+			}
 		}
 	}
 }

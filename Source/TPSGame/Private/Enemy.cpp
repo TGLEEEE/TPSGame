@@ -3,9 +3,8 @@
 
 #include "Enemy.h"
 #include "EnemyFSM.h"
-#include <Components/CapsuleComponent.h>
 #include "Components/BoxComponent.h"
-
+#include "components/capsulecomponent.h"
 // Sets default values
 AEnemy::AEnemy()
 {
@@ -43,9 +42,10 @@ AEnemy::AEnemy()
 
 	// 데미지 박스
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Damage BoxComp"));
-	boxComp->SetBoxExtent(FVector(40, 40, 10));
-	boxComp->SetupAttachment(RootComponent);
-	boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	boxComp->SetBoxExtent(FVector(10, 50, 10));
+	boxComp->SetRelativeLocation(FVector(0, -20, 0));
+	boxComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
+	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called when the game starts or when spawned
@@ -78,3 +78,5 @@ void AEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherAc
 		player->PlayerDamagedProcess(1);
 	}
 }
+
+

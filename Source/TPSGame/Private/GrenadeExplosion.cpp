@@ -36,6 +36,7 @@ void AGrenadeExplosion::BeginPlay()
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &AGrenadeExplosion::OnOverlap);
 	GetWorldTimerManager().SetTimer(destroyHandle, this, &AGrenadeExplosion::SelfDestroy, 0.5f);
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), grenadeExplosionFX, GetActorTransform());
+	UGameplayStatics::PlaySoundAtLocation(this, explosionSound, GetActorLocation());
 }
 
 // Called every frame
@@ -57,7 +58,11 @@ void AGrenadeExplosion::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		}
 		for (AMyPlayer* player : TActorRange<AMyPlayer>(GetWorld()))
 		{
-			player->CrossHit();
+			if (player)
+			{
+				player->SpawnBloodEffect(enemy->GetActorLocation(), enemy->GetActorRotation());
+				player->CrossHit();
+			}
 		}
 	}
 }

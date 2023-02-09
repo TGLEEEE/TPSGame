@@ -60,6 +60,10 @@ public:
 	TSubclassOf<class UUserWidget> crossHitFactory;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> warningTextFactory;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class USelectWeaponWidget> selectWeaponWidgetFactory;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AActor> knifeEffect;
 	UPROPERTY()
 	UUserWidget* crossIdleUI;
 	UPROPERTY()
@@ -68,8 +72,18 @@ public:
 	UUserWidget* crossHitUI;
 	UPROPERTY()
 	UUserWidget* warningTextUI;
+	UPROPERTY()
+	USelectWeaponWidget* selectWeaponUI;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* grenadeSetSound;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* grenadeGoSound;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* spadeSound;
+
 	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
+
 	bool bIsGrenadeAiming;
 	bool bIsKnifeAttackPressing;
 	class UMyPlayerAnim* anim;
@@ -79,6 +93,7 @@ public:
 	void CrossHit();
 	void CountdownTimer(int time);
 	void PlayerDamagedProcess(int value);
+	void SpawnBloodEffect(FVector loc, FRotator rot);
 
 	// 수류탄 궤적 그리기 BP로 구현위해
 	UPROPERTY(BlueprintReadWrite)
@@ -122,12 +137,15 @@ private:
 	UAnimSequence* animRockerLauncherFire;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCameraShakeBase>rocketCamShakeFactory;
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* bloodFx;
 
 
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;
 	FTimerHandle countdownHandle;
+	FTimerHandle selectWeaponHandle;
 	FVector dir;
 	FVector grenadeFireLoc;
 	FVector grenadeLaunchVelocity;
@@ -138,4 +156,17 @@ private:
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
 
+	// 재장전 관련
+	int ammoRifle;
+	int ammoRifleMax = 30;
+	int ammoRocketLauncher;
+	int ammoRocketLauncherMax = 1;
+
+	// 임시값 대입
+	int ammoRifleCanReloadCount = 1;
+	int ammoRocketLauncherCanReloadCount = 1;
+	// ammoGrenade 상호작용시 증가하게
+	int ammoGrenadeCanReloadCount = 1;
+
+	void ReloadWeapon();
 };

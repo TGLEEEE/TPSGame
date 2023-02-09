@@ -30,5 +30,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AGrenadeExplosion> explosion;
 	void SelfExplosion();
-
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* grenadeWarningSound;
 };

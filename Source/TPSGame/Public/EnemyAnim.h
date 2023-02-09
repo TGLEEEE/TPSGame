@@ -17,6 +17,8 @@ class TPSGAME_API UEnemyAnim : public UAnimInstance
 	GENERATED_BODY()
 	
 public:
+	virtual void NativeBeginPlay() override;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category=FSM)
 	EEnemyState animState;
 
@@ -31,6 +33,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = FSMEvent)
 	void PlayDamageAnim(FName sectionName);
 
+	UFUNCTION()
+	void AnimNotify_EnemyAttackStart();
+
+	UFUNCTION()
+	void AnimNotify_EnemyAttackEnd();
+
+	class AEnemy* me;
 
 
 };

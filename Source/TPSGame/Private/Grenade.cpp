@@ -7,6 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "GrenadeExplosion.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AGrenade::AGrenade()
@@ -40,7 +41,9 @@ void AGrenade::BeginPlay()
 	Super::BeginPlay();
 
 	FTimerHandle exTimerhandle;
-	GetWorldTimerManager().SetTimer(exTimerhandle, this, &AGrenade::SelfExplosion, 2.f, false);
+	GetWorldTimerManager().SetTimer(exTimerhandle, this, &AGrenade::SelfExplosion, 3.f, false);
+	FTimerHandle waringhandle;
+	GetWorldTimerManager().SetTimer(waringhandle, FTimerDelegate::CreateLambda([&]() {UGameplayStatics::PlaySoundAtLocation(this, grenadeWarningSound, GetActorLocation()); }), 1.5f, false);
 }
 
 // Called every frame

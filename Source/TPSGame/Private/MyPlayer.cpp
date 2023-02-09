@@ -21,6 +21,7 @@
 #include "Engine/StaticMeshSocket.h"
 #include <Components/SplineComponent.h>
 #include "WorldWarGameMode.h"
+#include "SelectWeaponWidget.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -77,6 +78,7 @@ AMyPlayer::AMyPlayer()
 	knifeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
 	knifeComp->SetRelativeLocationAndRotation(FVector(97.76f, -26.10f, 5.42f), FRotator(89.13f, -192.53f, 177.53f));
 	knifeComp->SetCollisionProfileName(TEXT("WeaponPreset"));
+	knifeComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ConstructorHelpers::FObjectFinder<UStaticMesh>tempKnife(TEXT("/Script/Engine.StaticMesh'/Game/Construction_VOL2/Meshes/SM_Shovel_01.SM_Shovel_01'"));
     if (tempKnife.Succeeded())
     {
@@ -112,15 +114,21 @@ void AMyPlayer::BeginPlay()
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	warningTextUI = CreateWidget(GetWorld(), warningTextFactory);
+	selectWeaponUI = CreateWidget<USelectWeaponWidget>(GetWorld(), selectWeaponWidgetFactory);
+	selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+	selectWeaponUI->AddToViewport();
 	crossIdleUI->AddToViewport();
 
 	// 시작시 장비
-	ArmRifle();
+	ArmKnife();
 
 	knifeComp->OnComponentBeginOverlap.AddDynamic(this, &AMyPlayer::KnifeOverlap);
 
 	// 기본 걷기 속도
 	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+
+	ammoRifle = ammoRifleMax;
+	ammoRocketLauncher = ammoRocketLauncherMax;
 }
 
 // Called every frame
@@ -170,6 +178,7 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &AMyPlayer::ZoomOut);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AMyPlayer::InputActionRun);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AMyPlayer::InputActionRunReleased);
+	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &AMyPlayer::ReloadWeapon);
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -271,6 +280,14 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
 			anim->bIsKnifeMode = false;
+			
+			// 선택무기 UI처리
+			selectWeaponUI->SetVisibility(ESlateVisibility::Visible);
+			selectWeaponUI->PlayAnimation(selectWeaponUI->selectRifle);
+			GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+			}), 1.01f, false);
 		break;
 	case 
 		WeaponList::RocketLauncher:
@@ -280,6 +297,15 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			knifeComp->SetVisibility(false);
 			grenadeComp->SetVisibility(false);
 			anim->bIsKnifeMode = false;
+			GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+
+			// 선택무기 UI처리
+			selectWeaponUI->SetVisibility(ESlateVisibility::Visible);
+			selectWeaponUI->PlayAnimation(selectWeaponUI->selectRocketLauncher);
+			GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
+				{
+					selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+				}), 1.01f, false);
 		break;
 	case
 		WeaponList::Knife:
@@ -290,6 +316,15 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 			knifeComp->SetVisibility(true);
 			grenadeComp->SetVisibility(false);
 			anim->bIsKnifeMode = true;
+			GetWorldTimerManager().ClearTimer(rifleTimerhandle);
+
+			// 선택무기 UI처리
+			selectWeaponUI->SetVisibility(ESlateVisibility::Visible);
+			selectWeaponUI->PlayAnimation(selectWeaponUI->selectSpade);
+			GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
+				{
+					selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+				}), 1.01f, false);
 		break;
 	default:
 		break;
@@ -298,6 +333,16 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 
 void AMyPlayer::FireRifle()
 {
+	// 총알 차감
+	if (ammoRifle <= 0)
+	{
+		return;
+	}
+	else
+	{
+		ammoRifle--;
+	}
+
 	// 라인트레이스
 	FHitResult hitInfo;
 	FVector startLoc = playerCamera->GetComponentLocation();
@@ -307,7 +352,7 @@ void AMyPlayer::FireRifle()
 	if (isHit)
 	{
 		FTransform trans(hitInfo.ImpactPoint);
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, trans);
+
 		// 적 데미지
 		AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
 		if (enemy)
@@ -316,8 +361,13 @@ void AMyPlayer::FireRifle()
 			if (enemyfsm)
 			{
 				enemyfsm->OnDamageProcess(1);
+				SpawnBloodEffect(trans.GetLocation(), trans.Rotator());
 				CrossHit();
  			}
+		}
+		else
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, trans);
 		}
 	}
 	// 반동
@@ -336,6 +386,15 @@ void AMyPlayer::FireRifle()
 
 void AMyPlayer::FireRocketLauncher()
 {
+	if (ammoRocketLauncher <= 0)
+	{
+		return;
+	}
+	else
+	{
+		ammoRocketLauncher--;
+	}
+
 	FVector rocketLoc = rocketLauncherComp->GetSocketLocation(TEXT("FirePosition"));
 	GetWorld()->SpawnActor<ARocketAmmoPre>(rocketFactory, rocketLoc, GetControlRotation());
 
@@ -351,12 +410,22 @@ void AMyPlayer::FireKnife()
 	if (anim)
 	{
 		anim->PlayKnifeAttackAnim(TEXT("FirstAttack"));
+		knifeComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		GetCharacterMovement()->MaxWalkSpeed = 0;
 	}
 }
 
 void AMyPlayer::FireGrenade()
 {
-	AActor* greActor = GetWorld()->SpawnActor<AGrenade>(grenadeFactory, grenadeFireLoc, GetControlRotation());
+	if (ammoGrenadeCanReloadCount > 0)
+	{
+		AActor* greActor = GetWorld()->SpawnActor<AGrenade>(grenadeFactory, grenadeFireLoc, GetControlRotation());
+		ammoGrenadeCanReloadCount--;
+	}
+	else
+	{
+		return;
+	}
 }
 
 void AMyPlayer::Zoom()
@@ -453,7 +522,21 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 		playerSpringArm->bUsePawnControlRotation = false;
 		playerCamera->bUsePawnControlRotation = false;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
+		GetCharacterMovement()->MaxWalkSpeed = 0;
+		FTimerHandle th;
+		GetWorldTimerManager().SetTimer(th, FTimerDelegate::CreateLambda([&]()
+		{
+			// 게임오버 위젯 실행
+		}), 3.f, false);
 	}
+}
+
+void AMyPlayer::SpawnBloodEffect(FVector loc, FRotator rot)
+{
+	FTransform trans;
+	trans.SetLocation(loc);
+	trans.SetRotation(FQuat::MakeFromRotator(rot));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bloodFx, trans);
 }
 
 void AMyPlayer::ChangeWeaponZooming()
@@ -472,6 +555,14 @@ void AMyPlayer::PlaySetGrenadeAnim()
 	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Set"));
+
+		// 선택무기 UI처리
+		selectWeaponUI->SetVisibility(ESlateVisibility::Visible);
+		selectWeaponUI->PlayAnimation(selectWeaponUI->selectGrenade);
+		GetWorldTimerManager().SetTimer(selectWeaponHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
+			}), 1.01f, false);
 	}
 }
 
@@ -505,15 +596,47 @@ void AMyPlayer::PredictGrenadePath()
 void AMyPlayer::KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UGameplayStatics::PlaySound2D(this, spadeSound, 2.f, 0.2f);
 	AEnemy* enemy = Cast<AEnemy>(OtherActor);
 	if (enemy)
 	{
 		UEnemyFSM* fsm = Cast<UEnemyFSM>(enemy->fsm);
 		if (fsm)
 		{
+			SpawnBloodEffect(enemy->GetActorLocation(), enemy->GetActorRotation() + FRotator(0, 0, -30));
 			fsm->OnDamageProcess(1);
 			CrossHit();
 		}
 	}
 }
 
+void AMyPlayer::ReloadWeapon()
+{
+	switch (nowWeapon)
+	{
+		case WeaponList::Rifle:
+			if (ammoRifleCanReloadCount > 0)
+			{
+				ammoRifle = ammoRifleMax;
+				ammoRifleCanReloadCount--;
+			}
+			else
+			{
+				return;
+			}
+		break;
+		case WeaponList::RocketLauncher:
+			if (ammoRocketLauncherCanReloadCount > 0)
+			{
+				ammoRocketLauncher = ammoRocketLauncherMax;
+				ammoRocketLauncherCanReloadCount--;
+			}
+			else
+			{
+				return;
+			}
+		break;
+		case WeaponList::Knife: 
+		break;
+	}
+}
