@@ -5,6 +5,7 @@
 #include "EnemyFSM.h"
 #include "Components/BoxComponent.h"
 #include "components/capsulecomponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
 AEnemy::AEnemy()
 {
@@ -77,6 +78,16 @@ void AEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherAc
 	{
 		player->PlayerDamagedProcess(1);
 	}
+}
+
+void AEnemy::PauseWalk(float time)
+{
+	GetCharacterMovement()->MaxWalkSpeed = 0;
+	FTimerHandle pauseWalkHandle;
+	GetWorldTimerManager().SetTimer(pauseWalkHandle, FTimerDelegate::CreateLambda([&]()
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 600;
+	}),3.f , false);
 }
 
 

@@ -14,11 +14,11 @@ void UGameOverWidget::NativeConstruct()
 
 void UGameOverWidget::ReStartGame()
 {
-	//레벨을 다시 로드한다 
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMap"));
-
 	//현재 위젯은 제거한다
 	this->RemoveFromParent();
+
+	//레벨을 다시 로드한다 
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMap"));
 }
 
 void UGameOverWidget::QuitGame()

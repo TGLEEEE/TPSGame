@@ -61,6 +61,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> warningTextFactory;
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> onHitFactory;
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class USelectWeaponWidget> selectWeaponWidgetFactory;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AActor> knifeEffect;
@@ -73,6 +75,8 @@ public:
 	UPROPERTY()
 	UUserWidget* warningTextUI;
 	UPROPERTY()
+	UUserWidget* onHitUI;
+	UPROPERTY()
 	USelectWeaponWidget* selectWeaponUI;
 	UPROPERTY(EditDefaultsOnly)
 	USoundBase* grenadeSetSound;
@@ -80,7 +84,6 @@ public:
 	USoundBase* grenadeGoSound;
 	UPROPERTY(EditDefaultsOnly)
 	USoundBase* spadeSound;
-
 	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
 
@@ -100,6 +103,19 @@ public:
 	TArray<FVector> predictPathLoc;
 	UFUNCTION(BlueprintImplementableEvent)
 	void DrawGrenadePath();
+
+	UFUNCTION(BlueprintCallable)
+	int GetPlayerHP();
+	UFUNCTION(BlueprintCallable)
+	int GetPlayerMaxHP();	
+	UFUNCTION(BlueprintCallable)
+	WeaponList GetNowWeapon();
+	UFUNCTION(BlueprintCallable)
+	int GetammoRifleCanReloadCount();
+	UFUNCTION(BlueprintCallable)
+	int GetammoRocketLauncherCanReloadCount();
+	UFUNCTION(BlueprintCallable)
+	int GetammoGrenadeCanReloadCount();
 
 private:
 
@@ -150,7 +166,8 @@ private:
 	FVector grenadeFireLoc;
 	FVector grenadeLaunchVelocity;
 
-	int playerHP = 20;
+	int playerHP;
+	int playerMaxHP = 10;
 	bool bIsHitUIOn;
 	bool bIsZooming;
 	float walkSpeed = 400.f;
@@ -163,10 +180,9 @@ private:
 	int ammoRocketLauncherMax = 1;
 
 	// 임시값 대입
-	int ammoRifleCanReloadCount = 1;
-	int ammoRocketLauncherCanReloadCount = 1;
-	// ammoGrenade 상호작용시 증가하게
-	int ammoGrenadeCanReloadCount = 1;
+	int ammoRifleCanReloadCount = 10;
+	int ammoRocketLauncherCanReloadCount = 10;
+	int ammoGrenadeCanReloadCount = 2;
 
 	void ReloadWeapon();
 };

@@ -39,18 +39,17 @@ void AEnemyManager::Tick(float DeltaTime)
 	currentTime = 0;
 */
 
-	if (gm->bCanSpawnZombie && stage == 0)
+	if (gm->bCanSpawnZombie && gm->stage == 0)
 	{
 		GetWorld()->GetTimerManager().SetTimer(spawnTimerHandle, this, &AEnemyManager::CreateEnemy, createTime);
-		stage++;
+		gm->stage++;
 	}
 
-	if (!gm->bCanSpawnZombie && stage == 1)
+	if (!gm->bCanSpawnZombie && gm->stage == 1)
 	{
 		GetWorldTimerManager().ClearTimer(spawnTimerHandle);
-		stage++;
+		gm->stage++;
 	}
-
 }
 
 

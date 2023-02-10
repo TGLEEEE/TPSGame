@@ -20,6 +20,8 @@
 #include "Animation/AnimSequence.h"
 #include "Engine/StaticMeshSocket.h"
 #include <Components/SplineComponent.h>
+
+#include "GameOverWidget.h"
 #include "WorldWarGameMode.h"
 #include "SelectWeaponWidget.h"
 
@@ -114,6 +116,7 @@ void AMyPlayer::BeginPlay()
 	crossHitUI = CreateWidget(GetWorld(), crossHitFactory);
 	crossIdleUI = CreateWidget(GetWorld(), crossIdleFactory);
 	warningTextUI = CreateWidget(GetWorld(), warningTextFactory);
+	onHitUI = CreateWidget(GetWorld(), onHitFactory);
 	selectWeaponUI = CreateWidget<USelectWeaponWidget>(GetWorld(), selectWeaponWidgetFactory);
 	selectWeaponUI->SetVisibility(ESlateVisibility::Hidden);
 	selectWeaponUI->AddToViewport();
@@ -129,6 +132,8 @@ void AMyPlayer::BeginPlay()
 
 	ammoRifle = ammoRifleMax;
 	ammoRocketLauncher = ammoRocketLauncherMax;
+
+	playerHP = playerMaxHP;
 }
 
 // Called every frame
@@ -179,6 +184,36 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AMyPlayer::InputActionRun);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AMyPlayer::InputActionRunReleased);
 	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &AMyPlayer::ReloadWeapon);
+}
+
+int AMyPlayer::GetPlayerHP()
+{
+	return playerHP;
+}
+
+int AMyPlayer::GetPlayerMaxHP()
+{
+	return playerMaxHP;
+}
+
+WeaponList AMyPlayer::GetNowWeapon()
+{
+	return nowWeapon;
+}
+
+int AMyPlayer::GetammoRifleCanReloadCount()
+{
+	return ammoRifleCanReloadCount;
+}
+
+int AMyPlayer::GetammoRocketLauncherCanReloadCount()
+{
+	return ammoRocketLauncherCanReloadCount;
+}
+
+int AMyPlayer::GetammoGrenadeCanReloadCount()
+{
+	return ammoGrenadeCanReloadCount;
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -476,7 +511,7 @@ void AMyPlayer::ZoomOut()
 
 void AMyPlayer::CrossHit()
 {
-	if (!bIsHitUIOn)
+	if (!bIsHitUIOn && !anim->bIsDead)
 	{
 		bIsHitUIOn = true;
 		crossHitUI->AddToViewport();
@@ -512,22 +547,31 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 	if (playerHP > 0)
 	{
 		playerHP -= value;
-		UE_LOG(LogTemp, Warning, TEXT("outch"));
+		onHitUI->AddToViewport();
+		FTimerHandle hitHandle;
+		GetWorldTimerManager().SetTimer(hitHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				onHitUI->RemoveFromParent();
+			}), 0.2f, false);
+		//UE_LOG(LogTemp, Warning, TEXT("outch"));
 	}
 	else
 	{
-		anim->bIsDead = true;
-		playerCamera->SetRelativeLocationAndRotation(FVector(200.f, 0.f, 600.f), FRotator(270.f, 0.f, 0.f));
-		bUseControllerRotationYaw = false;
-		playerSpringArm->bUsePawnControlRotation = false;
-		playerCamera->bUsePawnControlRotation = false;
-		GetCharacterMovement()->bOrientRotationToMovement = false;
-		GetCharacterMovement()->MaxWalkSpeed = 0;
-		FTimerHandle th;
-		GetWorldTimerManager().SetTimer(th, FTimerDelegate::CreateLambda([&]()
+		if (!anim->bIsDead)
 		{
-			// 게임오버 위젯 실행
-		}), 3.f, false);
+			anim->bIsDead = true;
+			playerCamera->SetRelativeLocationAndRotation(FVector(200.f, 0.f, 600.f), FRotator(270.f, 0.f, 0.f));
+			bUseControllerRotationYaw = false;
+			playerSpringArm->bUsePawnControlRotation = false;
+			playerCamera->bUsePawnControlRotation = false;
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+			GetCharacterMovement()->MaxWalkSpeed = 0;
+			FTimerHandle th;
+			GetWorldTimerManager().SetTimer(th, FTimerDelegate::CreateLambda([&]()
+				{
+					gm->ShowGameOver();
+				}), 3.f, false);
+		}
 	}
 }
 
@@ -552,6 +596,10 @@ void AMyPlayer::ChangeWeaponZooming()
 
 void AMyPlayer::PlaySetGrenadeAnim()
 {
+	if (ammoGrenadeCanReloadCount <= 0)
+	{
+		return;
+	}
 	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Set"));
@@ -568,6 +616,10 @@ void AMyPlayer::PlaySetGrenadeAnim()
 
 void AMyPlayer::PlayThrowGrenadeAnim()
 {
+	if (ammoGrenadeCanReloadCount <= 0)
+	{
+		return;
+	}
 	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Go"));

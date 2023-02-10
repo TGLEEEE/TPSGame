@@ -38,4 +38,5 @@ public:
 
 	class UStartWidget* start_UI;
 	class UGameOverWidget* over_UI;
+	int stage;
 };
