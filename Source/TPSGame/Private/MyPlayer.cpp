@@ -201,6 +201,21 @@ WeaponList AMyPlayer::GetNowWeapon()
 	return nowWeapon;
 }
 
+int AMyPlayer::GetammoRifleCanReloadCount()
+{
+	return ammoRifleCanReloadCount;
+}
+
+int AMyPlayer::GetammoRocketLauncherCanReloadCount()
+{
+	return ammoRocketLauncherCanReloadCount;
+}
+
+int AMyPlayer::GetammoGrenadeCanReloadCount()
+{
+	return ammoGrenadeCanReloadCount;
+}
+
 void AMyPlayer::InputAxisLookUp(float value)
 {
 	AddControllerPitchInput(value);
@@ -581,6 +596,10 @@ void AMyPlayer::ChangeWeaponZooming()
 
 void AMyPlayer::PlaySetGrenadeAnim()
 {
+	if (ammoGrenadeCanReloadCount <= 0)
+	{
+		return;
+	}
 	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Set"));
@@ -597,6 +616,10 @@ void AMyPlayer::PlaySetGrenadeAnim()
 
 void AMyPlayer::PlayThrowGrenadeAnim()
 {
+	if (ammoGrenadeCanReloadCount <= 0)
+	{
+		return;
+	}
 	if (anim && !anim->bIsKnifeMode)
 	{
 		anim->PlayGrenadeAnim(TEXT("Go"));
