@@ -40,11 +40,13 @@ public:
 	void ShowGameOver();
 	void ShowEnding();
 
+	class ABGMManager* bgm;
 	UPROPERTY()
 	class UStartWidget* start_UI;
 	UPROPERTY()
 	class UGameOverWidget* over_UI;
 	UPROPERTY()
 	class UEndingWidget* ending_UI;
-	
+	UPROPERTY(BlueprintReadOnly)
+	int stage;	
 };

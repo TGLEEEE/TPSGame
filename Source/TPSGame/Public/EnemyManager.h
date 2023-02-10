@@ -56,6 +56,5 @@ public:
 
 
 	class AWorldWarGameMode* gm;
-	int stage;
 	bool bDoOnce;
 };

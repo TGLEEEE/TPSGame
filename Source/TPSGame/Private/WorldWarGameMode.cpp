@@ -7,6 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "EndingWidget.h"
 #include "StartWidget.h"
+#include "BGMManager.h"
+#include "EngineUtils.h"
 
 void AWorldWarGameMode::BeginPlay()
 {
@@ -25,6 +27,11 @@ void AWorldWarGameMode::BeginPlay()
 
 	//마우스 커설르 화면에 보이게 한다
 		GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+
+	for(auto actor : TActorRange<ABGMManager>(GetWorld()))
+	{
+		bgm = actor;
+	}
 }
 
 void AWorldWarGameMode::ShowGameOver()
@@ -37,6 +44,7 @@ void AWorldWarGameMode::ShowGameOver()
 		over_UI->AddToViewport();
 	}
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+	bgm->PlayBGMDie();
 }
 
 void AWorldWarGameMode::ShowEnding()
@@ -46,6 +54,8 @@ void AWorldWarGameMode::ShowEnding()
 		ending_UI->AddToViewport();
 	}
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
+	bgm->PlayBGMClear();
 }
 
 

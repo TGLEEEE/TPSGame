@@ -9,7 +9,6 @@ void UEndingWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	btn_Quit->OnClicked.AddDynamic(this, &UEndingWidget::QuitGame);
-
 }
 
 void UEndingWidget::QuitGame()

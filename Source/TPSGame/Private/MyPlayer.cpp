@@ -537,7 +537,6 @@ void AMyPlayer::CountdownTimer(int time)
 				gm->currentCountdown = 0;
 				gm->bCanSpawnZombie = !gm->bCanSpawnZombie;
 				GetWorldTimerManager().ClearTimer(countdownHandle);
-				//UE_LOG(LogTemp, Warning, TEXT("timeout"));
 			}
 		}),1.f , true);
 }
