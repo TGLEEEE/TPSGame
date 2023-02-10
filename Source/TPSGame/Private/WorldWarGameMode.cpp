@@ -39,3 +39,5 @@ void AWorldWarGameMode::ShowGameOver()
 	
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }
+
+

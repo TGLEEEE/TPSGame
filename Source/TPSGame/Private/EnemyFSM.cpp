@@ -126,8 +126,6 @@ void UEnemyFSM::MoveState()
 	{
 		bDoOnce = true;
 		ai->MoveToActor(target);
-		
-		
 	}
 
 
