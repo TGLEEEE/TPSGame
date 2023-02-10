@@ -53,7 +53,7 @@ public:
 	bool spawnStart;
 
 	float createTime;
-	int stage;
+
 
 	class AWorldWarGameMode* gm;
 

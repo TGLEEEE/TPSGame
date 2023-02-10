@@ -110,6 +110,12 @@ public:
 	int GetPlayerMaxHP();	
 	UFUNCTION(BlueprintCallable)
 	WeaponList GetNowWeapon();
+	UFUNCTION(BlueprintCallable)
+	int GetammoRifleCanReloadCount();
+	UFUNCTION(BlueprintCallable)
+	int GetammoRocketLauncherCanReloadCount();
+	UFUNCTION(BlueprintCallable)
+	int GetammoGrenadeCanReloadCount();
 
 private:
 
@@ -174,10 +180,9 @@ private:
 	int ammoRocketLauncherMax = 1;
 
 	// 임시값 대입
-	int ammoRifleCanReloadCount = 1;
-	int ammoRocketLauncherCanReloadCount = 1;
-	// ammoGrenade 상호작용시 증가하게
-	int ammoGrenadeCanReloadCount = 1;
+	int ammoRifleCanReloadCount = 10;
+	int ammoRocketLauncherCanReloadCount = 10;
+	int ammoGrenadeCanReloadCount = 2;
 
 	void ReloadWeapon();
 };
