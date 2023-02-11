@@ -66,9 +66,30 @@ void UMyPlayerAnim::AnimNotify_SecondAttackEnd()
 	UGameplayStatics::PlaySound2D(this, player->spadeSound, 2.f);
 }
 
-void UMyPlayerAnim::FireAnim()
+void UMyPlayerAnim::AnimNotify_ReloadRifleEnd()
 {
-	Montage_Play(fireAnimMontage);
+	switch (player->GetNowWeapon())
+	{
+	case WeaponList::Rifle:
+		player->ReloadWeapon();
+		player->rifleFakeComp->SetVisibility(false);
+		player->rifleComp->SetVisibility(true);
+		break;
+	case WeaponList::RocketLauncher:
+		player->ReloadWeapon();
+		player->rocketLauncherFakeComp->SetVisibility(false);
+		player->rocketLauncherComp->SetVisibility(true);
+		break;
+	case WeaponList::Knife:
+		break;
+	}
+
+	player->bIsReloading = false;
+}
+
+void UMyPlayerAnim::FireAnim(FName sectionName)
+{
+	player->PlayAnimMontage(fireAnimMontage, 1.f, sectionName);
 }
 
 void UMyPlayerAnim::PlayGrenadeAnim(FName sectionName)

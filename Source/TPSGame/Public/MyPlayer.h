@@ -41,7 +41,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rocketLauncherComp;
 	UPROPERTY(EditDefaultsOnly)
+	class USkeletalMeshComponent* rocketLauncherFakeComp;
+	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rifleComp;
+	UPROPERTY(EditDefaultsOnly)
+	class USkeletalMeshComponent* rifleFakeComp;
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* knifeComp;
 	UPROPERTY(EditDefaultsOnly)
@@ -89,6 +93,7 @@ public:
 
 	bool bIsGrenadeAiming;
 	bool bIsKnifeAttackPressing;
+	bool bIsReloading;
 	class UMyPlayerAnim* anim;
 	class AWorldWarGameMode* gm;
 
@@ -97,6 +102,7 @@ public:
 	void CountdownTimer(int time);
 	void PlayerDamagedProcess(int value);
 	void SpawnBloodEffect(FVector loc, FRotator rot);
+	void ReloadWeapon();
 
 	// 수류탄 궤적 그리기 BP로 구현위해
 	UPROPERTY(BlueprintReadWrite)
@@ -141,6 +147,8 @@ private:
 	void PlaySetGrenadeAnim();
 	void PlayThrowGrenadeAnim();
 	void PredictGrenadePath();
+	void PlayAnimReload();
+
 
 	UFUNCTION()
 	void KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -155,7 +163,6 @@ private:
 	TSubclassOf<UCameraShakeBase>rocketCamShakeFactory;
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* bloodFx;
-
 
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
@@ -184,5 +191,4 @@ private:
 	int ammoRocketLauncherCanReloadCount = 10;
 	int ammoGrenadeCanReloadCount = 2;
 
-	void ReloadWeapon();
 };

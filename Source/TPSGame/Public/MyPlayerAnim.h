@@ -46,7 +46,9 @@ public:
 	UFUNCTION()
 	void AnimNotify_SecondAttackEnd();
 	UFUNCTION()
-	void FireAnim();
+	void AnimNotify_ReloadRifleEnd();
+	UFUNCTION()
+	void FireAnim(FName sectionName);
 	UFUNCTION()
 	void PlayGrenadeAnim(FName sectionName);
 	UFUNCTION()
