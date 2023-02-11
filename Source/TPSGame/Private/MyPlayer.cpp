@@ -725,7 +725,7 @@ void AMyPlayer::PlayAnimReload()
 	switch (nowWeapon)
 	{
 	case WeaponList::Rifle:
-		if (ammoRifleCanReloadCount < 1)
+		if (ammoRifleCanReloadCount < 1 || ammoRifle == ammoRifleMax)
 		{
 			return;
 		}
@@ -734,7 +734,7 @@ void AMyPlayer::PlayAnimReload()
 		anim->FireAnim(TEXT("ReloadRifle"));
 		break;
 	case WeaponList::RocketLauncher:
-		if (ammoRocketLauncherCanReloadCount < 1)
+		if (ammoRocketLauncherCanReloadCount < 1 || ammoRocketLauncher == ammoRocketLauncherMax)
 		{
 			return;
 		}
