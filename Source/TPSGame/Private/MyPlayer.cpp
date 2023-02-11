@@ -559,24 +559,6 @@ void AMyPlayer::CrossHit()
 	}
 }
 
-void AMyPlayer::CountdownTimer(int time)
-{
-	gm->currentCountdown = time;
-	GetWorldTimerManager().SetTimer(countdownHandle, FTimerDelegate::CreateLambda([&]()
-		{
-			if (gm->currentCountdown > 0)
-			{
-				gm->currentCountdown--;
-			}
-			else
-			{
-				gm->currentCountdown = 0;
-				gm->bCanSpawnZombie = !gm->bCanSpawnZombie;
-				GetWorldTimerManager().ClearTimer(countdownHandle);
-			}
-		}),1.f , true);
-}
-
 void AMyPlayer::PlayerDamagedProcess(int value)
 {
 	if (playerHP > 0)

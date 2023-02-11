@@ -44,7 +44,11 @@ void AWorldWarGameMode::ShowGameOver()
 		over_UI->AddToViewport();
 	}
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
+	// 배경음악 재생
 	bgm->PlayBGMDie();
+	// 카운트다운 타이머 취소
+	GetWorldTimerManager().ClearTimer(countdownHandle);
 }
 
 void AWorldWarGameMode::ShowEnding()
@@ -55,7 +59,27 @@ void AWorldWarGameMode::ShowEnding()
 	}
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
+	// 배경음악 재생
 	bgm->PlayBGMClear();
+	// 카운트다운 타이머 취소
+	GetWorldTimerManager().ClearTimer(countdownHandle);
 }
 
+void AWorldWarGameMode::CountdownTimer(int time)
+{
+	currentCountdown = time;
+	GetWorldTimerManager().SetTimer(countdownHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			if (currentCountdown > 0)
+			{
+				currentCountdown--;
+			}
+			else
+			{
+				currentCountdown = 0;
+				bCanSpawnZombie = !bCanSpawnZombie;
+				GetWorldTimerManager().ClearTimer(countdownHandle);
+			}
+		}), 1.f, true);
+}
 

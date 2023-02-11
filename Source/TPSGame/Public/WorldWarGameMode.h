@@ -39,6 +39,9 @@ public:
 
 	void ShowGameOver();
 	void ShowEnding();
+	void CountdownTimer(int time);
+
+	FTimerHandle countdownHandle;
 
 	class ABGMManager* bgm;
 	UPROPERTY()

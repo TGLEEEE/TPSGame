@@ -100,7 +100,6 @@ public:
 
 	void FireGrenade();
 	void CrossHit();
-	void CountdownTimer(int time);
 	void PlayerDamagedProcess(int value);
 	void SpawnBloodEffect(FVector loc, FRotator rot);
 	void ReloadWeapon();
@@ -183,7 +182,6 @@ private:
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;
-	FTimerHandle countdownHandle;
 	FTimerHandle selectWeaponHandle;
 	FVector dir;
 	FVector grenadeFireLoc;
