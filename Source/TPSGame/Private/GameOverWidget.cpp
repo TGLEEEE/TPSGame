@@ -17,6 +17,9 @@ void UGameOverWidget::ReStartGame()
 	//현재 위젯은 제거한다
 	this->RemoveFromParent();
 
+	// 마우스 커서 사라지게
+	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
+
 	//레벨을 다시 로드한다 
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMap"));
 }
