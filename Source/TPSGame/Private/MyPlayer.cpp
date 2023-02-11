@@ -337,6 +337,11 @@ void AMyPlayer::ArmKnife()
 
 void AMyPlayer::ChangeWeapon(WeaponList value)
 {
+	if (bIsReloading)
+	{
+		return;
+	}
+
 	switch (value)
 	{
 	case

@@ -116,12 +116,33 @@ public:
 	int GetPlayerMaxHP();	
 	UFUNCTION(BlueprintCallable)
 	WeaponList GetNowWeapon();
+
+	// 삭제요망
 	UFUNCTION(BlueprintCallable)
 	int GetammoRifleCanReloadCount();
 	UFUNCTION(BlueprintCallable)
 	int GetammoRocketLauncherCanReloadCount();
 	UFUNCTION(BlueprintCallable)
 	int GetammoGrenadeCanReloadCount();
+
+
+	// 재장전 관련
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRifle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRifleMax = 30;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRocketLauncher;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRocketLauncherMax = 1;
+
+	// 임시값 대입
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRifleCanReloadCount = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRocketLauncherCanReloadCount = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoGrenadeCanReloadCount = 2;
 
 private:
 
@@ -179,16 +200,5 @@ private:
 	bool bIsZooming;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
-
-	// 재장전 관련
-	int ammoRifle;
-	int ammoRifleMax = 30;
-	int ammoRocketLauncher;
-	int ammoRocketLauncherMax = 1;
-
-	// 임시값 대입
-	int ammoRifleCanReloadCount = 10;
-	int ammoRocketLauncherCanReloadCount = 10;
-	int ammoGrenadeCanReloadCount = 2;
 
 };
