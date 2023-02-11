@@ -23,6 +23,7 @@
 #include "GameOverWidget.h"
 #include "WorldWarGameMode.h"
 #include "SelectWeaponWidget.h"
+#include "Ammo.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -135,6 +136,8 @@ AMyPlayer::AMyPlayer()
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyPlayer::OnOverlap);
 	// Ä³½ºÆÃ
 	anim = Cast<UMyPlayerAnim>(GetMesh()->GetAnimInstance());
 	gm = Cast<AWorldWarGameMode>(GetWorld()->GetAuthGameMode());
@@ -211,6 +214,7 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AMyPlayer::InputActionRun);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AMyPlayer::InputActionRunReleased);
 	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &AMyPlayer::PlayAnimReload);
+	PlayerInputComponent->BindAction(TEXT("React"), IE_Pressed, this, &AMyPlayer::GetAmmo);
 }
 
 int AMyPlayer::GetPlayerHP()
@@ -228,19 +232,14 @@ WeaponList AMyPlayer::GetNowWeapon()
 	return nowWeapon;
 }
 
-int AMyPlayer::GetammoRifleCanReloadCount()
+void AMyPlayer::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	return ammoRifleCanReloadCount;
-}
-
-int AMyPlayer::GetammoRocketLauncherCanReloadCount()
-{
-	return ammoRocketLauncherCanReloadCount;
-}
-
-int AMyPlayer::GetammoGrenadeCanReloadCount()
-{
-	return ammoGrenadeCanReloadCount;
+	AAmmo* tempAmmo = Cast<AAmmo>(OtherActor);
+	if (tempAmmo)
+	{
+		ammo = tempAmmo;
+		bReadyToGetAmmo = true;
+	}
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -729,16 +728,34 @@ void AMyPlayer::ReloadWeapon()
 	}
 }
 
+void AMyPlayer::GetAmmo()
+{
+	if (bReadyToGetAmmo)
+	{
+		ammo->GetAmmo();
+		bReadyToGetAmmo = false;
+	}
+
+}
+
 void AMyPlayer::PlayAnimReload()
 {
 	switch (nowWeapon)
 	{
 	case WeaponList::Rifle:
+		if (ammoRifleCanReloadCount < 1)
+		{
+			return;
+		}
 		rifleComp->SetVisibility(false);
 		rifleFakeComp->SetVisibility(true);
 		anim->FireAnim(TEXT("ReloadRifle"));
 		break;
 	case WeaponList::RocketLauncher:
+		if (ammoRocketLauncherCanReloadCount < 1)
+		{
+			return;
+		}
 		rocketLauncherComp->SetVisibility(false);
 		rocketLauncherFakeComp->SetVisibility(true);
 		anim->FireAnim(TEXT("ReloadRifle"));

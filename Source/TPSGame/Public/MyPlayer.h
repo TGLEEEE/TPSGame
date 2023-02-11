@@ -96,6 +96,7 @@ public:
 	bool bIsReloading;
 	class UMyPlayerAnim* anim;
 	class AWorldWarGameMode* gm;
+	class AAmmo* ammo;
 
 	void FireGrenade();
 	void CrossHit();
@@ -103,6 +104,7 @@ public:
 	void PlayerDamagedProcess(int value);
 	void SpawnBloodEffect(FVector loc, FRotator rot);
 	void ReloadWeapon();
+	void GetAmmo();
 
 	// 수류탄 궤적 그리기 BP로 구현위해
 	UPROPERTY(BlueprintReadWrite)
@@ -117,15 +119,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	WeaponList GetNowWeapon();
 
-	// 삭제요망
-	UFUNCTION(BlueprintCallable)
-	int GetammoRifleCanReloadCount();
-	UFUNCTION(BlueprintCallable)
-	int GetammoRocketLauncherCanReloadCount();
-	UFUNCTION(BlueprintCallable)
-	int GetammoGrenadeCanReloadCount();
-
-
 	// 재장전 관련
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int ammoRifle;
@@ -136,14 +129,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int ammoRocketLauncherMax = 1;
 
-	// 임시값 대입
+	// 탄약 기본값 대입
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ammoRifleCanReloadCount = 10;
+	int ammoRifleCanReloadCount = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ammoRocketLauncherCanReloadCount = 10;
+	int ammoRocketLauncherCanReloadCount = 2;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ammoGrenadeCanReloadCount = 2;
+	int ammoGrenadeCanReloadCount = 3;
 
+UFUNCTION()
+	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 private:
 
 	void InputAxisLookUp(float value);
@@ -198,7 +193,7 @@ private:
 	int playerMaxHP = 10;
 	bool bIsHitUIOn;
 	bool bIsZooming;
+	bool bReadyToGetAmmo;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
-
 };

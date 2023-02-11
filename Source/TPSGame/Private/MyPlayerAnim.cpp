@@ -87,6 +87,21 @@ void UMyPlayerAnim::AnimNotify_ReloadRifleEnd()
 	player->bIsReloading = false;
 }
 
+void UMyPlayerAnim::AnimNotify_PlaySoundReload()
+{
+	switch (player->GetNowWeapon())
+	{
+	case WeaponList::Rifle:
+		UGameplayStatics::PlaySound2D(this, reloadRifleSound);
+		break;
+	case WeaponList::RocketLauncher:
+		UGameplayStatics::PlaySound2D(this, reloadRocketSound);
+		break;
+	case WeaponList::Knife:
+		break;
+	}
+}
+
 void UMyPlayerAnim::FireAnim(FName sectionName)
 {
 	player->PlayAnimMontage(fireAnimMontage, 1.f, sectionName);
