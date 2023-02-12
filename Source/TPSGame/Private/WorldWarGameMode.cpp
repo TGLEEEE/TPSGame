@@ -41,13 +41,12 @@ void AWorldWarGameMode::ShowGameOver()
 	{
 		over_UI->AddToViewport();
 	}
-
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0);
-	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 	// 배경음악 재생
 	bgm->PlayBGMDie();
 	// 카운트다운 타이머 취소
 	GetWorldTimerManager().ClearTimer(countdownHandle);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0);
+	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }
 
 void AWorldWarGameMode::ShowEnding()
@@ -56,12 +55,12 @@ void AWorldWarGameMode::ShowEnding()
 	{
 		ending_UI->AddToViewport();
 	}
-	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	// 배경음악 재생
 	bgm->PlayBGMClear();
 	// 카운트다운 타이머 취소
 	GetWorldTimerManager().ClearTimer(countdownHandle);
+	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
 
 void AWorldWarGameMode::CountdownTimer(int time)
