@@ -36,15 +36,14 @@ void AWorldWarGameMode::BeginPlay()
 
 void AWorldWarGameMode::ShowGameOver()
 {
-	//게임 오버를 화면에 띄운다
-//	over_UI = CreateWidget<UGameOverWidget>(GetWorld(), gameOverWidget);
 
 	if(over_UI != nullptr)
 	{
 		over_UI->AddToViewport();
 	}
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0);
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	// 배경음악 재생
 	bgm->PlayBGMDie();
 	// 카운트다운 타이머 취소
@@ -73,6 +72,10 @@ void AWorldWarGameMode::CountdownTimer(int time)
 			if (currentCountdown > 0)
 			{
 				currentCountdown--;
+				if (currentCountdown == 1 && stage == 2)
+				{
+					UGameplayStatics::SetGlobalTimeDilation(this, 0.3);
+				}
 			}
 			else
 			{

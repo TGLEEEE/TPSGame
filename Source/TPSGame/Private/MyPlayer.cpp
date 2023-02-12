@@ -597,7 +597,7 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 				{
 					gm->ShowGameOver();
 				}), 3.f, false);
-			UGameplayStatics::PlaySound2D(this, deathSound);
+			UGameplayStatics::PlaySound2D(this, deathSound, 2.f, 0.8f);
 		}
 	}
 }

@@ -42,6 +42,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSM)
 	EEnemyState mState = EEnemyState :: Idle;
 	bool bDoOnce;
+	bool bDoNot;
 
 	//대기상태
 	void IdleState();
@@ -111,5 +112,13 @@ public:
 
 	FTimerHandle aiTimerHandle;
 
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	class USoundCue* idleSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	class USoundCue* damageSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+		class USoundCue* deadSound;
 	
 };

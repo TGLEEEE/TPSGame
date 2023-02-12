@@ -3,7 +3,9 @@
 
 #include "EnemyAnim.h"
 #include "Enemy.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/BoxComponent.h"
+
 
 void UEnemyAnim::NativeBeginPlay()
 {
@@ -33,3 +35,6 @@ void UEnemyAnim::AnimNotify_EnemyAttackEnd()
 		//UE_LOG(LogTemp, Warning, TEXT("collision off"));
 	}
 }
+
+
+

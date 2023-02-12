@@ -9,5 +9,6 @@ void AActivateRifle::GetAmmo()
 {
 	UGameplayStatics::PlaySound2D(this, getSound, 2.f);
 	savePlayer->bIsActivateRifle = true;
+	savePlayer->ChangeWeapon(WeaponList::Rifle);
 	Destroy();
 }

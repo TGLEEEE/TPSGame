@@ -4,6 +4,8 @@
 #include "EnemyManager.h"
 #include "Enemy.h"
 #include "WorldWarGameMode.h"
+#include <Kismet/GameplayStatics.h>
+#include "SpawnPoint.h"
 
 // Sets default values
 AEnemyManager::AEnemyManager()
@@ -17,6 +19,10 @@ AEnemyManager::AEnemyManager()
 void AEnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
+	spawnPoints.Empty();
+	// 시작시 위치목록을 채운다
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnPoint::StaticClass(), spawnPoints);
+
 
 	//랜덤생성시간 구하기
 	createTime = FMath::RandRange(minTime, maxTime);
