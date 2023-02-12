@@ -42,6 +42,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSM)
 	EEnemyState mState = EEnemyState :: Idle;
 	bool bDoOnce;
+	bool bDoNot;
 
 	//대기상태
 	void IdleState();

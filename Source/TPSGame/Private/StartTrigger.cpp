@@ -36,7 +36,7 @@ void AStartTrigger::Tick(float DeltaTime)
 		FTimerHandle tempHandle;
 		GetWorldTimerManager().SetTimer(tempHandle, FTimerDelegate::CreateLambda([&]()
 		{
-			gm->CountdownTimer(30);
+			gm->CountdownTimer(180);
 		}), 2, false);
 		bDoOnce = true;
 	}
@@ -49,7 +49,7 @@ void AStartTrigger::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	{
 		player->warningTextUI->AddToViewport();
 		gm->bIsStarted = true;
-		gm->CountdownTimer(10);
+		gm->CountdownTimer(60);
 		gm->stage++;
 	}
 }

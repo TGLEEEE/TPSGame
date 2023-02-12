@@ -44,7 +44,6 @@ void AWorldWarGameMode::ShowGameOver()
 
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0);
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	// 배경음악 재생
 	bgm->PlayBGMDie();
 	// 카운트다운 타이머 취소

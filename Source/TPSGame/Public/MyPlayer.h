@@ -105,7 +105,7 @@ public:
 	class UMyPlayerAnim* anim;
 	class AWorldWarGameMode* gm;
 	class AAmmo* ammo;
-
+	void ChangeWeapon(WeaponList value);
 	void FireGrenade();
 	void CrossHit();
 	void PlayerDamagedProcess(int value);
@@ -136,13 +136,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int ammoRocketLauncherMax = 1;
 
-	// Åº¾à ±âº»°ª ´ëÀÔ
+	// Åº¾à
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ammoRifleCanReloadCount = 1;
+	int ammoRifleCanReloadCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ammoRocketLauncherCanReloadCount = 2;
+	int ammoRocketLauncherCanReloadCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ammoGrenadeCanReloadCount = 3;
+	int ammoGrenadeCanReloadCount;
 
 UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -160,7 +160,6 @@ private:
 	void ArmRocketLauncher();
 	void ArmRifle();
 	void ArmKnife();
-	void ChangeWeapon(WeaponList value);
 	void FireRifle();
 	void FireRocketLauncher();
 	void FireKnife();

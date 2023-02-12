@@ -9,5 +9,6 @@ void AActivateRocketLauncher::GetAmmo()
 {
 	UGameplayStatics::PlaySound2D(this, getSound, 2.f);
 	savePlayer->bIsActivateRocketLauncher = true;
+	savePlayer->ChangeWeapon(WeaponList::RocketLauncher);
 	Destroy();
 }

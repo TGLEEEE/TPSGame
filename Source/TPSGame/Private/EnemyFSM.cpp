@@ -69,7 +69,7 @@ void UEnemyFSM::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(aiTimerHandle, FTimerDelegate::CreateLambda([&]()
 		{
 			bDoOnce = false;
-		}), 3.f, true);
+		}), 1.f, true);
 }
 
 
@@ -148,8 +148,11 @@ void UEnemyFSM::MoveState()
 		bDoOnce = true;
 		ai->MoveToActor(target);
 
-		UGameplayStatics::PlaySoundAtLocation(this, idleSound, me->GetActorLocation());
-
+		if (!bDoNot)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, idleSound, me->GetActorLocation());
+			bDoNot = true;
+		}
 	}
 
 
