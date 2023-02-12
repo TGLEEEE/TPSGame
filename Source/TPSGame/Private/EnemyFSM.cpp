@@ -10,6 +10,7 @@
 #include "NavigationSystem.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Sound/SoundCue.h"
 #include "Kismet/GameplayStatics.h"
 #include "Navigation/PathFollowingComponent.h"
 
@@ -23,6 +24,24 @@ UEnemyFSM::UEnemyFSM()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+
+	ConstructorHelpers::FObjectFinder<USoundCue> tempSound(TEXT("/Script/Engine.SoundCue'/Game/Assets/BGM/zombie_idle_Cue.zombie_idle_Cue'"));
+	if (tempSound.Succeeded())
+	{
+		idleSound = tempSound.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundCue> tempSound1(TEXT("/Script/Engine.SoundCue'/Game/Assets/BGM/ZombieDamage_Cue.ZombieDamage_Cue'"));
+	if (tempSound1.Succeeded())
+	{
+		damageSound = tempSound1.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundCue> tempSound2(TEXT("/Script/Engine.SoundCue'/Game/Assets/BGM/zombie_Dead_Cue.zombie_Dead_Cue'"));
+	if (tempSound2.Succeeded())
+	{
+		deadSound = tempSound2.Object;
+	}
 }
 
 
@@ -90,6 +109,7 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 //대기상태 - (이후에 플레이어가 나타날때까지) 
 void UEnemyFSM::IdleState()
 {
+
 	// 시간이 흐르니까
 	currentTime += GetWorld()->DeltaTimeSeconds;
 	//만약 경과시간이 대기시간을 초과했다면
@@ -101,6 +121,7 @@ void UEnemyFSM::IdleState()
 		//4. 경과시간 초기화
 		currentTime = 0;
 		//UE_LOG(LogTemp, Warning, TEXT("2after move"));
+
 
 		//애니메이션 상태 동기화
 		anim->animState = mState;
@@ -126,6 +147,9 @@ void UEnemyFSM::MoveState()
 	{
 		bDoOnce = true;
 		ai->MoveToActor(target);
+
+		UGameplayStatics::PlaySoundAtLocation(this, idleSound, me->GetActorLocation());
+
 	}
 
 
@@ -214,6 +238,7 @@ void UEnemyFSM::DamageState()
 	//2.만약 경과시간이 대기시간을 초과했다면 
 	if (currentTime > damageDelayTime)
 	{
+
 		//3.대기상태로전환하고싶다
 		mState = EEnemyState::Idle;
 		//경과시간초기화
@@ -227,6 +252,7 @@ void UEnemyFSM::DamageState()
 void UEnemyFSM::DieState()
 {
 	currentTime += GetWorld()->DeltaTimeSeconds;
+
 	if (currentTime > dieDelayTime)
 	{
 		//계속 아래로 내려가고싶다
@@ -262,6 +288,7 @@ void UEnemyFSM::OnDamageProcess(int val)
 	//만약에 체력이 남아있다면 
 	if (hp > 0)
 	{
+		UGameplayStatics::PlaySoundAtLocation(this, damageSound, me->GetActorLocation());
 		//UE_LOG(LogTemp, Warning, TEXT("?"));
 		//상태를 피격으로 전환
 		mState = EEnemyState::Damage;
@@ -276,6 +303,7 @@ void UEnemyFSM::OnDamageProcess(int val)
 	//그렇지않으먄
 	else
 	{
+		UGameplayStatics::PlaySoundAtLocation(this, deadSound, me->GetActorLocation());
 		//UE_LOG(LogTemp, Warning, TEXT("zugum"));
 		//상태를 죽음으로 전환
 		mState = EEnemyState::Die;

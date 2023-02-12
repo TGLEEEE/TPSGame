@@ -111,5 +111,13 @@ public:
 
 	FTimerHandle aiTimerHandle;
 
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	class USoundCue* idleSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	class USoundCue* damageSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+		class USoundCue* deadSound;
 	
 };
