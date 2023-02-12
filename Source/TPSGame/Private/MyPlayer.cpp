@@ -345,6 +345,10 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 	{
 	case
 		WeaponList::Rifle:
+			if (!bIsActivateRifle)
+			{
+				return;
+			}
 			nowWeapon = value;
 			rifleComp->SetVisibility(true);
 			rocketLauncherComp->SetVisibility(false);
@@ -362,6 +366,10 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 		break;
 	case 
 		WeaponList::RocketLauncher:
+			if (!bIsActivateRocketLauncher)
+			{
+				return;
+			}
 			nowWeapon = value;
 			rifleComp->SetVisibility(false);
 			rocketLauncherComp->SetVisibility(true);

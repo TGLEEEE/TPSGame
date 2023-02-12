@@ -94,6 +94,8 @@ public:
 	bool bIsGrenadeAiming;
 	bool bIsKnifeAttackPressing;
 	bool bIsReloading;
+	bool bIsActivateRifle;
+	bool bIsActivateRocketLauncher;
 	class UMyPlayerAnim* anim;
 	class AWorldWarGameMode* gm;
 	class AAmmo* ammo;
@@ -189,9 +191,10 @@ private:
 
 	int playerHP;
 	int playerMaxHP = 10;
+	float walkSpeed = 400.f;
+	float runSpeed = 800.f;
 	bool bIsHitUIOn;
 	bool bIsZooming;
 	bool bReadyToGetAmmo;
-	float walkSpeed = 400.f;
-	float runSpeed = 800.f;
+
 };
