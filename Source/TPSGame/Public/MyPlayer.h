@@ -89,6 +89,12 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	USoundBase* spadeSound;
 	UPROPERTY(EditDefaultsOnly)
+	USoundBase* jumpSound;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* deathSound;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* hurtSound;
+	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
 
 	bool bIsGrenadeAiming;

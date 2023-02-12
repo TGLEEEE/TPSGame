@@ -265,6 +265,7 @@ void AMyPlayer::InputAxisMoveHorizontal(float value)
 void AMyPlayer::InputActionJump()
 {
 	Jump();
+	UGameplayStatics::PlaySound2D(this, jumpSound);
 }
 
 void AMyPlayer::InputActionFire()
@@ -569,7 +570,7 @@ void AMyPlayer::CrossHit()
 
 void AMyPlayer::PlayerDamagedProcess(int value)
 {
-	if (playerHP > 0)
+	if (playerHP > 1)
 	{
 		playerHP -= value;
 		onHitUI->AddToViewport();
@@ -578,7 +579,7 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 			{
 				onHitUI->RemoveFromParent();
 			}), 0.2f, false);
-		//UE_LOG(LogTemp, Warning, TEXT("outch"));
+		UGameplayStatics::PlaySound2D(this, hurtSound);
 	}
 	else
 	{
@@ -596,6 +597,7 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 				{
 					gm->ShowGameOver();
 				}), 3.f, false);
+			UGameplayStatics::PlaySound2D(this, deathSound);
 		}
 	}
 }
