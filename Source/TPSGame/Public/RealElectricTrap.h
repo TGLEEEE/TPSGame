@@ -41,4 +41,8 @@ public:
 	float shockTime = 3;
 	class AEnemy* enemy;
 	FTimerHandle moveHandle;
+
+	//전기소리
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+		class USoundCue* elecSound;
 };

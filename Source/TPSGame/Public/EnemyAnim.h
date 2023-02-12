@@ -39,7 +39,10 @@ public:
 	UFUNCTION()
 	void AnimNotify_EnemyAttackEnd();
 
+
+
 	class AEnemy* me;
 
+	
 
 };

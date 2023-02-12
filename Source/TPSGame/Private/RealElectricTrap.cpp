@@ -7,6 +7,8 @@
 #include "Enemy.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 ARealElectricTrap::ARealElectricTrap()
@@ -22,8 +24,13 @@ ARealElectricTrap::ARealElectricTrap()
 	SetRootComponent(boxComp);
 	arrow->SetupAttachment(RootComponent);
 
+	//소리 갖고오기
+	ConstructorHelpers::FObjectFinder<USoundCue> tempSound(TEXT("/Script/Engine.SoundCue'/Game/Assets/BGM/Electric-Sound_Cue.Electric-Sound_Cue'"));
+	if(tempSound.Succeeded())
+	{
+		elecSound = tempSound.Object;
+	}
 }
-
 
 // Called when the game starts or when spawned
 void ARealElectricTrap::BeginPlay()
@@ -41,6 +48,7 @@ void ARealElectricTrap::Tick(float DeltaTime)
 	if (currentTime >= shockTime)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("elc"));
+		UGameplayStatics::PlaySoundAtLocation(this,elecSound,GetActorLocation());
 
 		GetWorld()->SpawnActor<AElectricTrap>(electricFactory, GetActorLocation(), GetActorRotation());
 
