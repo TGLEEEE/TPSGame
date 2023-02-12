@@ -49,7 +49,7 @@ void AStartTrigger::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	{
 		player->warningTextUI->AddToViewport();
 		gm->bIsStarted = true;
-		gm->CountdownTimer(60);
+		gm->CountdownTimer(30);
 		gm->stage++;
 	}
 }

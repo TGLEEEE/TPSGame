@@ -72,6 +72,10 @@ void AWorldWarGameMode::CountdownTimer(int time)
 			if (currentCountdown > 0)
 			{
 				currentCountdown--;
+				if (currentCountdown == 1 && stage == 2)
+				{
+					UGameplayStatics::SetGlobalTimeDilation(this, 0.3);
+				}
 			}
 			else
 			{
