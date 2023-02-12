@@ -20,16 +20,17 @@
 #include "Animation/AnimSequence.h"
 #include "Engine/StaticMeshSocket.h"
 #include <Components/SplineComponent.h>
-
 #include "GameOverWidget.h"
 #include "WorldWarGameMode.h"
 #include "SelectWeaponWidget.h"
+#include "Ammo.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
 	// 캐릭터 메시
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Player/Ch17_nonPBR_UE.Ch17_nonPBR_UE'"));
 	if (mesh.Succeeded())
@@ -39,10 +40,12 @@ AMyPlayer::AMyPlayer()
 	}
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PlayerPreset"));
+	
 	// 스프링암
 	playerSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("playerSpringArm"));
 	playerSpringArm->SetupAttachment(RootComponent);
 	playerSpringArm->TargetArmLength = 250;
+	
 	// 카메라
 	playerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("playerCamera"));
 	playerCamera->SetupAttachment(playerSpringArm);
@@ -52,6 +55,7 @@ AMyPlayer::AMyPlayer()
 	playerSpringArm->bUsePawnControlRotation = true;
 	playerCamera->bUsePawnControlRotation = true;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	
 	// 로켓런처
 	rocketLauncherComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rocket Launcher Mesh"));
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempRocketLauncher(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Weapon/MilitaryWeapSilver/Weapons/Rocket_Launcher_A.Rocket_Launcher_A'"));
@@ -61,6 +65,7 @@ AMyPlayer::AMyPlayer()
 	}
 	rocketLauncherComp->SetupAttachment(GetMesh(), TEXT("handLSoc"));
 	rocketLauncherComp->SetRelativeLocationAndRotation(FVector(25.32f, 1.74f, -11.17f), FRotator(19.04f, -243.28f, -13.75f));
+	
 	// 라이플
 	rifleComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle Mesh"));
 	rifleComp->SetupAttachment(GetMesh(), TEXT("handLSoc"));
@@ -75,6 +80,29 @@ AMyPlayer::AMyPlayer()
 	{
 		bulletEffectFactory = tempBulletEffect.Object;
 	}
+
+	// 재장전시 보일 메쉬용 로켓런처
+	rocketLauncherFakeComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Fake Rocket Launcher Mesh"));
+	rocketLauncherFakeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	if (tempRocketLauncher.Succeeded())
+	{
+		rocketLauncherFakeComp->SetSkeletalMesh(tempRocketLauncher.Object);
+	}
+	rocketLauncherFakeComp->SetRelativeLocationAndRotation(FVector(0.81f, -5.76f, 3.44f), FRotator(80.f, -190.f, 5.f));
+	rocketLauncherFakeComp->SetVisibility(false);
+	rocketLauncherFakeComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// 재장전시 보일 메쉬용 라이플
+	rifleFakeComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Fake Rifle Mesh"));
+	rifleFakeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
+	if (tempRifle.Succeeded())
+	{
+		rifleFakeComp->SetSkeletalMesh(tempRifle.Object);
+	}
+	rifleFakeComp->SetRelativeLocationAndRotation(FVector(0.81f, -5.76f, 3.44f), FRotator(80.f, -190.f, 5.f));
+	rifleFakeComp->SetVisibility(false);
+	rifleFakeComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	// 나이프
 	knifeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Knife Mesh"));
 	knifeComp->SetupAttachment(GetMesh(), TEXT("handRSoc"));
@@ -108,6 +136,8 @@ AMyPlayer::AMyPlayer()
 void AMyPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyPlayer::OnOverlap);
 	// 캐스팅
 	anim = Cast<UMyPlayerAnim>(GetMesh()->GetAnimInstance());
 	gm = Cast<AWorldWarGameMode>(GetWorld()->GetAuthGameMode());
@@ -183,7 +213,8 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &AMyPlayer::ZoomOut);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AMyPlayer::InputActionRun);
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AMyPlayer::InputActionRunReleased);
-	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &AMyPlayer::ReloadWeapon);
+	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &AMyPlayer::PlayAnimReload);
+	PlayerInputComponent->BindAction(TEXT("React"), IE_Pressed, this, &AMyPlayer::GetAmmo);
 }
 
 int AMyPlayer::GetPlayerHP()
@@ -201,19 +232,14 @@ WeaponList AMyPlayer::GetNowWeapon()
 	return nowWeapon;
 }
 
-int AMyPlayer::GetammoRifleCanReloadCount()
+void AMyPlayer::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	return ammoRifleCanReloadCount;
-}
-
-int AMyPlayer::GetammoRocketLauncherCanReloadCount()
-{
-	return ammoRocketLauncherCanReloadCount;
-}
-
-int AMyPlayer::GetammoGrenadeCanReloadCount()
-{
-	return ammoGrenadeCanReloadCount;
+	AAmmo* tempAmmo = Cast<AAmmo>(OtherActor);
+	if (tempAmmo)
+	{
+		ammo = tempAmmo;
+		bReadyToGetAmmo = true;
+	}
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -239,10 +265,16 @@ void AMyPlayer::InputAxisMoveHorizontal(float value)
 void AMyPlayer::InputActionJump()
 {
 	Jump();
+	UGameplayStatics::PlaySound2D(this, jumpSound);
 }
 
 void AMyPlayer::InputActionFire()
 {
+	if (bIsReloading)
+	{
+		return;
+	}
+
 	switch (nowWeapon)
 	{
 	case WeaponList::Rifle:
@@ -305,10 +337,19 @@ void AMyPlayer::ArmKnife()
 
 void AMyPlayer::ChangeWeapon(WeaponList value)
 {
+	if (bIsReloading)
+	{
+		return;
+	}
+
 	switch (value)
 	{
 	case
 		WeaponList::Rifle:
+			if (!bIsActivateRifle)
+			{
+				return;
+			}
 			nowWeapon = value;
 			rifleComp->SetVisibility(true);
 			rocketLauncherComp->SetVisibility(false);
@@ -326,6 +367,10 @@ void AMyPlayer::ChangeWeapon(WeaponList value)
 		break;
 	case 
 		WeaponList::RocketLauncher:
+			if (!bIsActivateRocketLauncher)
+			{
+				return;
+			}
 			nowWeapon = value;
 			rifleComp->SetVisibility(false);
 			rocketLauncherComp->SetVisibility(true);
@@ -415,7 +460,7 @@ void AMyPlayer::FireRifle()
 	// 반동 애니메이션
 	if (anim)
 	{
-		anim->FireAnim();
+		anim->FireAnim(TEXT("Default"));
 	}
 }
 
@@ -523,28 +568,9 @@ void AMyPlayer::CrossHit()
 	}
 }
 
-void AMyPlayer::CountdownTimer(int time)
-{
-	gm->currentCountdown = time;
-	GetWorldTimerManager().SetTimer(countdownHandle, FTimerDelegate::CreateLambda([&]()
-		{
-			if (gm->currentCountdown > 0)
-			{
-				gm->currentCountdown--;
-			}
-			else
-			{
-				gm->currentCountdown = 0;
-				gm->bCanSpawnZombie = !gm->bCanSpawnZombie;
-				GetWorldTimerManager().ClearTimer(countdownHandle);
-				//UE_LOG(LogTemp, Warning, TEXT("timeout"));
-			}
-		}),1.f , true);
-}
-
 void AMyPlayer::PlayerDamagedProcess(int value)
 {
-	if (playerHP > 0)
+	if (playerHP > 1)
 	{
 		playerHP -= value;
 		onHitUI->AddToViewport();
@@ -553,7 +579,7 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 			{
 				onHitUI->RemoveFromParent();
 			}), 0.2f, false);
-		//UE_LOG(LogTemp, Warning, TEXT("outch"));
+		UGameplayStatics::PlaySound2D(this, hurtSound);
 	}
 	else
 	{
@@ -571,6 +597,7 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 				{
 					gm->ShowGameOver();
 				}), 3.f, false);
+			UGameplayStatics::PlaySound2D(this, deathSound);
 		}
 	}
 }
@@ -596,7 +623,7 @@ void AMyPlayer::ChangeWeaponZooming()
 
 void AMyPlayer::PlaySetGrenadeAnim()
 {
-	if (ammoGrenadeCanReloadCount <= 0)
+	if (ammoGrenadeCanReloadCount <= 0 || bIsReloading)
 	{
 		return;
 	}
@@ -616,7 +643,7 @@ void AMyPlayer::PlaySetGrenadeAnim()
 
 void AMyPlayer::PlayThrowGrenadeAnim()
 {
-	if (ammoGrenadeCanReloadCount <= 0)
+	if (ammoGrenadeCanReloadCount <= 0 || bIsReloading)
 	{
 		return;
 	}
@@ -691,4 +718,43 @@ void AMyPlayer::ReloadWeapon()
 		case WeaponList::Knife: 
 		break;
 	}
+}
+
+void AMyPlayer::GetAmmo()
+{
+	if (bReadyToGetAmmo)
+	{
+		ammo->GetAmmo();
+		bReadyToGetAmmo = false;
+	}
+
+}
+
+void AMyPlayer::PlayAnimReload()
+{
+	switch (nowWeapon)
+	{
+	case WeaponList::Rifle:
+		if (ammoRifleCanReloadCount < 1 || ammoRifle == ammoRifleMax)
+		{
+			return;
+		}
+		rifleComp->SetVisibility(false);
+		rifleFakeComp->SetVisibility(true);
+		anim->FireAnim(TEXT("ReloadRifle"));
+		break;
+	case WeaponList::RocketLauncher:
+		if (ammoRocketLauncherCanReloadCount < 1 || ammoRocketLauncher == ammoRocketLauncherMax)
+		{
+			return;
+		}
+		rocketLauncherComp->SetVisibility(false);
+		rocketLauncherFakeComp->SetVisibility(true);
+		anim->FireAnim(TEXT("ReloadRifle"));
+		break;
+	case WeaponList::Knife:
+		break;
+	}
+
+	bIsReloading = true;
 }

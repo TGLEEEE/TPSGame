@@ -65,6 +65,7 @@ void ARocketAmmo::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 {
 //	UE_LOG(LogTemp, Warning, TEXT("boooooom!!"));
 	GetWorld()->SpawnActor<ARocketExplosion>(explosion, GetActorLocation(), FRotator::ZeroRotator);
+	UGameplayStatics::SetGlobalTimeDilation(this, 1.f);
 	Destroy();
 }
 

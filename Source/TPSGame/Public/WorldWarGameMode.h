@@ -18,7 +18,7 @@ class TPSGAME_API AWorldWarGameMode : public AGameModeBase
 protected:
 	virtual void BeginPlay() override;
 
-public:
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsStarted;
@@ -34,10 +34,22 @@ public:
 	UPROPERTY(EditAnywhere, Category = MyWidgetSetting)
 	TSubclassOf<class UGameOverWidget> gameOverWidget;
 
+	UPROPERTY(EditAnywhere, Category = MyWidgetSetting)
+	TSubclassOf<class UEndingWidget> endingwWidget;
+
 	void ShowGameOver();
 	void ShowEnding();
+	void CountdownTimer(int time);
 
+	FTimerHandle countdownHandle;
+
+	class ABGMManager* bgm;
+	UPROPERTY()
 	class UStartWidget* start_UI;
+	UPROPERTY()
 	class UGameOverWidget* over_UI;
-	int stage;
+	UPROPERTY()
+	class UEndingWidget* ending_UI;
+	UPROPERTY(BlueprintReadOnly)
+	int stage;	
 };

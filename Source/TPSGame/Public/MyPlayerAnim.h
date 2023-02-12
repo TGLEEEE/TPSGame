@@ -35,6 +35,10 @@ public:
 	class UAnimMontage* grenadeAnimMontage;	
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* knifeAnimMontage;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* reloadRifleSound;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* reloadRocketSound;
 	class AMyPlayer* player;
 
 	UFUNCTION()
@@ -46,7 +50,11 @@ public:
 	UFUNCTION()
 	void AnimNotify_SecondAttackEnd();
 	UFUNCTION()
-	void FireAnim();
+	void AnimNotify_ReloadRifleEnd();
+	UFUNCTION()
+	void AnimNotify_PlaySoundReload();
+	UFUNCTION()
+	void FireAnim(FName sectionName);
 	UFUNCTION()
 	void PlayGrenadeAnim(FName sectionName);
 	UFUNCTION()

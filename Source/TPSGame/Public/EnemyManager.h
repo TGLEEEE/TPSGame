@@ -56,5 +56,5 @@ public:
 
 
 	class AWorldWarGameMode* gm;
-
+	bool bDoOnce;
 };

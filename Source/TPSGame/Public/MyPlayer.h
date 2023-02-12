@@ -41,7 +41,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rocketLauncherComp;
 	UPROPERTY(EditDefaultsOnly)
+	class USkeletalMeshComponent* rocketLauncherFakeComp;
+	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rifleComp;
+	UPROPERTY(EditDefaultsOnly)
+	class USkeletalMeshComponent* rifleFakeComp;
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* knifeComp;
 	UPROPERTY(EditDefaultsOnly)
@@ -85,18 +89,29 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	USoundBase* spadeSound;
 	UPROPERTY(EditDefaultsOnly)
+	USoundBase* jumpSound;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* deathSound;
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* hurtSound;
+	UPROPERTY(EditDefaultsOnly)
 	float fireRifleInterval = 0.15;
 
 	bool bIsGrenadeAiming;
 	bool bIsKnifeAttackPressing;
+	bool bIsReloading;
+	bool bIsActivateRifle;
+	bool bIsActivateRocketLauncher;
 	class UMyPlayerAnim* anim;
 	class AWorldWarGameMode* gm;
+	class AAmmo* ammo;
 
 	void FireGrenade();
 	void CrossHit();
-	void CountdownTimer(int time);
 	void PlayerDamagedProcess(int value);
 	void SpawnBloodEffect(FVector loc, FRotator rot);
+	void ReloadWeapon();
+	void GetAmmo();
 
 	// 수류탄 궤적 그리기 BP로 구현위해
 	UPROPERTY(BlueprintReadWrite)
@@ -110,13 +125,27 @@ public:
 	int GetPlayerMaxHP();	
 	UFUNCTION(BlueprintCallable)
 	WeaponList GetNowWeapon();
-	UFUNCTION(BlueprintCallable)
-	int GetammoRifleCanReloadCount();
-	UFUNCTION(BlueprintCallable)
-	int GetammoRocketLauncherCanReloadCount();
-	UFUNCTION(BlueprintCallable)
-	int GetammoGrenadeCanReloadCount();
 
+	// 재장전 관련
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRifle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRifleMax = 30;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRocketLauncher;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRocketLauncherMax = 1;
+
+	// 탄약 기본값 대입
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRifleCanReloadCount = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoRocketLauncherCanReloadCount = 2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ammoGrenadeCanReloadCount = 3;
+
+UFUNCTION()
+	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 private:
 
 	void InputAxisLookUp(float value);
@@ -141,6 +170,8 @@ private:
 	void PlaySetGrenadeAnim();
 	void PlayThrowGrenadeAnim();
 	void PredictGrenadePath();
+	void PlayAnimReload();
+
 
 	UFUNCTION()
 	void KnifeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -156,11 +187,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* bloodFx;
 
-
 	WeaponList nowWeapon;
 	FTimerHandle rifleTimerhandle;
 	FTimerHandle crossHitTimerhandle;
-	FTimerHandle countdownHandle;
 	FTimerHandle selectWeaponHandle;
 	FVector dir;
 	FVector grenadeFireLoc;
@@ -168,21 +197,10 @@ private:
 
 	int playerHP;
 	int playerMaxHP = 10;
-	bool bIsHitUIOn;
-	bool bIsZooming;
 	float walkSpeed = 400.f;
 	float runSpeed = 800.f;
+	bool bIsHitUIOn;
+	bool bIsZooming;
+	bool bReadyToGetAmmo;
 
-	// 재장전 관련
-	int ammoRifle;
-	int ammoRifleMax = 30;
-	int ammoRocketLauncher;
-	int ammoRocketLauncherMax = 1;
-
-	// 임시값 대입
-	int ammoRifleCanReloadCount = 10;
-	int ammoRocketLauncherCanReloadCount = 10;
-	int ammoGrenadeCanReloadCount = 2;
-
-	void ReloadWeapon();
 };
