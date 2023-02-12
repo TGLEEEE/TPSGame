@@ -8,6 +8,7 @@
 #include "EnemyAnim.h"
 #include "Components/CapsuleComponent.h"
 #include "NavigationSystem.h"
+#include "WorldWarGameMode.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Sound/SoundCue.h"
@@ -304,6 +305,10 @@ void UEnemyFSM::OnDamageProcess(int val)
 	else
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, deadSound, me->GetActorLocation());
+		// 게임 모드의 점수를 1점 추가한다.
+		AGameModeBase* gm = UGameplayStatics::GetGameMode(this);
+		AWorldWarGameMode* myGM = Cast<AWorldWarGameMode>(gm);
+		myGM->AddScore(1);
 		//UE_LOG(LogTemp, Warning, TEXT("zugum"));
 		//상태를 죽음으로 전환
 		mState = EEnemyState::Die;

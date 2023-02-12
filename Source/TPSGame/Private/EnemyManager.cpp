@@ -19,7 +19,7 @@ void AEnemyManager::BeginPlay()
 	Super::BeginPlay();
 
 	//랜덤생성시간 구하기
-	createTime = FMath::RandRange(1, 3);
+	createTime = FMath::RandRange(0.5f, 1.f);
 
 	//2.Timer Manager한테 알람 등록
 	//GetWorld()->GetTimerManager().SetTimer(spawnTimerHandle, this, &AEnemyManager::CreateEnemy, createTime);
@@ -68,7 +68,7 @@ void AEnemyManager::CreateEnemy()
 		GetWorld()->SpawnActor<AEnemy>(enemyFactory, spawnPoints[index]->GetActorLocation(), FRotator(0));
 
 		//다시 랜덤 시간에 CreateEnemy함수가 호출되도록 나이머 설정
-		float createTimer = FMath::RandRange(1, 3);
+		float createTimer = FMath::RandRange(0.5f, 1.f);
 		GetWorld()->GetTimerManager().SetTimer(spawnTimerHandle, this, &AEnemyManager::CreateEnemy, createTimer);
 	}
 }

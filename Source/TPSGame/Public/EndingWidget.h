@@ -19,6 +19,12 @@ class TPSGAME_API UEndingWidget : public UUserWidget
 
 	virtual void NativeConstruct() override;
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySetting|Score", meta = (BindWidget))
+		class UTextBlock* curScore;
+
+	void PrintCurrentScore();
+
 private:
 	
 	UFUNCTION()

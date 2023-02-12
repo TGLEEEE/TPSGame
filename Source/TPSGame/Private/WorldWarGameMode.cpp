@@ -52,10 +52,17 @@ void AWorldWarGameMode::ShowEnding()
 	if (ending_UI != nullptr)
 	{
 		ending_UI->AddToViewport();
+		ending_UI->PrintCurrentScore();
+
 	}
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	bgm->PlayBGMClear();
+}
+
+void AWorldWarGameMode::AddScore(int32 count)
+{
+	currentScore += count;
 }
 
 
