@@ -36,31 +36,30 @@ void AWorldWarGameMode::BeginPlay()
 
 void AWorldWarGameMode::ShowGameOver()
 {
-
-	if(over_UI != nullptr)
-	{
-		over_UI->AddToViewport();
-	}
 	// 배경음악 재생
 	bgm->PlayBGMDie();
 	// 카운트다운 타이머 취소
 	GetWorldTimerManager().ClearTimer(countdownHandle);
+	if(over_UI != nullptr)
+	{
+		over_UI->AddToViewport();
+	}
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0);
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }
 
 void AWorldWarGameMode::ShowEnding()
 {
+	// 배경음악 재생
+	bgm->PlayBGMClear();
+	// 카운트다운 타이머 취소
+	GetWorldTimerManager().ClearTimer(countdownHandle);
 	if (ending_UI != nullptr)
 	{
 		ending_UI->AddToViewport();
 		ending_UI->PrintCurrentScore();
 
 	}
-	// 배경음악 재생
-	bgm->PlayBGMClear();
-	// 카운트다운 타이머 취소
-	GetWorldTimerManager().ClearTimer(countdownHandle);
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }

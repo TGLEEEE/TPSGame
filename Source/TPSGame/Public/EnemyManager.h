@@ -26,10 +26,10 @@ public:
 public:
 	//랜덤 시간 간격 최솟값
 	UPROPERTY(EditAnywhere, Category = SpawnSettings)
-	float minTime = 0.4;
+	float minTime = 0.6f;
 	//랜덤시간 간격 최댓값
 	UPROPERTY(EditAnywhere, Category = SpawnSettings)
-	float maxTime = 2;
+	float maxTime = 1.8f;
 	//스폰할 위치 정보 배열
 	UPROPERTY(EditAnywhere, Category = SpawnSettings)
 	TArray<class AActor*> spawnPoints;
