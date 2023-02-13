@@ -763,14 +763,13 @@ void AMyPlayer::PlayAnimReload()
 void AMyPlayer::SlideRoll()
 {
 	FTimerHandle handle;
-	GetCapsuleComponent()->SetCapsuleHalfHeight(40.f);
+//	GetCapsuleComponent()->SetCapsuleHalfHeight(40.f);
 	GetCharacterMovement()->MaxWalkSpeed = 1200;
 	GetWorldTimerManager().SetTimer(handle, FTimerDelegate::CreateLambda([&]()
 		{
-			GetCapsuleComponent()->SetCapsuleHalfHeight(88.f);
+//			GetCapsuleComponent()->SetCapsuleHalfHeight(88.f);
 			GetCharacterMovement()->MaxWalkSpeed = 400.f;
 		}), 1.f, false);
-
 
 	switch (nowWeapon)
 	{
