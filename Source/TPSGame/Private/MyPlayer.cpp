@@ -215,6 +215,7 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &AMyPlayer::InputActionRunReleased);
 	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &AMyPlayer::PlayAnimReload);
 	PlayerInputComponent->BindAction(TEXT("React"), IE_Pressed, this, &AMyPlayer::GetAmmo);
+	PlayerInputComponent->BindAction(TEXT("SlideRoll"), IE_Pressed, this, &AMyPlayer::SlideRoll);
 }
 
 int AMyPlayer::GetPlayerHP()
@@ -757,4 +758,30 @@ void AMyPlayer::PlayAnimReload()
 	}
 
 	bIsReloading = true;
+}
+
+void AMyPlayer::SlideRoll()
+{
+	FTimerHandle handle;
+	GetCapsuleComponent()->SetCapsuleHalfHeight(40.f);
+	GetCharacterMovement()->MaxWalkSpeed = 1200;
+	GetWorldTimerManager().SetTimer(handle, FTimerDelegate::CreateLambda([&]()
+		{
+			GetCapsuleComponent()->SetCapsuleHalfHeight(88.f);
+			GetCharacterMovement()->MaxWalkSpeed = 400.f;
+		}), 1.f, false);
+
+
+	switch (nowWeapon)
+	{
+	case WeaponList::Rifle:
+		anim->PlaySlideRollAnim(TEXT("Roll"));
+		break;
+	case WeaponList::RocketLauncher:
+		anim->PlaySlideRollAnim(TEXT("Roll"));
+		break;
+	case WeaponList::Knife:
+		anim->PlaySlideRollAnim(TEXT("Slide"));
+		break;
+	}
 }

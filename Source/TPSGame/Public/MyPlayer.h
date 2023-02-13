@@ -170,6 +170,7 @@ private:
 	void PlayThrowGrenadeAnim();
 	void PredictGrenadePath();
 	void PlayAnimReload();
+	void SlideRoll();
 
 
 	UFUNCTION()

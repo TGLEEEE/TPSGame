@@ -36,6 +36,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* knifeAnimMontage;
 	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* rollslideAnimMontage;
+	UPROPERTY(EditDefaultsOnly)
 	class USoundBase* reloadRifleSound;
 	UPROPERTY(EditDefaultsOnly)
 	class USoundBase* reloadRocketSound;
@@ -59,4 +61,6 @@ public:
 	void PlayGrenadeAnim(FName sectionName);
 	UFUNCTION()
 	void PlayKnifeAttackAnim(FName sectionName);
+	UFUNCTION()
+	void PlaySlideRollAnim(FName sectionName);
 };

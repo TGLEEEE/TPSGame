@@ -122,3 +122,11 @@ void UMyPlayerAnim::PlayKnifeAttackAnim(FName sectionName)
 		player->PlayAnimMontage(knifeAnimMontage, 1.2f, sectionName);
 	}
 }
+
+void UMyPlayerAnim::PlaySlideRollAnim(FName sectionName)
+{
+	if (player)
+	{
+		player->PlayAnimMontage(rollslideAnimMontage, 1.2f, sectionName);
+	}
+}
