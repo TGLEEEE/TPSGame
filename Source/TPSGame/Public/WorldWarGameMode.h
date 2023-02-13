@@ -51,5 +51,13 @@ public:
 	UPROPERTY()
 	class UEndingWidget* ending_UI;
 	UPROPERTY(BlueprintReadOnly)
-	int stage;	
+	int stage;
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int32 GetCurrentScore() { return currentScore; }
+
+	int32 currentScore = 0;
+	void AddScore(int32 count);
+
+
 };

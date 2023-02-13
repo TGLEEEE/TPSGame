@@ -54,6 +54,8 @@ void AWorldWarGameMode::ShowEnding()
 	if (ending_UI != nullptr)
 	{
 		ending_UI->AddToViewport();
+		ending_UI->PrintCurrentScore();
+
 	}
 	// 배경음악 재생
 	bgm->PlayBGMClear();
@@ -62,6 +64,7 @@ void AWorldWarGameMode::ShowEnding()
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
+
 
 void AWorldWarGameMode::CountdownTimer(int time)
 {
@@ -83,5 +86,10 @@ void AWorldWarGameMode::CountdownTimer(int time)
 				GetWorldTimerManager().ClearTimer(countdownHandle);
 			}
 		}), 1.f, true);
+}
+
+void AWorldWarGameMode::AddScore(int32 count)
+{
+	currentScore += count;
 }
 
