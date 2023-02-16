@@ -24,6 +24,7 @@
 #include "WorldWarGameMode.h"
 #include "SelectWeaponWidget.h"
 #include "Ammo.h"
+#include "EV_Door.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -241,6 +242,7 @@ void AMyPlayer::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 		ammo = tempAmmo;
 		bReadyToGetAmmo = true;
 	}
+	evDoor = Cast<AEV_Door>(OtherActor);
 }
 
 void AMyPlayer::InputAxisLookUp(float value)
@@ -728,7 +730,14 @@ void AMyPlayer::GetAmmo()
 		ammo->GetAmmo();
 		bReadyToGetAmmo = false;
 	}
-
+	// 엘리베이터 문열기 추가
+	if (bCanOpenEVDoor)
+	{
+		if (evDoor)
+		{
+			evDoor->bDoOpen = true;
+		}
+	}
 }
 
 void AMyPlayer::PlayAnimReload()
