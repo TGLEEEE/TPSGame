@@ -43,9 +43,9 @@ void AEV_Door::BeginPlay()
 	boxComp->OnComponentEndOverlap.AddDynamic(this, &AEV_Door::EndOverlap);
 
 	startLocLeft = doorLeft->GetRelativeLocation();
-	endLocLeft = startLocLeft + FVector(0, -120.f, 0);
+	endLocLeft = startLocLeft + FVector(0, -80.f, 0);
 	startLocRight = doorRight->GetRelativeLocation();
-	endLocRight = startLocRight + FVector(0, -120.f, 0);
+	endLocRight = startLocRight + FVector(0, -80.f, 0);
 }
 
 // Called every frame
