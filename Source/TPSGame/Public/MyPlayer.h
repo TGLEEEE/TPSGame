@@ -102,9 +102,11 @@ public:
 	bool bIsReloading;
 	bool bIsActivateRifle;
 	bool bIsActivateRocketLauncher;
+	bool bCanOpenEVDoor;
 	class UMyPlayerAnim* anim;
 	class AWorldWarGameMode* gm;
 	class AAmmo* ammo;
+	class AEV_Door* evDoor;
 	void ChangeWeapon(WeaponList value);
 	void FireGrenade();
 	void CrossHit();
