@@ -13,7 +13,7 @@ AEV_Door::AEV_Door()
 	
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collision"));
 	SetRootComponent(boxComp);
- 	boxComp->SetRelativeScale3D(FVector(2.f, 3.5f, 2.f));
+ 	boxComp->SetRelativeScale3D(FVector(1.f, 1.4f, 1.3f));
 
 	doorLeft = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Left Door"));
 	doorLeft->SetupAttachment(boxComp);
@@ -105,7 +105,7 @@ void AEV_Door::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 
 void AEV_Door::moveLeftDoor(FVector start, FVector end)
 {
-	timeL += GetWorld()->GetDeltaSeconds() * 0.2;
+	timeL += GetWorld()->GetDeltaSeconds() * 0.3;
 	timeL = FMath::Clamp(timeL, 0.f, 1.f);
 	doorLeft->SetRelativeLocation(FMath::Lerp(start, end, timeL));
 
@@ -114,14 +114,14 @@ void AEV_Door::moveLeftDoor(FVector start, FVector end)
 		FTimerHandle evHandle;
 		GetWorldTimerManager().SetTimer(evHandle, FTimerDelegate::CreateLambda([&](){
 			bOpenRightDelay = true;
-		}), 2.f, false);
+		}), 1.5f, false);
 		bDoOnce = true;
 	}
 }
 
 void AEV_Door::moveRightDoor(FVector start, FVector end)
 {
-	timeR += GetWorld()->GetDeltaSeconds() * 0.2;
+	timeR += GetWorld()->GetDeltaSeconds() * 0.3;
 	timeR = FMath::Clamp(timeR, 0.f, 1.f);
 	doorRight->SetRelativeLocation(FMath::Lerp(start, end, timeR));
 }
