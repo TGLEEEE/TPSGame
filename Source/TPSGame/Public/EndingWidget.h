@@ -21,8 +21,13 @@ class TPSGAME_API UEndingWidget : public UUserWidget
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySetting|Score", meta = (BindWidget))
-		class UTextBlock* curScore;
-
+	class UTextBlock* curScore;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySetting|Score", meta = (BindWidget))
+	class UTextBlock* recordFirst;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySetting|Score", meta = (BindWidget))
+	class UTextBlock* recordSecond;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySetting|Score", meta = (BindWidget))
+	class UTextBlock* recordThird;
 	void PrintCurrentScore();
 
 private:

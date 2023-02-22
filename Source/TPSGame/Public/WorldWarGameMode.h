@@ -59,5 +59,13 @@ public:
 	int32 currentScore = 0;
 	void AddScore(int32 count);
 
+	int32 scoreFirst;
+	int32 scoreSecond;
+	int32 scoreThird;
+	void RecordScore();
+	void LoadScore();
+	void SaveScore();
+	FString saveSlotName;
+
 
 };
