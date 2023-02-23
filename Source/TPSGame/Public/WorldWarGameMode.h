@@ -66,6 +66,9 @@ public:
 	void LoadScore();
 	void SaveScore();
 	FString saveSlotName;
-
+	FString scoreFirstName;
+	FString scoreSecondName;
+	FString scoreThirdName;
+	FString currentName;
 
 };

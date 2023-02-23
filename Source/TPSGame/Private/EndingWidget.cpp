@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "WorldWarGameMode.h"
 #include "Components/Button.h"
+#include "Components/EditableText.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -12,6 +13,7 @@ void UEndingWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	btn_Quit->OnClicked.AddDynamic(this, &UEndingWidget::QuitGame);
+	btn_EnterName->OnClicked.AddDynamic(this, &UEndingWidget::EnterName);
 }
 
 void UEndingWidget::PrintCurrentScore()
@@ -33,7 +35,28 @@ void UEndingWidget::PrintCurrentScore()
 		recordFirst->SetText(recordFirstText);
 		recordSecond->SetText(recordSecondText);
 		recordThird->SetText(recordThirdText);
+
+		// 점수별 이름 출력
+		recordFirstName->SetText(FText::FromString(myGM->scoreFirstName));
+		recordSecondName->SetText(FText::FromString(myGM->scoreSecondName));
+		recordThirdName->SetText(FText::FromString(myGM->scoreThirdName));
+
 	}
+}
+
+void UEndingWidget::EnterName()
+{
+	AWorldWarGameMode* myGM = Cast<AWorldWarGameMode>(UGameplayStatics::GetGameMode(this));
+	myGM->currentName =  InputText->GetText().ToString();
+	myGM->RecordScore();
+	myGM->SaveScore();
+	if (myGM->ending_UI)
+	{
+		myGM->ending_UI->PrintCurrentScore();
+	}
+
+	InputText->SetVisibility(ESlateVisibility::Hidden);
+	btn_EnterName->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UEndingWidget::QuitGame()

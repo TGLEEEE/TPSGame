@@ -36,7 +36,7 @@ void AStartTrigger::Tick(float DeltaTime)
 		FTimerHandle tempHandle;
 		GetWorldTimerManager().SetTimer(tempHandle, FTimerDelegate::CreateLambda([&]()
 		{
-			gm->CountdownTimer(30);
+			gm->CountdownTimer(50);
 		}), 2, false);
 		bDoOnce = true;
 	}

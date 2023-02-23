@@ -29,4 +29,10 @@ public:
 	int32 scoreSecond;
 	UPROPERTY()
 	int32 scoreThird;
+	UPROPERTY()
+	FString scoreFirstName;
+	UPROPERTY()
+	FString scoreSecondName;
+	UPROPERTY()
+	FString scoreThirdName;
 };
