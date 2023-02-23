@@ -9,6 +9,7 @@
 #include "StartWidget.h"
 #include "BGMManager.h"
 #include "EngineUtils.h"
+#include "SaveScore.h"
 
 void AWorldWarGameMode::BeginPlay()
 {
@@ -50,6 +51,11 @@ void AWorldWarGameMode::ShowGameOver()
 
 void AWorldWarGameMode::ShowEnding()
 {
+	// 순위점수 불러오고 업데이트 후 저장
+	LoadScore();
+	RecordScore();
+	SaveScore();
+
 	// 배경음악 재생
 	bgm->PlayBGMClear();
 	// 카운트다운 타이머 취소
@@ -90,5 +96,58 @@ void AWorldWarGameMode::CountdownTimer(int time)
 void AWorldWarGameMode::AddScore(int32 count)
 {
 	currentScore += count;
+}
+
+void AWorldWarGameMode::RecordScore()
+{
+	if (currentScore >= scoreFirst)
+	{
+		scoreThird = scoreSecond;
+		scoreSecond = scoreFirst;
+		scoreFirst = currentScore;
+	}
+	else if (currentScore >= scoreSecond)
+	{
+		scoreThird = scoreSecond;
+		scoreSecond = currentScore;
+	}
+	else if (currentScore >= scoreThird)
+	{
+		scoreThird = currentScore;
+	}
+}
+
+void AWorldWarGameMode::LoadScore()
+{
+	USaveScore* loadDataInstance = Cast<USaveScore>(UGameplayStatics::CreateSaveGameObject(USaveScore::StaticClass()));
+	if (loadDataInstance)
+	{
+		loadDataInstance->slotName = "ScoreData";
+		loadDataInstance->saveIndex = 0;
+
+		loadDataInstance = Cast<USaveScore>(UGameplayStatics::LoadGameFromSlot(loadDataInstance->slotName, loadDataInstance->saveIndex));
+		if (loadDataInstance)
+		{
+			scoreFirst = loadDataInstance->scoreFirst;
+			scoreSecond = loadDataInstance->scoreSecond;
+			scoreThird = loadDataInstance->scoreThird;
+		}
+	}
+}
+
+void AWorldWarGameMode::SaveScore()
+{
+	USaveScore* scoreDataInstance = Cast<USaveScore>(UGameplayStatics::CreateSaveGameObject(USaveScore::StaticClass()));
+	if (scoreDataInstance)
+	{
+		scoreDataInstance->slotName = "ScoreData";
+		scoreDataInstance->saveIndex = 0;
+
+		scoreDataInstance->scoreFirst = scoreFirst;
+		scoreDataInstance->scoreSecond = scoreSecond;
+		scoreDataInstance->scoreThird = scoreThird;
+
+		UGameplayStatics::SaveGameToSlot(scoreDataInstance, scoreDataInstance->slotName, scoreDataInstance->saveIndex);
+	}
 }
 

@@ -25,6 +25,14 @@ void UEndingWidget::PrintCurrentScore()
 
 		//curScore 텍스트 블록의 값으로 설정한다.
 		curScore->SetText(scoreText);
+
+		// 순위점수 출력
+		FText recordFirstText = FText::AsNumber(myGM->scoreFirst);
+		FText recordSecondText = FText::AsNumber(myGM->scoreSecond);
+		FText recordThirdText = FText::AsNumber(myGM->scoreThird);
+		recordFirst->SetText(recordFirstText);
+		recordSecond->SetText(recordSecondText);
+		recordThird->SetText(recordThirdText);
 	}
 }
 
