@@ -36,7 +36,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	class USpringArmComponent* playerSpringArm;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCameraComponent* playerCamera;
 	UPROPERTY(EditDefaultsOnly)
 	class USkeletalMeshComponent* rocketLauncherComp;
