@@ -10,6 +10,8 @@
 #include "BGMManager.h"
 #include "EngineUtils.h"
 #include "SaveScore.h"
+#include "Components/Button.h"
+#include "Components/EditableText.h"
 
 void AWorldWarGameMode::BeginPlay()
 {
@@ -53,8 +55,8 @@ void AWorldWarGameMode::ShowEnding()
 {
 	// 순위점수 불러오고 업데이트 후 저장
 	LoadScore();
-	RecordScore();
-	SaveScore();
+//	RecordScore();
+//	SaveScore();
 
 	// 배경음악 재생
 	bgm->PlayBGMClear();
@@ -64,7 +66,11 @@ void AWorldWarGameMode::ShowEnding()
 	{
 		ending_UI->AddToViewport();
 		ending_UI->PrintCurrentScore();
-
+		if (currentScore < scoreThird)
+		{
+			ending_UI->InputText->SetVisibility(ESlateVisibility::Hidden);
+			ending_UI->btn_EnterName->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
@@ -105,15 +111,24 @@ void AWorldWarGameMode::RecordScore()
 		scoreThird = scoreSecond;
 		scoreSecond = scoreFirst;
 		scoreFirst = currentScore;
+
+		scoreThirdName = scoreSecondName;
+		scoreSecondName = scoreFirstName;
+		scoreFirstName = currentName;
 	}
 	else if (currentScore >= scoreSecond)
 	{
 		scoreThird = scoreSecond;
 		scoreSecond = currentScore;
+
+		scoreThirdName = scoreSecondName;
+		scoreSecondName = currentName;
 	}
 	else if (currentScore >= scoreThird)
 	{
 		scoreThird = currentScore;
+
+		scoreThirdName = currentName;
 	}
 }
 
@@ -131,6 +146,10 @@ void AWorldWarGameMode::LoadScore()
 			scoreFirst = loadDataInstance->scoreFirst;
 			scoreSecond = loadDataInstance->scoreSecond;
 			scoreThird = loadDataInstance->scoreThird;
+
+			scoreFirstName = loadDataInstance->scoreFirstName;
+			scoreSecondName = loadDataInstance->scoreSecondName;
+			scoreThirdName = loadDataInstance->scoreThirdName;
 		}
 	}
 }
@@ -146,6 +165,10 @@ void AWorldWarGameMode::SaveScore()
 		scoreDataInstance->scoreFirst = scoreFirst;
 		scoreDataInstance->scoreSecond = scoreSecond;
 		scoreDataInstance->scoreThird = scoreThird;
+
+		scoreDataInstance->scoreFirstName = scoreFirstName;
+		scoreDataInstance->scoreSecondName = scoreSecondName;
+		scoreDataInstance->scoreThirdName = scoreThirdName;
 
 		UGameplayStatics::SaveGameToSlot(scoreDataInstance, scoreDataInstance->slotName, scoreDataInstance->saveIndex);
 	}
