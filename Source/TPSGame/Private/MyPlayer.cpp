@@ -581,7 +581,7 @@ void AMyPlayer::PlayerDamagedProcess(int value)
 		GetWorldTimerManager().SetTimer(hitHandle, FTimerDelegate::CreateLambda([&]()
 			{
 				onHitUI->RemoveFromParent();
-			}), 0.2f, false);
+			}), 0.4f, false);
 		UGameplayStatics::PlaySound2D(this, hurtSound);
 	}
 	else
